@@ -1,0 +1,18 @@
+services:
+    influxdb:
+        image: influxdb:2
+        container_name: fik_influxdb
+        restart: unless-stopped
+        ports:
+            - 8086:8086
+        volumes:
+            - ./.data/influxdb:/var/lib/influxdb2:rw
+
+    # postgres:
+    #     image: postgres:17-alpine
+    #     container_name: itz-postgres
+    #     restart: unless-stopped
+    #     ports:
+    #       - '5432:5432'
+    #     volumes:
+    #       - ./.data/postgres:/var/lib/postgresql/data

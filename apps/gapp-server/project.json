@@ -1,0 +1,63 @@
+{
+    "name": "gapp-server",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/gapp-server/src",
+    "projectType": "application",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/esbuild:esbuild",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "platform": "node",
+                "outputPath": "dist/apps/gapp-server",
+                "format": ["cjs"],
+                "bundle": false,
+                "main": "apps/gapp-server/src/main.ts",
+                "tsConfig": "apps/gapp-server/tsconfig.app.json",
+                "assets": ["apps/gapp-server/src/assets"],
+                "generatePackageJson": true,
+                "esbuildOptions": {
+                    "sourcemap": true,
+                    "outExtension": {
+                        ".js": ".js"
+                    }
+                }
+            },
+            "configurations": {
+                "development": {},
+                "production": {
+                    "esbuildOptions": {
+                        "sourcemap": false,
+                        "outExtension": {
+                            ".js": ".js"
+                        }
+                    }
+                }
+            }
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "dependsOn": ["build"],
+            "options": {
+                "buildTarget": "gapp-server:build",
+                "runBuildTargetDependencies": false
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "gapp-server:build:development"
+                },
+                "production": {
+                    "buildTarget": "gapp-server:build:production"
+                }
+            }
+        },
+        "test": {
+            "options": {
+                "passWithNoTests": true
+            }
+        }
+    }
+}

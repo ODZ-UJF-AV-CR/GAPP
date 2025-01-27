@@ -21,6 +21,7 @@
         "@angular/platform-browser": "~19.0.0",
         "@angular/platform-browser-dynamic": "~19.0.0",
         "@angular/router": "~19.0.0",
+        "@fastify/mongodb": "^9.0.2",
         "@fastify/sensible": "^6.0.2",
         "@fastify/swagger": "^9.4.2",
         "@fastify/swagger-ui": "^5.2.1",

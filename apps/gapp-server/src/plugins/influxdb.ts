@@ -1,6 +1,6 @@
 import { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
-import { InfluxDB, WriteApi } from '@influxdata/influxdb-client';
+import { InfluxDB } from '@influxdata/influxdb-client';
 import { Plugins } from './plugins';
 import { Organization, OrgsAPI } from '@influxdata/influxdb-client-apis';
 
@@ -29,23 +29,26 @@ const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify
         },
     });
 
-    const orgsApi = new OrgsAPI(influxClient);
-    const orgs = await orgsApi.getOrgs();
-    let org = orgs.orgs.find((org) => org.name === options.org);
-    if (!org) {
-        fastify.log.info(`Creating organization ${options.org}`);
-        org = await orgsApi.postOrgs({
-            body: {
-                name: options.org,
-                description: 'Organization for storing telemetry data',
-            },
-        });
-    }
+    try {
+        const orgsApi = new OrgsAPI(influxClient);
+        const orgs = await orgsApi.getOrgs();
+        let org = orgs.orgs.find((org) => org.name === options.org);
+        if (!org) {
+            fastify.log.info(`Creating organization ${options.org}`);
+            org = await orgsApi.postOrgs({
+                body: {
+                    name: options.org,
+                    description: 'Organization for storing high altitude ballon flights data',
+                },
+            });
+        }
 
-    fastify.decorate('influxOrg', org);
-    fastify.decorate('influxClient', influxClient);
+        fastify.decorate('influxOrg', org);
+        fastify.decorate('influxClient', influxClient);
+        fastify.log.info('Connected to InfluxDB');
+    } catch (err) {
+        fastify.log.fatal(err, 'Failed to connect to InfluxDB');
+    }
 };
 
-export default fp(influxDbPlugin, {
-    name: Plugins.INFLUXDB,
-});
+export default fp(influxDbPlugin, { name: Plugins.INFLUXDB });

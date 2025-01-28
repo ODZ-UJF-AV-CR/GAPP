@@ -8,11 +8,14 @@ import sondehubPlugin from './plugins/sondehub';
 import { sondesController } from './controllers/sondes.controller';
 import carsServicePlugin from './plugins/cars-service';
 import telemetryServicePlugin from './plugins/telemetry-service';
+import mongoDbPlugin from './plugins/mongodb';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
     influxDbHost: string;
     influxDbOrg: string;
+
+    mongoDbUri: string;
 }
 
 export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
@@ -25,6 +28,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         token: opts.influxDbToken,
         org: opts.influxDbOrg,
     });
+    await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: true });
     await fastify.register(carsServicePlugin);
     await fastify.register(telemetryServicePlugin);

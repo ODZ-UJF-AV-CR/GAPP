@@ -30,6 +30,4 @@ const sondehubPlugin: FastifyPluginAsync<SondehubPluginOptions> = async (fastify
     });
 };
 
-export default fp(sondehubPlugin, {
-    name: Plugins.SONDEHUB,
-});
+export default fp(sondehubPlugin, { name: Plugins.SONDEHUB });

@@ -9,4 +9,8 @@ export const appRoutes: Route[] = [
         path: 'setup',
         loadComponent: () => import('../pages/setup/setup.component').then((c) => c.SetupComponent),
     },
+    {
+        path: 'map',
+        loadComponent: () => import('../pages/map/map.component').then((c) => c.MapComponent),
+    },
 ];

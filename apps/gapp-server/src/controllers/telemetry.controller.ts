@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_CarStatus, B_SondeTtnTelemetry, Q_Callsign } from '../schemas';
+import { B_CarTelemetry, B_SondeTtnTelemetry } from '../schemas';
 import { ttnPacketDto } from '../utils/ttn-packet-dto';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
@@ -30,23 +30,15 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'Endpoint for car position',
                 description: 'Received data are stored in InfluxDB and forwarded to SondeHub.',
-                querystring: Q_Callsign,
-                body: B_CarStatus,
+                body: B_CarTelemetry,
             },
         },
         async (req, rep) => {
-            const { callsign } = req.query;
-            const { latitude, longitude, altitude } = req.body;
-
-            req.server.telemetryService.writeCarLocation(callsign, {
-                latitude,
-                longitude,
-                altitude,
-            });
+            req.server.telemetryService.writeCarLocation(req.body);
 
             await req.server.sondehub.uploadStationPosition({
-                uploader_callsign: callsign,
-                uploader_position: [latitude, longitude, altitude],
+                uploader_callsign: req.body.callsign,
+                uploader_position: [req.body.latitude, req.body.longitude, req.body.altitude],
                 mobile: true,
             });
 

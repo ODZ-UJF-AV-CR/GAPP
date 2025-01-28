@@ -45,10 +45,10 @@ export class TelemetryService extends InfluxDbServiceBase {
         this.writeApi.writePoint(point);
     }
 
-    public writeCarLocation(callsign: string, status: CarStatus) {
+    public writeCarLocation(status: CarStatus) {
         const point = new Point('car_location')
-            .timestamp(Date.now())
-            .tag('callsign', callsign)
+            .timestamp(new Date(Date.now()))
+            .tag('callsign', status.callsign)
             .floatField('latitude', status.latitude)
             .floatField('longitude', status.longitude)
             .floatField('altitude', status.altitude);

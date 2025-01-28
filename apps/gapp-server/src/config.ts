@@ -11,7 +11,7 @@ const envSchema = {
     }),
     INFLUXDB_ORG: str({ desc: 'Influx db organization', default: 'fik' }),
 
-    MONGODB_URI: url({ desc: 'Mongo db uri', devDefault: 'mongodb://fik:tajne-heslo@localhost:27017/' }),
+    MONGODB_URI: url({ desc: 'Mongo db uri', devDefault: 'mongodb://fik:tajne-heslo@localhost:27018/' }),
 };
 
 export const getConfig = (configObject: object) => {

@@ -38,7 +38,7 @@ export const carsController: FastifyPluginAsyncTypebox = async (fastify) => {
             const { callsign } = req.query;
             const { latitude, longitude, altitude } = req.body;
 
-            req.server.carsService.writeCarStatus(callsign, {
+            req.server.locationService.writeCarLocation(callsign, {
                 latitude,
                 longitude,
                 altitude,

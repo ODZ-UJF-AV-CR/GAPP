@@ -5,9 +5,9 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { carsController } from './controllers/cars.controller';
 import sondehubPlugin from './plugins/sondehub';
-import { sondesController } from './controllers/sondes.controller';
+import { vesselController } from './controllers/vessel.controller';
 import carsServicePlugin from './plugins/cars-service';
-import telemetryServicePlugin from './plugins/telemetry-service';
+import locationServicePlugin from './plugins/location-service';
 import mongoDbPlugin from './plugins/mongodb';
 
 interface AppOptions extends FastifyPluginOptions {
@@ -31,7 +31,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: true });
     await fastify.register(carsServicePlugin);
-    await fastify.register(telemetryServicePlugin);
+    await fastify.register(locationServicePlugin);
 
     await fastify.register(swagger, {
         openapi: {
@@ -42,7 +42,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
             },
             tags: [
                 { name: 'cars', description: 'Chase cars API' },
-                { name: 'sondes', description: 'Sondes telemetry APi' },
+                { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
             ],
         },
     });
@@ -50,7 +50,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
 
     // ROUTES
     fastify.register(carsController, { prefix: '/cars' });
-    fastify.register(sondesController, { prefix: '/sondes' });
+    fastify.register(vesselController, { prefix: '/vessel' });
 
     fastify.get(
         '/ping',

@@ -10,11 +10,12 @@ declare module 'fastify' {
 }
 
 const carsServicePlugin: FastifyPluginAsync = async (fastify) => {
-    const carsService = new CarsService();
+    const carsService = new CarsService(fastify.mongodb);
+    await carsService.init();
     fastify.decorate('carsService', carsService);
 };
 
 export default fp(carsServicePlugin, {
     name: Plugins.CARS_SERVICE,
-    dependencies: [Plugins.INFLUXDB],
+    dependencies: [Plugins.MONGODB],
 });

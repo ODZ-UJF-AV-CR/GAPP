@@ -5,7 +5,8 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { carsController } from './controllers/cars.controller';
 import sondehubPlugin from './plugins/sondehub';
-import { vesselController } from './controllers/vessel.controller';
+import vesselsServicePlugin from './plugins/vessels-service';
+import { vesselsController } from './controllers/vessels.controller';
 import carsServicePlugin from './plugins/cars-service';
 import locationServicePlugin from './plugins/location-service';
 import mongoDbPlugin from './plugins/mongodb';
@@ -33,6 +34,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     await fastify.register(sondehubPlugin, { dev: true });
     await fastify.register(carsServicePlugin);
     await fastify.register(locationServicePlugin);
+    await fastify.register(vesselsServicePlugin);
 
     await fastify.register(swagger, {
         openapi: {
@@ -52,7 +54,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
 
     // ROUTES
     fastify.register(carsController, { prefix: '/cars' });
-    fastify.register(vesselController, { prefix: '/vessel' });
+    fastify.register(vesselsController, { prefix: '/vessels' });
     fastify.register(telemetryController, { prefix: '/telemetry' });
 
     fastify.get(

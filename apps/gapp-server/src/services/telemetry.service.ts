@@ -14,7 +14,7 @@ export interface CallsignLocation {
 }
 
 export class TelemetryService extends InfluxDbServiceBase {
-    private readonly bucket: 'locations';
+    private readonly bucket = 'telemetry';
     private writeApi: WriteApi;
     private queryAPi: QueryApi;
 

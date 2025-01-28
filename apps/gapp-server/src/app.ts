@@ -18,6 +18,8 @@ interface AppOptions extends FastifyPluginOptions {
     influxDbOrg: string;
 
     mongoDbUri: string;
+
+    isDevelopment: boolean;
 }
 
 export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
@@ -31,7 +33,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         org: opts.influxDbOrg,
     });
     await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
-    await fastify.register(sondehubPlugin, { dev: true });
+    await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(carsServicePlugin);
     await fastify.register(locationServicePlugin);
     await fastify.register(vesselsServicePlugin);

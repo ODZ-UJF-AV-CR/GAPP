@@ -238,7 +238,7 @@ export class Uploader {
             enhancedPacket.time_received = new Date().toISOString();
         }
 
-        enhancedPacket.dev = packet.dev ?? this.uploaderConfig.dev ? 'true' : 'false';
+        enhancedPacket.dev = this.uploaderConfig.dev ? 'true' : undefined;
 
         return enhancedPacket;
     }

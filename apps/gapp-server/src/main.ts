@@ -13,6 +13,7 @@ server.register(app, {
     influxDbHost: config.INFLUXDB_HOST,
     influxDbOrg: config.INFLUXDB_ORG,
     mongoDbUri: config.MONGODB_URI,
+    isDevelopment: config.isDevelopment,
 });
 
 server.listen({ port: config.PORT, host: '0.0.0.0' }, (err) => {

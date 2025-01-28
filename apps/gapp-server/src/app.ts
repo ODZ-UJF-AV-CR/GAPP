@@ -9,6 +9,7 @@ import { vesselController } from './controllers/vessel.controller';
 import carsServicePlugin from './plugins/cars-service';
 import locationServicePlugin from './plugins/location-service';
 import mongoDbPlugin from './plugins/mongodb';
+import { telemetryController } from './controllers/telemetry.controller';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
@@ -43,6 +44,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
             tags: [
                 { name: 'cars', description: 'Chase cars API' },
                 { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
+                { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
             ],
         },
     });
@@ -51,6 +53,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     // ROUTES
     fastify.register(carsController, { prefix: '/cars' });
     fastify.register(vesselController, { prefix: '/vessel' });
+    fastify.register(telemetryController, { prefix: '/telemetry' });
 
     fastify.get(
         '/ping',

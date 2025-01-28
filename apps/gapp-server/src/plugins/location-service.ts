@@ -1,20 +1,20 @@
 import { FastifyPluginAsync } from 'fastify';
-import { LocationService } from '../services/location.service';
+import { TelemetryService } from '../services/telemetry.service';
 import fp from 'fastify-plugin';
 import { Plugins } from './plugins';
 
 declare module 'fastify' {
     interface FastifyInstance {
-        locationService: LocationService;
+        telemetryService: TelemetryService;
     }
 }
 
 const locationsService: FastifyPluginAsync = async (fastify) => {
-    const locationsService = new LocationService(fastify.influxClient, fastify.influxOrg);
+    const locationsService = new TelemetryService(fastify.influxClient, fastify.influxOrg);
 
     await locationsService.init();
 
-    fastify.decorate('locationService', locationsService);
+    fastify.decorate('telemetryService', locationsService);
     fastify.addHook('onClose', async () => {
         await locationsService.deinit();
     });

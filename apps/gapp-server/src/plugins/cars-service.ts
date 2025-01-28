@@ -10,14 +10,8 @@ declare module 'fastify' {
 }
 
 const carsServicePlugin: FastifyPluginAsync = async (fastify) => {
-    const carsService = new CarsService(fastify.influxClient, fastify.influxOrg);
-
-    await carsService.init();
-
+    const carsService = new CarsService();
     fastify.decorate('carsService', carsService);
-    fastify.addHook('onClose', async () => {
-        await carsService.deinit();
-    });
 };
 
 export default fp(carsServicePlugin, {

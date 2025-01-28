@@ -13,7 +13,7 @@ export interface CallsignLocation {
     _time: string;
 }
 
-export class LocationService extends InfluxDbServiceBase {
+export class TelemetryService extends InfluxDbServiceBase {
     private readonly bucket: 'locations';
     private writeApi: WriteApi;
     private queryAPi: QueryApi;

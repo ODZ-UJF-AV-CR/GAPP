@@ -40,4 +40,8 @@ export class CarsService {
             _id: car._id.toString(),
         }));
     }
+
+    public async ensureCallsign(callsign: string): Promise<boolean> {
+      return !!(await this.carsCollection.findOne({ callsign }));
+    }
 }

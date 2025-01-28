@@ -56,4 +56,8 @@ export class VesselsService {
             _id: vessel._id.toString(),
         }));
     }
+
+    public async ensureCallsign(callsign: string): Promise<boolean> {
+      return !!(await this.vesselsCollection.findOne({ transmitters: callsign }));
+    }
 }

@@ -1,4 +1,6 @@
-<div class="flex flex-row">
-    <a class="btn" routerLink="/">main</a>
-    <a class="btn" routerLink="/setup">setup</a>
+<div class="flex flex-row justify-center gap-1 p-2">
+    <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" [routerLinkActiveOptions]="{ exact: true }" routerLink="/"
+        ><ng-icon name="tablerHome"></ng-icon
+    ></a>
+    <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" routerLink="/setup"><ng-icon name="tablerSettings"></ng-icon></a>
 </div>

@@ -16,3 +16,7 @@ services:
             - 27017:27017
         volumes:
             - ./.data/mongodb:/data/db:rw
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: fik
+            MONGO_INITDB_ROOT_PASSWORD: tajne-heslo
+            MONGO_INITDB_DATABASE: gapp

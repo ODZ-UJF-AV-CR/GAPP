@@ -42,6 +42,6 @@ export class CarsService {
     }
 
     public async ensureCallsign(callsign: string): Promise<boolean> {
-      return !!(await this.carsCollection.findOne({ callsign }));
+        return !!(await this.carsCollection.findOne({ callsign }));
     }
 }

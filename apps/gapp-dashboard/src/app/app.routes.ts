@@ -6,8 +6,12 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('@/pages/homepage/homepage.component').then((c) => c.HomepageComponent),
     },
     {
-        path: 'setup',
-        loadComponent: () => import('@/pages/setup/setup.component').then((c) => c.SetupComponent),
+        path: 'cars',
+        loadComponent: () => import('@/pages/cars/cars.component').then((c) => c.CarsComponent),
+    },
+    {
+        path: 'vessels',
+        loadComponent: () => import('@/pages/vessels/vessels.component').then((c) => c.VesselsComponent),
     },
     {
         path: 'map',

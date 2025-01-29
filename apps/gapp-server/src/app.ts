@@ -8,7 +8,7 @@ import sondehubPlugin from './plugins/sondehub';
 import vesselsServicePlugin from './plugins/vessels-service';
 import { vesselsController } from './controllers/vessels.controller';
 import carsServicePlugin from './plugins/cars-service';
-import telemetryServicePlugin from './plugins/location-service';
+import telemetryServicePlugin from './plugins/telemetry-service';
 import mongoDbPlugin from './plugins/mongodb';
 import { telemetryController } from './controllers/telemetry.controller';
 

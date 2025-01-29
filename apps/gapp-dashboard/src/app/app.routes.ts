@@ -3,18 +3,18 @@ import { Route } from '@angular/router';
 export const appRoutes: Route[] = [
     {
         path: '',
-        loadComponent: () => import('../pages/homepage/homepage.component').then((c) => c.HomepageComponent),
+        loadComponent: () => import('@/pages/homepage/homepage.component').then((c) => c.HomepageComponent),
     },
     {
         path: 'setup',
-        loadComponent: () => import('../pages/setup/setup.component').then((c) => c.SetupComponent),
+        loadComponent: () => import('@/pages/setup/setup.component').then((c) => c.SetupComponent),
     },
     {
         path: 'map',
-        loadComponent: () => import('../pages/map/map.component').then((c) => c.MapComponent),
+        loadComponent: () => import('@/pages/map/map.component').then((c) => c.MapComponent),
     },
     {
         path: 'dashboard',
-        loadComponent: () => import('../pages/dashboard/dashboard.component').then((c) => c.DashboardComponent),
+        loadComponent: () => import('@/pages/dashboard/dashboard.component').then((c) => c.DashboardComponent),
     },
 ];

@@ -8,7 +8,7 @@ import sondehubPlugin from './plugins/sondehub';
 import vesselsServicePlugin from './plugins/vessels-service';
 import { vesselsController } from './controllers/vessels.controller';
 import carsServicePlugin from './plugins/cars-service';
-import locationServicePlugin from './plugins/location-service';
+import telemetryServicePlugin from './plugins/location-service';
 import mongoDbPlugin from './plugins/mongodb';
 import { telemetryController } from './controllers/telemetry.controller';
 
@@ -35,7 +35,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(carsServicePlugin);
-    await fastify.register(locationServicePlugin);
+    await fastify.register(telemetryServicePlugin);
     await fastify.register(vesselsServicePlugin);
 
     await fastify.register(swagger, {

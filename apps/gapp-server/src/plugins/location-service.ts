@@ -9,18 +9,18 @@ declare module 'fastify' {
     }
 }
 
-const locationsService: FastifyPluginAsync = async (fastify) => {
-    const locationsService = new TelemetryService(fastify.influxClient, fastify.influxOrg);
+const telemetryService: FastifyPluginAsync = async (fastify) => {
+    const telemetryService = new TelemetryService(fastify.influxClient, fastify.influxOrg);
 
-    await locationsService.init();
+    await telemetryService.init();
 
-    fastify.decorate('telemetryService', locationsService);
+    fastify.decorate('telemetryService', telemetryService);
     fastify.addHook('onClose', async () => {
-        await locationsService.deinit();
+        await telemetryService.deinit();
     });
 };
 
-export default fp(locationsService, {
+export default fp(telemetryService, {
     name: Plugins.LOCATIONS_SERVICE,
     dependencies: [Plugins.INFLUXDB],
 });

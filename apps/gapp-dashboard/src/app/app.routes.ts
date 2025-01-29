@@ -13,4 +13,8 @@ export const appRoutes: Route[] = [
         path: 'map',
         loadComponent: () => import('../pages/map/map.component').then((c) => c.MapComponent),
     },
+    {
+        path: 'dashboard',
+        loadComponent: () => import('../pages/dashboard/dashboard.component').then((c) => c.DashboardComponent),
+    },
 ];

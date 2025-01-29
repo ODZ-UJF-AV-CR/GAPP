@@ -15,6 +15,7 @@
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
         "paths": {
+            "@gapp/schemas": ["libs/schemas/src/index.ts"],
             "@gapp/sondehub": ["libs/sondehub/src/index.ts"]
         }
     },

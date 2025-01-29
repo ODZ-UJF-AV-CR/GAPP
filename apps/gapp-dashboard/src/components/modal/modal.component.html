@@ -2,14 +2,21 @@
     <div class="modal-box">
         <h3 class="text-lg font-bold">{{ title() }}</h3>
 
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+
         <div class="my-5">
             <ng-content></ng-content>
         </div>
 
         <div class="modal-action">
             <form method="dialog">
-                <button class="btn">Close</button>
+                <button class="btn btn-sm">Close</button>
             </form>
+            @if(action()) {
+            <button class="btn btn-primary btn-sm" (click)="actionUsed.emit()">{{ action() }}</button>
+            }
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">

@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 
 export const appRoutes: Route[] = [
     {
-        path: '',
+        path: 'home',
         loadComponent: () => import('@/pages/homepage/homepage.component').then((c) => c.HomepageComponent),
     },
     {
@@ -16,5 +16,10 @@ export const appRoutes: Route[] = [
     {
         path: 'dashboard',
         loadComponent: () => import('@/pages/dashboard/dashboard.component').then((c) => c.DashboardComponent),
+    },
+    {
+        path: '**',
+        redirectTo: 'home',
+        pathMatch: 'full',
     },
 ];

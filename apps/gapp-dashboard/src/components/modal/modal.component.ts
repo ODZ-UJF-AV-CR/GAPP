@@ -9,7 +9,9 @@ export class ModalComponent {
 
     public readonly isOpen = input(false);
     public readonly title = input('');
+    public readonly action = input<string | undefined>();
     public readonly closed = output<void>();
+    public readonly actionUsed = output<void>();
 
     constructor() {
         effect(() => {

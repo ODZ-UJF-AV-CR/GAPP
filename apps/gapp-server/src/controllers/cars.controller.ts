@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_Car } from '../schemas/car.schema';
+import { B_Car, R_Car } from '../schemas/car.schema';
 import { Type } from '@sinclair/typebox';
 
 export const carsController: FastifyPluginAsyncTypebox = async (fastify) => {
@@ -40,7 +40,7 @@ export const carsController: FastifyPluginAsyncTypebox = async (fastify) => {
                 description: 'Get all cars from database with latest location data',
                 tags: ['cars'],
                 response: {
-                    200: Type.Array(B_Car),
+                    200: Type.Array(R_Car),
                 },
             },
         },

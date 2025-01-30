@@ -1,1 +1,56 @@
-cars list
+<div gappLayout>
+    <div>
+        <gapp-header title="Chase cars">
+            <button class="btn btn-primary" (click)="openCarModal()">Add</button>
+        </gapp-header>
+
+        @if(carsSignal()?.loading) {
+        <div class="flex flex-col gap-4">
+            <span class="loading loading-dots loading-lg"></span>
+        </div>
+        } @else {
+        <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
+            @for(car of carsSignal()?.data; track car._id) {
+            <car-tab [car]="car" />
+            } @empty {
+            <p>No cars yet</p>
+            }
+        </div>
+        }
+    </div>
+</div>
+
+<gapp-modal
+    title="Add new chase car"
+    [isOpen]="isCarModalOpened()"
+    (closed)="isCarModalOpened.set(false)"
+    action="Create"
+    [formGroup]="carForm"
+    (actionUsed)="createCar()"
+>
+    @if(errorMessage()) {
+    <div role="alert" class="alert alert-error">
+        <span>{{ errorMessage() }}</span>
+    </div>
+    }
+    <label class="form-control w-full">
+        <div class="label">
+            <span class="label-text">Callsign</span>
+        </div>
+        <input class="input input-bordered w-full" name="callsign" type="text" formControlName="callsign" />
+        <div class="label">
+            <span class="label-text-alt">Unique identification of car</span>
+            <span [hidden]="!hasError('callsign')" class="label-text-alt text-error">Callsign is required</span>
+        </div>
+    </label>
+
+    <label class="form-control w-full">
+        <div class="label">
+            <span class="label-text">Notes</span>
+        </div>
+        <textarea class="textarea textarea-bordered h-24" rows="2" formControlName="description"></textarea>
+        <div class="label">
+            <span class="label-text-alt">Car type, crew...</span>
+        </div>
+    </label>
+</gapp-modal>

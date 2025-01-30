@@ -6,7 +6,10 @@ import { catchError, map, Observable, of, startWith } from 'rxjs';
 export interface ApiResponse<T> {
     loading: boolean;
     data?: T;
-    error?: Error;
+    error?: {
+        type: string;
+        message: string;
+    };
 }
 
 export abstract class ApiServiceBase {
@@ -16,10 +19,18 @@ export abstract class ApiServiceBase {
         return `${environment.apiBaseUrl}${path}`;
     }
 
-    protected post$<T>(url: string, body: any | null): Observable<ApiResponse<T>> {
+    protected post$<T>(url: string, body: unknown | null): Observable<ApiResponse<T>> {
         return this.http.post<T>(url, body).pipe(
             map((data) => ({ loading: false, data })),
-            catchError((error) => of({ loading: false, error })),
+            catchError(({ error }) =>
+                of({
+                    loading: false,
+                    error: {
+                        type: error.error,
+                        message: error.message,
+                    },
+                })
+            ),
             startWith({ loading: true })
         );
     }
@@ -27,7 +38,15 @@ export abstract class ApiServiceBase {
     protected get$<T>(url: string): Observable<ApiResponse<T>> {
         return this.http.get<T>(url).pipe(
             map((data) => ({ loading: false, data })),
-            catchError((error) => of({ loading: false, error })),
+            catchError(({ error }) =>
+                of({
+                    loading: false,
+                    error: {
+                        type: error.error,
+                        message: error.message,
+                    },
+                })
+            ),
             startWith({ loading: true })
         );
     }

@@ -12,10 +12,10 @@
 
         <div class="modal-action">
             <form method="dialog">
-                <button class="btn btn-sm">Close</button>
+                <button class="btn">Close</button>
             </form>
             @if(action()) {
-            <button class="btn btn-primary btn-sm" (click)="actionUsed.emit()">{{ action() }}</button>
+            <button class="btn btn-primary" (click)="actionUsed.emit()">{{ action() }}</button>
             }
         </div>
     </div>

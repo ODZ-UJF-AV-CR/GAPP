@@ -14,10 +14,10 @@ export class ToastService {
 
     public toast(type: ToastType, message: string, expiration = 2_000) {
         this.toasts.update((toasts) => {
-            const id = this.generateToastId(toasts);
-            this.setToastExpiration(id, expiration);
-
-            return [...toasts, { type, id, message }];
+            const toast: Toast = { type, message, id: this.generateToastId(toasts) };
+            this.setToastExpiration(toast, expiration);
+            toasts.push(toast);
+            return toasts;
         });
     }
 
@@ -37,9 +37,9 @@ export class ToastService {
         return newId;
     }
 
-    private setToastExpiration(id: number, expiration: number) {
+    private setToastExpiration(toast: Toast, expiration: number) {
         setTimeout(() => {
-            this.toasts.update((toasts) => toasts.filter((toast) => toast.id !== id));
+            this.toasts.update((toasts) => toasts.filter((t) => t !== toast));
         }, expiration);
     }
 }

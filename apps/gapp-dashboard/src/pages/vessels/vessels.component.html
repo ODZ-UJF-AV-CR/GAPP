@@ -11,9 +11,28 @@
         } @else {
         <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
             @for(vessel of vesselsSignal()?.data; track vessel._id) {
-            <div>{{ vessel.callsign }}</div>
+            <div class="collapse collapse-arrow card bg-base-200">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">
+                    @if(vessel.type === 'balloon') {
+                    <ng-icon name="tablerAirBalloon" size="1.2rem"></ng-icon>
+                    } @else if(vessel.type === 'uav') {
+                    <ng-icon name="tablerDrone" size="1.2rem"></ng-icon>
+                    }
+                    {{ vessel.callsign }}
+                </div>
+                <div class="collapse-content">
+                    <ul class="list-disc list-inside mb-2">
+                        @for(transmitter of vessel.transmitters; track $index) {
+                        <li>{{ transmitter }}</li>
+                        }
+                    </ul>
+
+                    <p>{{ vessel?.description }}</p>
+                </div>
+            </div>
             } @empty {
-            <p>No vessels yet</p>
+            <p class="text-center">No vessels yet.</p>
             }
         </div>
         }

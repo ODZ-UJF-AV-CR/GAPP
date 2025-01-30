@@ -11,9 +11,15 @@
         } @else {
         <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
             @for(car of carsSignal()?.data; track car._id) {
-            <car-tab [car]="car" />
+            <div class="collapse collapse-arrow card bg-base-200">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">{{ car.callsign }}</div>
+                <div class="collapse-content">
+                    <p>{{ car?.description }}</p>
+                </div>
+            </div>
             } @empty {
-            <p>No cars yet</p>
+            <p class="text-center">No chase cars yet.</p>
             }
         </div>
         }

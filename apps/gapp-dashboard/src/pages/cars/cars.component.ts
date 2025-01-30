@@ -1,8 +1,7 @@
 import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
 import { Car, CarsService } from '@/services/cars.service';
-import { Component, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { CarTabComponent } from './car-tab.component';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
@@ -12,12 +11,13 @@ import { HeaderComponent } from '@/components/header/header.component';
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [GappLayoutDirective, CarTabComponent, ModalComponent, ReactiveFormsModule, HeaderComponent],
+    imports: [GappLayoutDirective, ModalComponent, ReactiveFormsModule, HeaderComponent],
 })
 export class CarsComponent {
     private carsService = inject(CarsService);
     private formBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
+    private destroyRef = inject(DestroyRef);
 
     public readonly carsSignal = toSignal(this.carsService.getCars$());
     public readonly isCarModalOpened = signal(false);
@@ -41,7 +41,10 @@ export class CarsComponent {
 
         this.carsService
             .createCar$(this.carForm.value as Car)
-            .pipe(filter((data) => !data.loading))
+            .pipe(
+                filter((data) => !data.loading),
+                takeUntilDestroyed(this.destroyRef)
+            )
             .subscribe((result) => {
                 if (result.error) {
                     this.errorMessage.set(result.error.message);

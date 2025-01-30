@@ -1,6 +1,6 @@
 import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
-import { Component, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
@@ -8,18 +8,19 @@ import { ToastService } from '@/services/toast.service';
 import { HeaderComponent } from '@/components/header/header.component';
 import { VesselsService, VesselType } from '@/services/vessels.service';
 import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
-import { tablerTrash } from '@ng-icons/tabler-icons';
+import { tablerTrash, tablerAirBalloon, tablerDrone } from '@ng-icons/tabler-icons';
 
 @Component({
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
     imports: [GappLayoutDirective, ModalComponent, ReactiveFormsModule, HeaderComponent, NgIcon],
-    providers: [provideIcons({ tablerTrash }), provideNgIconsConfig({ size: '1rem' })],
+    providers: [provideIcons({ tablerTrash, tablerAirBalloon, tablerDrone }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent {
     private vesselsService = inject(VesselsService);
     private formBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
+    private destroyRef = inject(DestroyRef);
 
     public readonly vesselsSignal = toSignal(this.vesselsService.getVessels$());
     public readonly isVesselModalOpened = signal(false);
@@ -67,14 +68,15 @@ export class VesselsComponent {
 
         this.vesselsService
             .createVessel$({
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                callsign: this.vesselForm.value.callsign!,
+                callsign: this.vesselForm.value.callsign || '',
                 transmitters: this.vesselForm.value.transmitters?.map((t) => t.transmitter as string) || [],
                 type: this.vesselForm.value.type as VesselType,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                description: this.vesselForm.value.description! as string,
+                description: this.vesselForm.value.description || '',
             })
-            .pipe(filter((data) => !data.loading))
+            .pipe(
+                filter((data) => !data.loading),
+                takeUntilDestroyed(this.destroyRef)
+            )
             .subscribe((result) => {
                 if (result.error) {
                     this.errorMessage.set(result.error.message);
@@ -89,5 +91,14 @@ export class VesselsComponent {
     public hasError(fieldName: string) {
         const field = this.vesselForm.get(fieldName);
         return !field?.valid && (field?.dirty || field?.touched);
+    }
+
+    public getIconForVessel(type: VesselType) {
+        switch (type) {
+            case VesselType.BALLOON:
+                return tablerAirBalloon;
+            case VesselType.UAV:
+                return tablerDrone;
+        }
     }
 }

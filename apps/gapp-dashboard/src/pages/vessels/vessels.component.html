@@ -45,32 +45,34 @@
     </label>
 
     <div formArrayName="transmitters" class="flex flex-col w-3/4 mb-2">
-      <div class="label">
-          <span class="label-text">Transmitter callsigns</span>
-      </div>
-      @for(control of transmitters.controls; track control.value.id; let index = $index) {
-      <div class="join mb-2" [formGroupName]="index">
-        <input class="input input-bordered w-full input-sm join-item" name="transmitter" type="text" formControlName="transmitter" />
-        <button class="btn btn-error join-item btn-sm btn-outline" (click)="removeTransmitter(index)" [disabled]="transmitters.length === 1"><ng-icon name="tablerTrash"></ng-icon></button>
-      </div>
-      }
+        <div class="label">
+            <span class="label-text">Transmitter callsigns</span>
+        </div>
+        @for(control of transmitters.controls; track control.value.id; let index = $index) {
+        <div class="join mb-2" [formGroupName]="index">
+            <input class="input input-bordered w-full input-sm join-item" name="transmitter" type="text" formControlName="transmitter" />
+            <button class="btn btn-error join-item btn-sm btn-outline" (click)="removeTransmitter(index)" [disabled]="transmitters.length === 1">
+                <ng-icon name="tablerTrash"></ng-icon>
+            </button>
+        </div>
+        }
 
-      <button class="btn btn-primary btn-sm btn-outline w-min" (click)="addTransmitter()">Add</button>
+        <button class="btn btn-primary btn-sm btn-outline w-min" (click)="addTransmitter()">Add</button>
 
-      <div class="label">
-          <span [hidden]="!hasError('transmitters')" class="label-text-alt text-error">At least one transmitter is required</span>
-      </div>
+        <div class="label">
+            <span [hidden]="!hasError('transmitters')" class="label-text-alt text-error">At least one transmitter is required</span>
+        </div>
     </div>
 
     <label class="form-control w-full max-w-xs mb-2">
-      <div class="label">
-        <span class="label-text">Vessel type</span>
-      </div>
-      <select class="select select-bordered" formControlName="type">
-        @for(type of vesselTypes; track $index) {
-        <option>{{ type }}</option>
-        }
-      </select>
+        <div class="label">
+            <span class="label-text">Vessel type</span>
+        </div>
+        <select class="select select-bordered" formControlName="type">
+            @for(type of vesselTypes; track $index) {
+            <option>{{ type }}</option>
+            }
+        </select>
     </label>
 
     <label class="form-control w-full">

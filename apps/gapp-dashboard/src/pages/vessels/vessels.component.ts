@@ -14,10 +14,7 @@ import { tablerTrash } from '@ng-icons/tabler-icons';
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
     imports: [GappLayoutDirective, ModalComponent, ReactiveFormsModule, HeaderComponent, NgIcon],
-    providers: [
-        provideIcons({ tablerTrash }),
-        provideNgIconsConfig({ size: '1rem' }),
-    ],
+    providers: [provideIcons({ tablerTrash }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent {
     private vesselsService = inject(VesselsService);
@@ -27,7 +24,7 @@ export class VesselsComponent {
     public readonly vesselsSignal = toSignal(this.vesselsService.getVessels$());
     public readonly isVesselModalOpened = signal(false);
     public readonly errorMessage = signal<string | undefined>(undefined);
-  public readonly vesselTypes = Object.values(VesselType);
+    public readonly vesselTypes = Object.values(VesselType);
 
     public readonly vesselForm = this.formBuilder.group({
         callsign: ['', Validators.required],
@@ -37,25 +34,25 @@ export class VesselsComponent {
     });
 
     public get transmitters() {
-      return this.vesselForm.get('transmitters') as FormArray;
+        return this.vesselForm.get('transmitters') as FormArray;
     }
 
     private getTransmitterControl() {
-      return this.formBuilder.group({
-        id: Date.now(),
-        transmitter: ['', Validators.required]
-      });
+        return this.formBuilder.group({
+            id: Date.now(),
+            transmitter: ['', Validators.required],
+        });
     }
 
     public removeTransmitter(index: number): void {
-       if (this.transmitters.length > 1) {
-         this.transmitters.removeAt(index);
-       }
-     }
+        if (this.transmitters.length > 1) {
+            this.transmitters.removeAt(index);
+        }
+    }
 
-     public addTransmitter() {
-       this.transmitters.push(this.getTransmitterControl());
-     }
+    public addTransmitter() {
+        this.transmitters.push(this.getTransmitterControl());
+    }
 
     public openCarModal() {
         this.errorMessage.set(undefined);
@@ -70,12 +67,12 @@ export class VesselsComponent {
 
         this.vesselsService
             .createVessel$({
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              callsign: this.vesselForm.value.callsign!,
-              transmitters: this.vesselForm.value.transmitters?.map((t) => t.transmitter as string) || [],
-              type: this.vesselForm.value.type as VesselType,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              description: this.vesselForm.value.description! as string
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                callsign: this.vesselForm.value.callsign!,
+                transmitters: this.vesselForm.value.transmitters?.map((t) => t.transmitter as string) || [],
+                type: this.vesselForm.value.type as VesselType,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                description: this.vesselForm.value.description! as string,
             })
             .pipe(filter((data) => !data.loading))
             .subscribe((result) => {

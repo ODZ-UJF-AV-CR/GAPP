@@ -9,5 +9,8 @@ import { Component, inject } from '@angular/core';
 })
 export class ToastsComponent {
     private toastService = inject(ToastService);
-    public readonly toasts = this.toastService.toasts;
+
+    public get toasts() {
+        return this.toastService.toasts;
+    }
 }

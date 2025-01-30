@@ -1,6 +1,6 @@
 import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
 import { Car, CarsService } from '@/services/cars.service';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, Injector, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,8 +18,9 @@ export class CarsComponent {
     private formBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
     private destroyRef = inject(DestroyRef);
+    private injector = inject(Injector);
 
-    public readonly carsSignal = toSignal(this.carsService.getCars$());
+    public carsSignal = toSignal(this.carsService.getCars$());
     public readonly isCarModalOpened = signal(false);
     public readonly errorMessage = signal<string | undefined>(undefined);
 
@@ -53,6 +54,10 @@ export class CarsComponent {
 
                 this.isCarModalOpened.set(false);
                 this.toastService.toast('alert-success', 'Chase car added');
+                this.carsSignal = toSignal(this.carsService.getCars$(), {
+                    injector: this.injector,
+                });
+                this.carForm.reset();
             });
     }
 

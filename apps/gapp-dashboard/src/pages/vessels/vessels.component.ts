@@ -1,5 +1,5 @@
 import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, Injector, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -21,8 +21,9 @@ export class VesselsComponent {
     private formBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
     private destroyRef = inject(DestroyRef);
+    private injector = inject(Injector);
 
-    public readonly vesselsSignal = toSignal(this.vesselsService.getVessels$());
+    public vesselsSignal = toSignal(this.vesselsService.getVessels$());
     public readonly isVesselModalOpened = signal(false);
     public readonly errorMessage = signal<string | undefined>(undefined);
     public readonly vesselTypes = Object.values(VesselType);
@@ -85,20 +86,15 @@ export class VesselsComponent {
 
                 this.isVesselModalOpened.set(false);
                 this.toastService.toast('alert-success', `Vessel added`);
+                this.vesselsSignal = toSignal(this.vesselsService.getVessels$(), {
+                    injector: this.injector,
+                });
+                this.vesselForm.reset();
             });
     }
 
     public hasError(fieldName: string) {
         const field = this.vesselForm.get(fieldName);
         return !field?.valid && (field?.dirty || field?.touched);
-    }
-
-    public getIconForVessel(type: VesselType) {
-        switch (type) {
-            case VesselType.BALLOON:
-                return tablerAirBalloon;
-            case VesselType.UAV:
-                return tablerDrone;
-        }
     }
 }

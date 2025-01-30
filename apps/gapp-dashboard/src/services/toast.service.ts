@@ -17,6 +17,7 @@ export class ToastService {
             const toast: Toast = { type, message, id: this.generateToastId(toasts) };
             this.setToastExpiration(toast, expiration);
             toasts.push(toast);
+            console.log(toasts);
             return toasts;
         });
     }

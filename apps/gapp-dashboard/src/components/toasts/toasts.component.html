@@ -1,5 +1,5 @@
 <div class="toast toast-end toast-bottom">
-    @for(toast of toasts(); track toast.id) {
+    @for(toast of toasts(); track $index) {
     <div [ngClass]="['alert', toast.type]">
         <span>{{ toast.message }}</span>
     </div>

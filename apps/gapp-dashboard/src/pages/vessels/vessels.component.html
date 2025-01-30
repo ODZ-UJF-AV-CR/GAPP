@@ -11,7 +11,7 @@
         } @else {
         <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
             @for(vessel of vesselsSignal()?.data; track vessel._id) {
-            <div class="collapse collapse-arrow card bg-base-200">
+            <div class="collapse collapse-arrow bg-base-200">
                 <input type="checkbox" />
                 <div class="collapse-title text-xl font-medium">
                     @if(vessel.type === 'balloon') {

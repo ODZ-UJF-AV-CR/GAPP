@@ -49,7 +49,7 @@ export class CarsComponent {
                 }
 
                 this.isCarModalOpened.set(false);
-                this.toastService.toast('alert-success', 'Chase car added.');
+                this.toastService.toast('alert-success', 'Chase car added');
             });
     }
 

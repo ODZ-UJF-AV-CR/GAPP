@@ -1,1 +1,85 @@
-vessels list
+<div gappLayout>
+    <div>
+        <gapp-header title="Mission vessels">
+            <button class="btn btn-primary" (click)="openCarModal()">Add</button>
+        </gapp-header>
+
+        @if(vesselsSignal()?.loading) {
+        <div class="flex flex-col gap-4">
+            <span class="loading loading-dots loading-lg"></span>
+        </div>
+        } @else {
+        <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
+            @for(vessel of vesselsSignal()?.data; track vessel._id) {
+            <div>{{ vessel.callsign }}</div>
+            } @empty {
+            <p>No vessels yet</p>
+            }
+        </div>
+        }
+    </div>
+</div>
+
+<gapp-modal
+    title="Add new mission vessel"
+    [isOpen]="isVesselModalOpened()"
+    (closed)="isVesselModalOpened.set(false)"
+    action="Create"
+    [formGroup]="vesselForm"
+    (actionUsed)="createVessel()"
+>
+    @if(errorMessage()) {
+    <div role="alert" class="alert alert-error">
+        <span>{{ errorMessage() }}</span>
+    </div>
+    }
+    <label class="form-control w-full mb-2">
+        <div class="label">
+            <span class="label-text">Callsign</span>
+        </div>
+        <input class="input input-bordered w-full" name="callsign" type="text" formControlName="callsign" />
+        <div class="label">
+            <span class="label-text-alt">Unique identification of vessel</span>
+            <span [hidden]="!hasError('callsign')" class="label-text-alt text-error">Callsign is required</span>
+        </div>
+    </label>
+
+    <div formArrayName="transmitters" class="flex flex-col w-3/4 mb-2">
+      <div class="label">
+          <span class="label-text">Transmitter callsigns</span>
+      </div>
+      @for(control of transmitters.controls; track control.value.id; let index = $index) {
+      <div class="join mb-2" [formGroupName]="index">
+        <input class="input input-bordered w-full input-sm join-item" name="transmitter" type="text" formControlName="transmitter" />
+        <button class="btn btn-error join-item btn-sm btn-outline" (click)="removeTransmitter(index)" [disabled]="transmitters.length === 1"><ng-icon name="tablerTrash"></ng-icon></button>
+      </div>
+      }
+
+      <button class="btn btn-primary btn-sm btn-outline w-min" (click)="addTransmitter()">Add</button>
+
+      <div class="label">
+          <span [hidden]="!hasError('transmitters')" class="label-text-alt text-error">At least one transmitter is required</span>
+      </div>
+    </div>
+
+    <label class="form-control w-full max-w-xs mb-2">
+      <div class="label">
+        <span class="label-text">Vessel type</span>
+      </div>
+      <select class="select select-bordered" formControlName="type">
+        @for(type of vesselTypes; track $index) {
+        <option>{{ type }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="form-control w-full">
+        <div class="label">
+            <span class="label-text">Notes</span>
+        </div>
+        <textarea class="textarea textarea-bordered h-24" rows="2" formControlName="description"></textarea>
+        <div class="label">
+            <span class="label-text-alt">Vessel type, mission goal...</span>
+        </div>
+    </label>
+</gapp-modal>

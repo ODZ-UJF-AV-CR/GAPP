@@ -16,4 +16,8 @@ export class CarsService extends ApiServiceBase {
     public getCars$() {
         return this.get$<Car[]>(this.apiUrl('/cars'));
     }
+
+    public deleteCar$(id: string) {
+        return this.delete$(this.apiUrl(`/cars/${id}`));
+    }
 }

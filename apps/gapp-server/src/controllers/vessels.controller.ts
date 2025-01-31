@@ -51,4 +51,21 @@ export const vesselsController: FastifyPluginAsyncTypebox = async (fastify) => {
             rep.status(200).send(vessels);
         }
     );
+
+    fastify.delete(
+        '/:id',
+        {
+            schema: {
+                summary: 'Delete vessel by id',
+                tags: ['vessel'],
+                params: Type.Object({
+                    id: Type.String(),
+                }),
+            },
+        },
+        async (req, rep) => {
+            await req.server.vesselsService.deleteVessel(req.params.id);
+            rep.status(201).send();
+        }
+    );
 };

@@ -50,4 +50,20 @@ export abstract class ApiServiceBase {
             startWith({ loading: true })
         );
     }
+
+    protected delete$<T>(url: string): Observable<ApiResponse<T>> {
+        return this.http.delete<T>(url).pipe(
+            map((data) => ({ loading: false, data })),
+            catchError(({ error }) =>
+                of({
+                    loading: false,
+                    error: {
+                        type: error.error,
+                        message: error.message,
+                    },
+                })
+            ),
+            startWith({ loading: true })
+        );
+    }
 }

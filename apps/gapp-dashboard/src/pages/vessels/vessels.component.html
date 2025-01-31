@@ -4,13 +4,13 @@
             <button class="btn btn-primary" (click)="openCarModal()">Add</button>
         </gapp-header>
 
-        @if(vesselsSignal()?.loading) {
-        <div class="flex flex-col gap-4">
+        @if(vesselsSignal().loading) {
+        <div class="flex flex-row justify-center">
             <span class="loading loading-dots loading-lg"></span>
         </div>
         } @else {
         <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
-            @for(vessel of vesselsSignal()?.data; track vessel._id) {
+            @for(vessel of vesselsSignal().data; track vessel._id) {
             <div class="collapse collapse-arrow bg-base-200">
                 <input type="checkbox" />
                 <div class="collapse-title text-xl font-medium">
@@ -29,6 +29,9 @@
                     </ul>
 
                     <p>{{ vessel?.description }}</p>
+                    <div class="flex justify-end">
+                        <button class="btn btn-error btn-sm" (click)="deleteVessel(vessel._id)">Remove</button>
+                    </div>
                 </div>
             </div>
             } @empty {

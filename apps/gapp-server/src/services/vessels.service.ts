@@ -1,4 +1,4 @@
-import { Collection, Db } from 'mongodb';
+import { Collection, Db, ObjectId } from 'mongodb';
 
 export enum VesselType {
     BALLOON = 'balloon',
@@ -55,6 +55,10 @@ export class VesselsService {
             ...vessel,
             _id: vessel._id.toString(),
         }));
+    }
+
+    public async deleteVessel(id: string) {
+        return await this.vesselsCollection.deleteOne({ _id: new ObjectId(id) });
     }
 
     public async ensureCallsign(callsign: string): Promise<boolean> {

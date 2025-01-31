@@ -1,6 +1,7 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { B_CarTelemetry, B_SondeTtnTelemetry } from '../schemas';
 import { ttnPacketDto } from '../utils/ttn-packet-dto';
+import { Type } from '@sinclair/typebox';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -11,6 +12,9 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 summary: 'TTN webhook',
                 description: 'Endpoint for receiving telemetry data from TheThingsNetwork. Data are stored in InfluxDB and forwarded to Sondehub.',
                 body: B_SondeTtnTelemetry,
+                response: {
+                    200: Type.String(),
+                },
             },
         },
         async (req, rep) => {

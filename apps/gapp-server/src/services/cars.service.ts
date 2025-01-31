@@ -1,4 +1,4 @@
-import { Collection, Db } from 'mongodb';
+import { Collection, Db, ObjectId } from 'mongodb';
 
 export interface Car {
     callsign: string;
@@ -39,6 +39,10 @@ export class CarsService {
             ...car,
             _id: car._id.toString(),
         }));
+    }
+
+    public async deleteCar(id: string) {
+        return await this.carsCollection.deleteOne({ _id: new ObjectId(id) });
     }
 
     public async ensureCallsign(callsign: string): Promise<boolean> {

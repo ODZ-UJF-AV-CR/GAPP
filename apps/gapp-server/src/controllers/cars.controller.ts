@@ -50,4 +50,21 @@ export const carsController: FastifyPluginAsyncTypebox = async (fastify) => {
             rep.status(200).send(cars);
         }
     );
+
+    fastify.delete(
+        '/:id',
+        {
+            schema: {
+                summary: 'Delete chase car by id',
+                tags: ['cars'],
+                params: Type.Object({
+                    id: Type.String(),
+                }),
+            },
+        },
+        async (req, rep) => {
+            await req.server.carsService.deleteCar(req.params.id);
+            rep.status(201).send();
+        }
+    );
 };

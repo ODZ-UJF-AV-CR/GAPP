@@ -1,26 +1,26 @@
 import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
 import { Car, CarsService } from '@/services/cars.service';
-import { Component, DestroyRef, inject, Injector, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
 import { HeaderComponent } from '@/components/header/header.component';
+import { ApiResponse } from '@/services/api.service.base';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
     imports: [GappLayoutDirective, ModalComponent, ReactiveFormsModule, HeaderComponent],
 })
-export class CarsComponent {
+export class CarsComponent implements OnInit {
     private carsService = inject(CarsService);
     private formBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
     private destroyRef = inject(DestroyRef);
-    private injector = inject(Injector);
 
-    public carsSignal = toSignal(this.carsService.getCars$());
+    public carsSignal = signal<ApiResponse<Car[]>>({ loading: true });
     public readonly isCarModalOpened = signal(false);
     public readonly errorMessage = signal<string | undefined>(undefined);
 
@@ -28,6 +28,19 @@ export class CarsComponent {
         callsign: ['', Validators.required],
         description: [null],
     });
+
+    public ngOnInit() {
+        this.loadCars();
+    }
+
+    private loadCars() {
+        this.carsService
+            .getCars$()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((response) => {
+                this.carsSignal.set(response);
+            });
+    }
 
     public openCarModal() {
         this.errorMessage.set(undefined);
@@ -54,10 +67,20 @@ export class CarsComponent {
 
                 this.isCarModalOpened.set(false);
                 this.toastService.toast('alert-success', 'Chase car added');
-                this.carsSignal = toSignal(this.carsService.getCars$(), {
-                    injector: this.injector,
-                });
+                this.loadCars();
                 this.carForm.reset();
+            });
+    }
+
+    public deleteCar(id: string) {
+        this.carsService
+            .deleteCar$(id)
+            .pipe(
+                filter((data) => !data.loading),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe(() => {
+                this.loadCars();
             });
     }
 

@@ -23,4 +23,8 @@ export class VesselsService extends ApiServiceBase {
     public getVessels$() {
         return this.get$<Vessel[]>(this.apiUrl('/vessels'));
     }
+
+    public deleteVessel$(id: string) {
+        return this.delete$(this.apiUrl(`/vessels/${id}`));
+    }
 }

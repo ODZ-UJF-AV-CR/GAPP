@@ -4,18 +4,21 @@
             <button class="btn btn-primary" (click)="openCarModal()">Add</button>
         </gapp-header>
 
-        @if(carsSignal()?.loading) {
-        <div class="flex flex-col gap-4">
+        @if(carsSignal().loading) {
+        <div class="flex flex-row justify-center">
             <span class="loading loading-dots loading-lg"></span>
         </div>
         } @else {
         <div class="flex gap-4 flex-col max-h-[70vh] overflow-auto">
-            @for(car of carsSignal()?.data; track car._id) {
+            @for(car of carsSignal().data; track car._id) {
             <div class="collapse collapse-arrow bg-base-200">
                 <input type="checkbox" />
                 <div class="collapse-title text-xl font-medium">{{ car.callsign }}</div>
                 <div class="collapse-content">
                     <p>{{ car?.description }}</p>
+                    <div class="flex justify-end">
+                        <button class="btn btn-error btn-sm" (click)="deleteCar(car._id)">Remove</button>
+                    </div>
                 </div>
             </div>
             } @empty {

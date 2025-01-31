@@ -7,6 +7,6 @@ export class GappLayoutDirective implements AfterViewInit {
     private el = inject(ElementRef);
 
     public ngAfterViewInit() {
-        this.el.nativeElement.classList.add('grid', 'place-content-center', 'h-full');
+        this.el.nativeElement.classList.add('grid', 'place-content-top', 'sm:place-content-center', 'h-full');
     }
 }

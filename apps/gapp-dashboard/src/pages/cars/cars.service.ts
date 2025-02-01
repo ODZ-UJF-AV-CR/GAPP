@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiServiceBase } from './api.service.base';
+import { ApiServiceBase } from '@/services/api.service.base';
 
 export interface Car {
     callsign: string;

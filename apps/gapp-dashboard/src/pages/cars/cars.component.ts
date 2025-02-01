@@ -1,5 +1,5 @@
 import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
-import { Car, CarsService } from '@/services/cars.service';
+import { Car, CarsService } from './cars.service';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';

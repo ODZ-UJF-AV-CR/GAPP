@@ -57,4 +57,26 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             rep.code(201).send();
         }
     );
+
+  fastify.get('/dashboard', {
+    schema: {
+      tags: ['telemetry'],
+      summary: 'Get live data',
+      description: 'Stream live data updates from vessels and chase cars using servewr sent events'
+    }
+  }, async (req, res) => {
+    res.sse((async function* source() {
+      let running = true;
+      res.raw.on('close', () => {
+        running = false;
+      });
+      while (running) {
+        await new Promise((r) => setTimeout(r, 1000));
+        const data = Date.now().toString();
+        console.log('data: ', data);
+        yield { data };
+      }
+    })()
+    );
+  });
 };

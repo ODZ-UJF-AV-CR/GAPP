@@ -1,5 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { DashboardService } from './dashboard.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'dapp-dashboard',
@@ -7,10 +8,14 @@ import { DashboardService } from './dashboard.service';
 })
 export class DashboardComponent implements OnInit {
     private dashboardService = inject(DashboardService);
+    private destroyRef = inject(DestroyRef);
 
     public ngOnInit(): void {
-        this.dashboardService.getDashboardStatus$().subscribe((data) => {
-            console.log(data);
-        });
+        this.dashboardService
+            .getDashboardStatusStrem$()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((data) => {
+                console.log(data);
+            });
     }
 }

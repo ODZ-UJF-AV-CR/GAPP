@@ -66,8 +66,9 @@ export class TelemetryService extends InfluxDbServiceBase {
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<CallsignLocation[]> {
         let query = `from(bucket: "${this.bucket}")
             |> range(start: -24h)
+            |> last()
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
+            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "_measurement"])`;
 
         if (callsigns?.length) {
             query = `from(bucket: "${this.bucket}")
@@ -75,7 +76,7 @@ export class TelemetryService extends InfluxDbServiceBase {
                 |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
                 |> last()
                 |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-                |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
+                |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "_measurement"])`;
         }
 
         return await this.queryAPi.collectRows(query);

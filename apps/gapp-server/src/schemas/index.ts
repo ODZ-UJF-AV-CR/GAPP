@@ -98,3 +98,15 @@ export const R_CarsStatus = T.Array(
 );
 
 export type CarsStatus = Static<typeof R_CarsStatus>;
+
+export const R_CallsignLocation = T.Object({
+    _time: T.String(),
+    altitude: T.Number(),
+    callsign: T.String(),
+    latitude: T.Number(),
+    longitude: T.Number(),
+    result: T.String(),
+    table: T.Number(),
+});
+
+export type CallsignLocation = Static<typeof R_CallsignLocation>;

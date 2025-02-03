@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_CarTelemetry, B_SondeTtnTelemetry, Q_OptionalCallsign } from '../schemas';
+import { B_CarTelemetry, B_SondeTtnTelemetry, Q_OptionalCallsign, R_CallsignLocation } from '../schemas';
 import { ttnPacketDto } from '../utils/ttn-packet-dto';
 import { Type } from '@sinclair/typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
@@ -59,40 +59,50 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         }
     );
 
-  fastify.get('', {
-    schema: {
-      tags: ['telemetry'],
-      summary: 'Get telemetry data',
-      description: 'Get latest telemetry data for all callsigns or you can specify callsigns in query parameter',
-      querystring: Q_OptionalCallsign
-    }
-  }, async (req, res) => {
-    const callsigns = req.query?.callsign?.split(',');
-    const latestData = await req.server.telemetryService.getCallsignsLastLocation(callsigns);
-    res.status(200).send(latestData);
-  });
-
+    fastify.get(
+        '',
+        {
+            schema: {
+                tags: ['telemetry'],
+                summary: 'Get telemetry data',
+                description: 'Get latest telemetry data for all callsigns or you can specify callsigns in query parameter',
+                querystring: Q_OptionalCallsign,
+                response: {
+                    200: Type.Array(R_CallsignLocation),
+                },
+            },
+        },
+        async (req, res) => {
+            const callsigns = req.query?.callsign?.split(',');
+            const latestData = await req.server.telemetryService.getCallsignsLastLocation(callsigns);
+            res.status(200).send(latestData);
+        }
+    );
 
     fastify.register(FastifySSEPlugin);
 
-  fastify.get('/dashboard', {
-    schema: {
-      tags: ['telemetry'],
-      summary: 'Get live data',
-      description: 'Stream live data updates from vessels and chase cars using servewr sent events'
-    }
-  }, async (req, res) => {
-    let streaming = true;
-    req.raw.on('close', () => streaming = false);
-    res.sse(
-      (async function* () {
-        for await (const [event] of req.server.telemetryService.getStreamGenerator()) {
-          if(!streaming) {
-            break;
-          }
-          yield event;
+    fastify.get(
+        '/stream',
+        {
+            schema: {
+                tags: ['telemetry'],
+                summary: 'Get live data',
+                description: 'Stream live data updates from vessels and chase cars using servewr sent events',
+            },
+        },
+        async (req, res) => {
+            let streaming = true;
+            req.raw.on('close', () => (streaming = false));
+            res.sse(
+                (async function* () {
+                    for await (const [event] of req.server.telemetryService.getStreamGenerator()) {
+                        if (!streaming) {
+                            break;
+                        }
+                        yield event;
+                    }
+                })()
+            );
         }
-      })()
     );
-  });
 };

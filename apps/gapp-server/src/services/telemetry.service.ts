@@ -2,32 +2,20 @@ import { InfluxDB, Point, QueryApi, WriteApi } from '@influxdata/influxdb-client
 import { InfluxDbServiceBase } from '../utils/influxdb-service-base';
 import { Organization } from '@influxdata/influxdb-client-apis';
 import { TelemetryPacket } from '@gapp/sondehub';
-import { CarStatus } from '../schemas';
+import { CarStatus, CallsignLocation } from '../schemas';
 import { arrayAsString } from '../utils/array-as-atring';
 import { EventBus } from '../utils/event-bus';
 import { Events } from '../plugins/event-bus';
 import { on } from 'events';
 import { setInterval } from 'timers';
 
-export interface CallsignLocation {
-    callsign: string;
-    latitude: number;
-    longitude: number;
-    altitude: number;
-    _time: string;
-}
-
 export class TelemetryService extends InfluxDbServiceBase {
     private readonly bucket = 'telemetry';
     private writeApi: WriteApi;
     private queryAPi: QueryApi;
-  private timer: NodeJS.Timer;
+    private timer: NodeJS.Timer;
 
-    constructor(
-      private client: InfluxDB,
-      org: Organization,
-      private eventBus: EventBus<Events>
-    ) {
+    constructor(private client: InfluxDB, org: Organization, private eventBus: EventBus<Events>) {
         super(client, org.id);
     }
 
@@ -36,19 +24,18 @@ export class TelemetryService extends InfluxDbServiceBase {
         this.writeApi = this.client.getWriteApi(this.orgID, this.bucket);
         this.queryAPi = this.client.getQueryApi(this.orgID);
 
-      this.timer = setInterval(() => {
-        console.log('Runs: ', Date.now());
-        this.eventBus.emit('stream.data', { data: 'ping' });
-      }, 5_000);
+        this.timer = setInterval(() => {
+            this.eventBus.emit('stream.data', { data: 'ping' });
+        }, 5_000);
 
-      this.eventBus.on('influx.write', async () => {
-        const lastData = await this.getCallsignsLastLocation([]);
-        this.eventBus.emit('stream.data', { data: JSON.stringify(lastData) });
-      });
+        this.eventBus.on('influx.write', async () => {
+            const lastData = await this.getCallsignsLastLocation([]);
+            this.eventBus.emit('stream.data', { data: JSON.stringify(lastData) });
+        });
     }
 
     public async deinit() {
-      clearInterval(this.timer);
+        clearInterval(this.timer);
         await this.writeApi.close();
     }
 
@@ -82,19 +69,19 @@ export class TelemetryService extends InfluxDbServiceBase {
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
             |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
 
-        if(callsigns?.length) {
-          query = `from(bucket: "${this.bucket}")
-              |> range(start: -24h)
-              |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
-              |> last()
-              |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-              |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
+        if (callsigns?.length) {
+            query = `from(bucket: "${this.bucket}")
+                |> range(start: -24h)
+                |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
+                |> last()
+                |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+                |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
         }
 
         return await this.queryAPi.collectRows(query);
     }
 
     public getStreamGenerator() {
-      return on(this.eventBus.emitter, 'stream.data');
+        return on(this.eventBus.emitter, 'stream.data');
     }
 }

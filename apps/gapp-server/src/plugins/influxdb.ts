@@ -22,9 +22,15 @@ const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify
         token: options.token,
         url: options.host,
         writeOptions: {
-            batchSize: 10,
+            batchSize: 100,
+            flushInterval: 10_000,
             writeSuccess: (lines: string[]) => {
+              fastify.eventBus.emit('influx.write');
                 fastify.log.info(lines, 'Influx data written');
+            },
+            writeFailed(error, lines) {
+              fastify.log.error(error, 'Error while writing data to influxdb');
+              fastify.log.warn(lines, 'Dropped lines');
             },
         },
     });
@@ -51,4 +57,4 @@ const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify
     }
 };
 
-export default fp(influxDbPlugin, { name: Plugins.INFLUXDB });
+export default fp(influxDbPlugin, { name: Plugins.INFLUXDB, dependencies: [Plugins.EVENT_BUS] });

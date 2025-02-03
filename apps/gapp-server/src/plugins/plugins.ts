@@ -3,4 +3,5 @@ export enum Plugins {
     MONGODB = 'mongodb',
     SONDEHUB = 'sondehub',
     SERVICES = 'services',
+    EVENT_BUS = 'eventBus',
 }

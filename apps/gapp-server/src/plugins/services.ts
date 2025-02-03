@@ -14,7 +14,7 @@ declare module 'fastify' {
 }
 
 const services: FastifyPluginAsync = async (fastify) => {
-    const telemetryService = new TelemetryService(fastify.influxClient, fastify.influxOrg);
+    const telemetryService = new TelemetryService(fastify.influxClient, fastify.influxOrg, fastify.eventBus);
     const carsService = new CarsService(fastify.mongodb);
     const vesselsService = new VesselsService(fastify.mongodb);
 

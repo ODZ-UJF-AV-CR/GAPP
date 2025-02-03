@@ -9,7 +9,7 @@ import { vesselsController } from './controllers/vessels.controller';
 import mongoDbPlugin from './plugins/mongodb';
 import { telemetryController } from './controllers/telemetry.controller';
 import servicesPlugin from './plugins/services';
-import { FastifySSEPlugin } from 'fastify-sse-v2';
+import eventBusPlugin from './plugins/event-bus';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
@@ -24,7 +24,7 @@ interface AppOptions extends FastifyPluginOptions {
 export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     // LIBRARIES
     fastify.register(Sensible);
-  fastify.register(FastifySSEPlugin);
+  fastify.register(eventBusPlugin);
 
     // PLUGINS
     await fastify.register(influxDbPlugin, {

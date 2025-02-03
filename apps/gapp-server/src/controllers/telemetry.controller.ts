@@ -91,18 +91,9 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, res) => {
-            let streaming = true;
-            req.raw.on('close', () => (streaming = false));
-            res.sse(
-                (async function* () {
-                    for await (const [event] of req.server.telemetryService.getStreamGenerator()) {
-                        if (!streaming) {
-                            break;
-                        }
-                        yield event;
-                    }
-                })()
-            );
+            const abortController = new AbortController();
+            req.raw.on('close', () => abortController.abort());
+            res.sse(req.server.telemetryService.streamGenerator(abortController));
         }
     );
 };

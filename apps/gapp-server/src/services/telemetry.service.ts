@@ -8,6 +8,7 @@ import { EventBus } from '../utils/event-bus';
 import { Events } from '../plugins/event-bus';
 import { on } from 'events';
 import { setInterval } from 'timers';
+import { EventMessage } from 'fastify-sse-v2';
 
 export class TelemetryService extends InfluxDbServiceBase {
     private readonly bucket = 'telemetry';
@@ -23,15 +24,6 @@ export class TelemetryService extends InfluxDbServiceBase {
         await this.ensureBucket(this.bucket);
         this.writeApi = this.client.getWriteApi(this.orgID, this.bucket);
         this.queryAPi = this.client.getQueryApi(this.orgID);
-
-        this.timer = setInterval(() => {
-            this.eventBus.emit('stream.data', { data: 'ping' });
-        }, 5_000);
-
-        this.eventBus.on('influx.write', async () => {
-            const lastData = await this.getCallsignsLastLocation([]);
-            this.eventBus.emit('stream.data', { data: JSON.stringify(lastData) });
-        });
     }
 
     public async deinit() {
@@ -84,5 +76,35 @@ export class TelemetryService extends InfluxDbServiceBase {
 
     public getStreamGenerator() {
         return on(this.eventBus.emitter, 'stream.data');
+    }
+
+    public async *streamGenerator(abortCotroller: AbortController): AsyncGenerator<EventMessage> {
+        const abortSignal = abortCotroller.signal;
+        const queue: EventMessage[] = [];
+        const interval = setInterval(() => queue.push({ data: 'ping' }), 5_000);
+
+        const eventHandler = async () => {
+            const data = await this.getCallsignsLastLocation();
+            queue.push({ data: JSON.stringify(data) });
+        };
+
+        eventHandler();
+        this.eventBus.on('influx.write', eventHandler);
+
+        try {
+            while (!abortSignal.aborted) {
+                if (queue.length) {
+                    yield queue.shift();
+                } else {
+                    await new Promise((r) => setTimeout(r, 1000));
+                }
+            }
+        } finally {
+            if (interval) {
+                clearInterval(interval);
+            }
+
+            this.eventBus.off('influx.write', eventHandler);
+        }
     }
 }

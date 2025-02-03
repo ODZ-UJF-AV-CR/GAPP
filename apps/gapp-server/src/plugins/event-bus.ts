@@ -1,21 +1,20 @@
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { Plugins } from "./plugins";
-import { EventBus } from "../utils/event-bus";
+import { Plugins } from './plugins';
+import { EventBus } from '../utils/event-bus';
 
 export type Events = {
-  'influx.write': [];
-  'stream.data': Record<string, any> | string;
-}
+    'influx.write': [];
+};
 
 declare module 'fastify' {
-  export interface FastifyInstance {
-    eventBus: EventBus<Events>;
-  }
+    export interface FastifyInstance {
+        eventBus: EventBus<Events>;
+    }
 }
 
 const eventBus: FastifyPluginAsync = async (fastify) => {
-  fastify.decorate('eventBus', new EventBus<Events>());
-}
+    fastify.decorate('eventBus', new EventBus<Events>());
+};
 
 export default fp(eventBus, { name: Plugins.EVENT_BUS });

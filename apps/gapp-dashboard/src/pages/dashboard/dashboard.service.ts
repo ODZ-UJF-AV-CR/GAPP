@@ -23,7 +23,6 @@ export class DashboardService extends ApiServiceBase {
 
         return new Observable((observer) => {
             source.onmessage = (message) => {
-                console.log(message);
                 if (message.data !== 'ping') {
                     observer.next(JSON.parse(message.data));
                 }

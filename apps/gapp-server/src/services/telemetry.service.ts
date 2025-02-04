@@ -74,10 +74,6 @@ export class TelemetryService extends InfluxDbServiceBase {
         return await this.queryAPi.collectRows(query);
     }
 
-    public getStreamGenerator() {
-        return on(this.eventBus.emitter, 'stream.data');
-    }
-
     public async *streamGenerator(abortCotroller: AbortController): AsyncGenerator<EventMessage> {
         const abortSignal = abortCotroller.signal;
         const queue: EventMessage[] = [];

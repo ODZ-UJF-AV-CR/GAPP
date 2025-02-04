@@ -18,6 +18,7 @@ RUN X_DAEMON=false npm run dashboard:build
 
 ## RUNTIME IMAGE ###
 FROM node:22.13.1-alpine
+LABEL org.opencontainers.image.source https://github.com/ODZ-UJF-AV-CR/GAPP
 
 WORKDIR /app
 

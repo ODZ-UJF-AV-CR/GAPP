@@ -37,10 +37,10 @@ jobs:
                   echo ::set-output name=tags::${TAGS}
                   echo ::set-output name=docker_image::${DOCKER_IMAGE}
 
-            # - name: Setup QUEMU
-            #   uses: docker/setup-qemu-action@v2
-            #   with:
-            #     platforms: 'all'
+            - name: Setup QUEMU
+              uses: docker/setup-qemu-action@v2
+              with:
+                platforms: 'all'
 
             - name: Setup buildx
               id: buildx

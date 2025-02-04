@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface TelemetryStatus {
     _time: string;
+    _measurement: 'car_location' | 'vessel_location';
     altitude: number;
     callsign: string;
     latitude: number;
@@ -18,7 +19,7 @@ export class DashboardService extends ApiServiceBase {
         return this.get$<TelemetryStatus>(this.apiUrl('/telemetry'));
     }
 
-    public getDashboardStatusStrem$() {
+    public dashboardStatus$(): Observable<TelemetryStatus[]> {
         const source = new EventSource(this.apiUrl('/telemetry/stream'));
 
         return new Observable((observer) => {

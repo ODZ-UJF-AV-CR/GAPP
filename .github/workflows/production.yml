@@ -16,7 +16,7 @@ jobs:
             - name: Prepare
               id: prep
               run: |
-                  DOCKER_IMAGE=ghcr.io/odz/gapp
+                  DOCKER_IMAGE=ghcr.io/odz-ujf-av-cr/gapp
                   VERSION=latest
                   SHORTREF=${GITHUB_SHA::8}
 

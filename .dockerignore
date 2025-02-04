@@ -1,0 +1,16 @@
+node_modules
+tmp
+dist
+.git
+Dockerfile
+.dockerignore
+compose.yml
+.prettierignore
+.prettierrc
+.zed
+.data
+.angular
+.circleci
+.vscode
+reset.sh
+README.md

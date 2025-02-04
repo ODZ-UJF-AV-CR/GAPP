@@ -1,5 +1,5 @@
 <div>
     @for (car of (carsData$ | async); track car._time) {
     <div>{{ car.callsign }} - {{ car._time }}</div>
-    }
+    } @empty { loading... }
 </div>

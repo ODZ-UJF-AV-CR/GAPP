@@ -3,6 +3,8 @@ import { app } from './app';
 import { getConfig } from './config';
 import pino from 'pino';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import fastifyStatic from '@fastify/static';
+import path from 'path';
 
 const config = getConfig(process.env);
 const logger = pino();
@@ -14,6 +16,12 @@ server.register(app, {
     influxDbOrg: config.INFLUXDB_ORG,
     mongoDbUri: config.MONGODB_URI,
     isDevelopment: config.isDevelopment,
+});
+
+console.log(__dirname);
+
+server.register(fastifyStatic, {
+    root: path.join(__dirname, '../../../../gapp-dashboard/browser'),
 });
 
 server.listen({ port: config.PORT, host: '0.0.0.0' }, (err) => {

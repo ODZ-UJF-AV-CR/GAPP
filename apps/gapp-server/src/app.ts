@@ -24,7 +24,7 @@ interface AppOptions extends FastifyPluginOptions {
 export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     // LIBRARIES
     fastify.register(Sensible);
-  fastify.register(eventBusPlugin);
+    fastify.register(eventBusPlugin);
 
     // PLUGINS
     await fastify.register(influxDbPlugin, {
@@ -34,30 +34,35 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     });
     await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
-  await fastify.register(servicesPlugin);
+    await fastify.register(servicesPlugin);
 
-  if(opts.isDevelopment) {
-      await fastify.register(swagger, {
-          openapi: {
-              info: {
-                  title: 'GAPP API',
-                  version: '0.0.1',
-                  description: 'API Docs for ground app',
-              },
-              tags: [
-                  { name: 'cars', description: 'Chase cars API' },
-                  { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
-                  { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
-              ],
-          },
-      });
-      await fastify.register(swaggerUi, { routePrefix: '/docs', uiConfig: {} });
-  }
+    if (opts.isDevelopment) {
+        await fastify.register(swagger, {
+            openapi: {
+                info: {
+                    title: 'GAPP API',
+                    version: '0.0.1',
+                    description: 'API Docs for ground app',
+                },
+                tags: [
+                    { name: 'cars', description: 'Chase cars API' },
+                    { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
+                    { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
+                ],
+            },
+        });
+        await fastify.register(swaggerUi, { routePrefix: '/docs', uiConfig: {} });
+    }
 
     // ROUTES
-    fastify.register(carsController, { prefix: '/cars' });
-    fastify.register(vesselsController, { prefix: '/vessels' });
-    fastify.register(telemetryController, { prefix: '/telemetry' });
+    fastify.register(
+        async (fastify) => {
+            fastify.register(carsController, { prefix: '/cars' });
+            fastify.register(vesselsController, { prefix: '/vessels' });
+            fastify.register(telemetryController, { prefix: '/telemetry' });
+        },
+        { prefix: '/api' }
+    );
 
     fastify.get(
         '/ping',

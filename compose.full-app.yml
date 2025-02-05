@@ -24,9 +24,9 @@ services:
         volumes:
             - ./.data/mongodb:/data/db:rw
         environment:
-            MONGO_INITDB_ROOT_USERNAME: fik
-            MONGO_INITDB_ROOT_PASSWORD: tajne-heslo
-            MONGO_INITDB_DATABASE: gapp
+            - MONGO_INITDB_ROOT_USERNAME=fik
+            - MONGO_INITDB_ROOT_PASSWORD=tajne-heslo
+            - MONGO_INITDB_DATABASE=gapp
 
     gapp:
         image: ghcr.io/odz-ujf-av-cr/gapp:latest
@@ -35,8 +35,8 @@ services:
             - influxdb
             - mongodb
         ports:
-          - 3000:3000
+            - 3000:3000
         environment:
-          - INFLUXDB_TOKEN=some-long-secret-like-string
-          - INFLUXDB_HOST=http://influxdb:8086
-          - MONGODB_URI=mongodb://fik:tajne-heslo@mongodb:27017
+            - INFLUXDB_TOKEN=some-long-secret-like-string
+            - INFLUXDB_HOST=http://influxdb:8086
+            - MONGODB_URI=mongodb://fik:tajne-heslo@mongodb:27017

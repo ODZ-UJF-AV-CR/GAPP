@@ -16,7 +16,7 @@ jobs:
             - name: Prepare
               id: prep
               run: |
-                  DOCKER_IMAGE=ghcr.io/odz-ujf-av-cr/gapp
+                  DOCKER_IMAGE=ghcr.io/v2/odz-ujf-av-cr/gapp
                   VERSION=latest
                   SHORTREF=${GITHUB_SHA::8}
 
@@ -50,8 +50,8 @@ jobs:
               uses: docker/login-action@v2
               with:
                   registry: ghcr.io
-                  username: ${{ vars.GHCR_USER }}
-                  password: ${{ secrets.PAT }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Build and push
               uses: docker/build-push-action@v3

@@ -19,11 +19,11 @@ services:
         volumes:
             - ./.example-data/influxdb:/var/lib/influxdb2:rw
         healthcheck:
-          test: curl -f http://localhost:8086/ping
-          interval: 10s
-          timeout: 10s
-          retries: 5
-          start_period: 8s
+            test: curl -f http://localhost:8086/ping
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 8s
         environment:
             - DOCKER_INFLUXDB_INIT_MODE=setup
             - DOCKER_INFLUXDB_INIT_USERNAME=user
@@ -39,11 +39,11 @@ services:
         volumes:
             - ./.example-data/mongodb:/data/db:rw
         healthcheck:
-              test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-              interval: 10s
-              timeout: 10s
-              retries: 5
-              start_period: 8s
+            test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+            interval: 10s
+            timeout: 10s
+            retries: 5
+            start_period: 8s
         environment:
             - MONGO_INITDB_ROOT_USERNAME=user
             - MONGO_INITDB_ROOT_PASSWORD=password

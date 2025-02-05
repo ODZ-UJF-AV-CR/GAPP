@@ -7,6 +7,13 @@ services:
             - 8086:8086
         volumes:
             - ./.data/influxdb:/var/lib/influxdb2:rw
+        environment:
+            - DOCKER_INFLUXDB_INIT_MODE=setup
+            - DOCKER_INFLUXDB_INIT_USERNAME=user
+            - DOCKER_INFLUXDB_INIT_PASSWORD=password
+            - DOCKER_INFLUXDB_INIT_ORG=flight
+            - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
+            - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=development-influx-token
 
     mongodb:
         image: mongo:8

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
     influxdb:
         image: influxdb:2
@@ -7,36 +9,49 @@ services:
             - 8086:8086
         volumes:
             - ./.example-data/influxdb:/var/lib/influxdb2:rw
+        healthcheck:
+          test: curl -f http://localhost:8086/ping
+          interval: 10s
+          timeout: 10s
+          retries: 5
+          start_period: 8s
         environment:
             - DOCKER_INFLUXDB_INIT_MODE=setup
-            - DOCKER_INFLUXDB_INIT_USERNAME=myusername
-            - DOCKER_INFLUXDB_INIT_PASSWORD=passwordpasswordpassword
-            - DOCKER_INFLUXDB_INIT_ORG=myorg
-            - DOCKER_INFLUXDB_INIT_BUCKET=mybucket
+            - DOCKER_INFLUXDB_INIT_USERNAME=user
+            - DOCKER_INFLUXDB_INIT_PASSWORD=password
+            - DOCKER_INFLUXDB_INIT_ORG=flight
+            - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
             - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=some-long-secret-like-string
 
     mongodb:
         image: mongo:8
         container_name: gapp_mongodb
         restart: unless-stopped
-        ports:
-            - 27017:27017
         volumes:
             - ./.example-data/mongodb:/data/db:rw
+        healthcheck:
+              test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+              interval: 10s
+              timeout: 10s
+              retries: 5
+              start_period: 8s
         environment:
-            - MONGO_INITDB_ROOT_USERNAME=fik
-            - MONGO_INITDB_ROOT_PASSWORD=tajne-heslo
+            - MONGO_INITDB_ROOT_USERNAME=user
+            - MONGO_INITDB_ROOT_PASSWORD=password
             - MONGO_INITDB_DATABASE=gapp
 
     gapp:
-        image: ghcr.io/odz-ujf-av-cr/gapp:5f437586
+        image: ghcr.io/odz-ujf-av-cr/gapp:latest
         container_name: gapp
         depends_on:
-            - influxdb
-            - mongodb
+            influxdb:
+                condition: service_healthy
+            mongodb:
+                condition: service_healthy
         ports:
             - 3000:3000
         environment:
+            - INFLUXDB_ORG=flight
             - INFLUXDB_TOKEN=some-long-secret-like-string
             - INFLUXDB_HOST=http://influxdb:8086
-            - MONGODB_URI=mongodb://fik:tajne-heslo@mongodb:27017
+            - MONGODB_URI=mongodb://user:password@mongodb:27017/

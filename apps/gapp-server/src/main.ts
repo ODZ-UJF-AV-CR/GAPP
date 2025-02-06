@@ -18,11 +18,13 @@ server.register(app, {
     isDevelopment: config.isDevelopment,
 });
 
-console.log(__dirname);
-
 server.register(fastifyStatic, {
     root: path.join(__dirname, '../../../../gapp-dashboard/browser'),
 });
+
+server.setNotFoundHandler((request, reply) => {
+  reply.sendFile('index.html');
+})
 
 server.listen({ port: config.PORT, host: '0.0.0.0' }, (err) => {
     if (err) {

@@ -3,11 +3,13 @@ import { DashboardService, TelemetryStatus } from './dashboard.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { TimeAgoComponent } from '@/components/time-ago/time-ago.component';
+import { PageBlockComponent } from '@/components/page-block/page-block.component';
+import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
 
 @Component({
     selector: 'dapp-dashboard',
     templateUrl: './dashboard.component.html',
-    imports: [TimeAgoComponent],
+    imports: [TimeAgoComponent, PageBlockComponent, ScrollableComponent],
 })
 export class DashboardComponent implements OnInit {
     private dashboardService = inject(DashboardService);

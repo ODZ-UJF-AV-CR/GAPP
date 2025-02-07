@@ -12,14 +12,23 @@ export const Q_OptionalCallsign = T.Object(
 );
 
 export const B_CarTelemetry = T.Object({
-    car_id: T.Optional(T.String()),
-    car_heartbeat_value: T.Optional(T.String({ format: 'date-time' })),
     latitude: T.Number(),
     longitude: T.Number(),
     altitude: T.Number(),
     callsign: T.String(),
 });
-export type CarStatus = Static<typeof B_CarTelemetry>;
+export type CarTelemetry = Static<typeof B_CarTelemetry>;
+
+export const B_VesselTelemetry = T.Object({
+    latitude: T.Number(),
+    longitude: T.Number(),
+    altitude: T.Number(),
+    callsign: T.String(),
+    received_at: T.String(),
+    course: T.Optional(T.Number()),
+    speed_mps: T.Optional(T.Number()),
+});
+export type VesselTelemetry = Static<typeof B_VesselTelemetry>;
 
 export const B_SondeTtnTelemetry = T.Object({
     end_device_ids: T.Object({

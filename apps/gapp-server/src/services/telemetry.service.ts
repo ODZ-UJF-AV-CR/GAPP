@@ -2,11 +2,10 @@ import { InfluxDB, Point, QueryApi, WriteApi } from '@influxdata/influxdb-client
 import { InfluxDbServiceBase } from '../utils/influxdb-service-base';
 import { Organization } from '@influxdata/influxdb-client-apis';
 import { TelemetryPacket } from '@gapp/sondehub';
-import { CarStatus, CallsignLocation } from '../schemas';
+import { CarTelemetry, CallsignLocation } from '../schemas';
 import { arrayAsString } from '../utils/array-as-atring';
 import { EventBus } from '../utils/event-bus';
 import { Events } from '../plugins/event-bus';
-import { on } from 'events';
 import { setInterval } from 'timers';
 import { EventMessage } from 'fastify-sse-v2';
 
@@ -44,7 +43,7 @@ export class TelemetryService extends InfluxDbServiceBase {
         this.writeApi.writePoint(point);
     }
 
-    public writeCarLocation(status: CarStatus) {
+    public writeCarLocation(status: CarTelemetry) {
         const point = new Point('car_location')
             .timestamp(new Date(Date.now()))
             .tag('callsign', status.callsign)

@@ -1,4 +1,4 @@
-import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
+import { GappLayoutDirective } from '@/utils/gapp-layout.directive';
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,8 +6,4 @@ import { Component } from '@angular/core';
     templateUrl: './homepage.component.html',
     imports: [GappLayoutDirective],
 })
-export class HomepageComponent {
-    public closed() {
-        console.log('modal is closed');
-    }
-}
+export class HomepageComponent {}

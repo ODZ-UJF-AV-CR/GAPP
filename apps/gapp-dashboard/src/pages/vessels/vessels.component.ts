@@ -1,4 +1,4 @@
-import { GappLayoutDirective } from '@/directives/gapp-layout.directive';
+import { GappLayoutDirective } from '@/utils/gapp-layout.directive';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';

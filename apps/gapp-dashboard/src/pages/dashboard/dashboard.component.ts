@@ -2,10 +2,12 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { DashboardService, TelemetryStatus } from './dashboard.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { TimeAgoComponent } from '@/components/time-ago/time-ago.component';
 
 @Component({
     selector: 'dapp-dashboard',
     templateUrl: './dashboard.component.html',
+    imports: [TimeAgoComponent],
 })
 export class DashboardComponent implements OnInit {
     private dashboardService = inject(DashboardService);

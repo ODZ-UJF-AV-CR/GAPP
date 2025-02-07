@@ -1,15 +1,19 @@
 <div>
-    <h2>Cars</h2>
-    <div>
-        @for (car of cars(); track car._time) {
-        <div>{{ car.callsign }} - {{ car._time }}</div>
-        } @empty { Waiting for data }
-    </div>
+    <div class="flex flex-col lg:flex-row gap-8">
+        <div class="w-full flex flex-col">
+            <h2 class="bg-base-300 rounded-xl p-4 mb-8 shadow-lg">Cars</h2>
 
-    <h2 class="mt-4">Vessels</h2>
-    <div>
-        @for (vessel of vessels(); track vessel._time) {
-        <div>{{ vessel.callsign }} - {{ vessel._time }}</div>
-        } @empty { Waiting for data }
+            @for (car of cars(); track car._time) {
+            <div>{{ car.callsign }} - <time-ago [date]="car._time"></time-ago></div>
+            } @empty { Waiting for data }
+        </div>
+
+        <div class="w-full flex flex-col">
+            <h2 class="bg-base-300 rounded-xl p-4 mb-8 shadow-lg">Vessels</h2>
+
+            @for (vessel of vessels(); track vessel._time) {
+            <div>{{ vessel.callsign }} - {{ vessel._time }}</div>
+            } @empty { Waiting for data }
+        </div>
     </div>
 </div>

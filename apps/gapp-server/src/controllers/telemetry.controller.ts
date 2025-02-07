@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_CarTelemetry, B_SondeTtnTelemetry, Q_OptionalCallsign, R_CallsignLocation } from '../schemas';
+import { B_CarTelemetry, B_SondeTtnTelemetry, B_VesselTelemetry, Q_OptionalCallsign, R_CallsignLocation } from '../schemas';
 import { ttnPacketDto } from '../utils/ttn-packet-dto';
 import { Type } from '@sinclair/typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
@@ -54,6 +54,39 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 uploader_position: [req.body.latitude, req.body.longitude, req.body.altitude],
                 mobile: true,
             });
+
+            rep.code(201).send();
+        }
+    );
+
+    fastify.post(
+        '/vessel',
+        {
+            schema: {
+                tags: ['telemetry'],
+                summary: 'Vessel telemetry received via car',
+                description: 'Received data are stored in InfluxDB and forwarded to SondeHub.',
+                body: B_VesselTelemetry,
+            },
+        },
+        async (req, rep) => {
+            if (!(await req.server.vesselsService.ensureCallsign(req.body.callsign))) {
+                return rep.unprocessableEntity(`Callsign ${req.body.callsign} does not exist`);
+            }
+
+            const packet = {
+                payload_callsign: req.body.callsign,
+                lat: req.body.latitude,
+                lon: req.body.longitude,
+                alt: req.body.altitude,
+                datetime: new Date().toISOString(),
+                time_received: req.body.received_at,
+                vel_h: req.body.speed_mps,
+                heading: req.body.course,
+            };
+
+            req.server.telemetryService.writeVesselLocation(packet);
+            req.server.sondehub.addTelemetry(packet);
 
             rep.code(201).send();
         }

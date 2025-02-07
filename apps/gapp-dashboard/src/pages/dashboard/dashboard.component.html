@@ -1,16 +1,16 @@
 <div class="flex flex-col lg:flex-row gap-8 px-4">
-    <page-block title="Case Cars">
-        <scrollable blockBody class="card bg-base-200 p-2">
-            @for (car of cars(); track car._time) {
-            <div>{{ car.callsign }} - <time-ago [date]="car._time"></time-ago></div>
-            } @empty { Waiting for data }
-        </scrollable>
-    </page-block>
-
     <page-block title="Vessels">
         <scrollable blockBody class="card bg-base-200 p-2">
             @for (vessel of vessels(); track vessel._time) {
             <div>{{ vessel.callsign }} - <time-ago [date]="vessel._time"></time-ago></div>
+            } @empty { Waiting for data }
+        </scrollable>
+    </page-block>
+
+    <page-block title="Cars">
+        <scrollable blockBody class="card bg-base-200 p-2">
+            @for (car of cars(); track car._time) {
+            <div>{{ car.callsign }} - <time-ago [date]="car._time"></time-ago></div>
             } @empty { Waiting for data }
         </scrollable>
     </page-block>

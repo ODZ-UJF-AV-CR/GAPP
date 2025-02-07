@@ -1,20 +1,20 @@
-import { GappLayoutDirective } from '@/utils/gapp-layout.directive';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@/components/modal/modal.component';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
-import { HeaderComponent } from '@/components/header/header.component';
 import { Vessel, VesselsService, VesselType } from './vessels.service';
 import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 import { tablerTrash, tablerAirBalloon, tablerDrone } from '@ng-icons/tabler-icons';
 import { ApiResponse } from '@/services/api.service.base';
+import { PageBlockComponent } from '@/components/page-block/page-block.component';
+import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
 
 @Component({
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
-    imports: [GappLayoutDirective, ModalComponent, ReactiveFormsModule, HeaderComponent, NgIcon],
+    imports: [ModalComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent],
     providers: [provideIcons({ tablerTrash, tablerAirBalloon, tablerDrone }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent implements OnInit {

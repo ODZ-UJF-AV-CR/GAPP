@@ -1,48 +1,46 @@
-<div gappLayout>
-    <div>
-        <gapp-header title="Mission vessels">
-            <button class="btn btn-primary" (click)="openCarModal()">Add</button>
-        </gapp-header>
+<page-block title="Mission Vessels">
+    <ng-container blockHeader>
+        <button class="btn btn-primary" (click)="openCarModal()">Add</button>
+    </ng-container>
 
+    <ng-container blockBody>
         @if(vesselsSignal().loading) {
         <div class="flex flex-row justify-center">
             <span class="loading loading-dots loading-lg"></span>
         </div>
         } @else {
-        <div class="max-h-[75vh] overflow-auto">
-            <div class="flex gap-4 flex-col">
-                @for(vessel of vesselsSignal().data; track vessel._id) {
-                <div class="collapse collapse-arrow bg-base-200">
-                    <input type="checkbox" />
-                    <div class="collapse-title text-xl font-medium">
-                        @if(vessel.type === 'balloon') {
-                        <ng-icon name="tablerAirBalloon" size="1.2rem"></ng-icon>
-                        } @else if(vessel.type === 'uav') {
-                        <ng-icon name="tablerDrone" size="1.2rem"></ng-icon>
+        <scrollable>
+            @for(vessel of vesselsSignal().data; track vessel._id) {
+            <div class="collapse collapse-arrow bg-base-200">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">
+                    @if(vessel.type === 'balloon') {
+                    <ng-icon name="tablerAirBalloon" size="1.2rem"></ng-icon>
+                    } @else if(vessel.type === 'uav') {
+                    <ng-icon name="tablerDrone" size="1.2rem"></ng-icon>
+                    }
+                    {{ vessel.callsign }}
+                </div>
+                <div class="collapse-content">
+                    <ul class="list-disc list-inside mb-2">
+                        @for(transmitter of vessel.transmitters; track $index) {
+                        <li>{{ transmitter }}</li>
                         }
-                        {{ vessel.callsign }}
-                    </div>
-                    <div class="collapse-content">
-                        <ul class="list-disc list-inside mb-2">
-                            @for(transmitter of vessel.transmitters; track $index) {
-                            <li>{{ transmitter }}</li>
-                            }
-                        </ul>
+                    </ul>
 
-                        <p>{{ vessel?.description }}</p>
-                        <div class="flex justify-end">
-                            <button class="btn btn-error btn-sm" (click)="deleteVessel(vessel._id)">Remove</button>
-                        </div>
+                    <p>{{ vessel?.description }}</p>
+                    <div class="flex justify-end">
+                        <button class="btn btn-error btn-sm" (click)="deleteVessel(vessel._id)">Remove</button>
                     </div>
                 </div>
-                } @empty {
-                <p class="text-center">No vessels yet.</p>
-                }
             </div>
-        </div>
+            } @empty {
+            <p class="text-center">No vessels yet.</p>
+            }
+        </scrollable>
         }
-    </div>
-</div>
+    </ng-container>
+</page-block>
 
 <gapp-modal
     title="Add new mission vessel"

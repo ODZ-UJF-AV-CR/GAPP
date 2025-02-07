@@ -1,9 +1,9 @@
 import { Component, input } from '@angular/core';
 
 @Component({
-    selector: 'gapp-header',
-    templateUrl: './header.component.html',
+    selector: 'page-block',
+    templateUrl: './page-block.component.html',
 })
-export class HeaderComponent {
+export class PageBlockComponent {
     public readonly title = input<string>();
 }

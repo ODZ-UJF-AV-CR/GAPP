@@ -1,4 +1,3 @@
-import { GappLayoutDirective } from '@/utils/gapp-layout.directive';
 import { Car, CarsService } from './cars.service';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -6,13 +5,14 @@ import { ModalComponent } from '@/components/modal/modal.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
-import { HeaderComponent } from '@/components/header/header.component';
 import { ApiResponse } from '@/services/api.service.base';
+import { PageBlockComponent } from '@/components/page-block/page-block.component';
+import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [GappLayoutDirective, ModalComponent, ReactiveFormsModule, HeaderComponent],
+    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent],
 })
 export class CarsComponent implements OnInit {
     private carsService = inject(CarsService);

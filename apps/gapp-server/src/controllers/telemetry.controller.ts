@@ -125,6 +125,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         },
         async (req, res) => {
             const abortController = new AbortController();
+            req.server.addHook('onClose', () => abortController.abort());
             req.raw.on('close', () => abortController.abort());
             res.sse(req.server.telemetryService.streamGenerator(abortController));
         }

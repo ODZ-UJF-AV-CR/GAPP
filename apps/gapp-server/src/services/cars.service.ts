@@ -1,4 +1,5 @@
 import { Collection, Db, ObjectId } from 'mongodb';
+import { ensureCollection } from '../utils/ensure-collection';
 
 export interface Car {
     callsign: string;
@@ -11,15 +12,7 @@ export class CarsService {
     constructor(private db: Db) {}
 
     public async init() {
-        const collections = await this.db.listCollections({ name: 'cars' }).toArray();
-
-        if (!collections) {
-            this.carsCollection = await this.db.createCollection('cars');
-
-            await this.carsCollection.createIndex({ callsign: 1 }, { unique: true });
-        } else {
-            this.carsCollection = this.db.collection<Car>('cars');
-        }
+        this.carsCollection = await ensureCollection(this.db, 'cars');
     }
 
     public async addCar(car: Car) {

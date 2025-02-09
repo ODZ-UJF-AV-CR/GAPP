@@ -9,18 +9,16 @@ declare module 'fastify' {
     interface FastifyInstance {
         telemetryService: TelemetryService;
         carsService: CarsService;
-      vesselsService: VesselsService;
+        vesselsService: VesselsService;
     }
 }
 
 const services: FastifyPluginAsync = async (fastify) => {
-    const telemetryService = new TelemetryService(fastify.influxClient, fastify.influxOrg, fastify.eventBus);
+    const telemetryService = new TelemetryService(fastify.influxClient, fastify.influxOrg, fastify.eventBus, fastify.mongodb);
     const carsService = new CarsService(fastify.mongodb);
     const vesselsService = new VesselsService(fastify.mongodb);
 
-    await carsService.init();
-    await telemetryService.init();
-    await vesselsService.init();
+    await Promise.all([carsService.init(), telemetryService.init(), vesselsService.init()]);
 
     fastify.decorate('telemetryService', telemetryService);
     fastify.decorate('carsService', carsService);
@@ -31,4 +29,4 @@ const services: FastifyPluginAsync = async (fastify) => {
     });
 };
 
-export default fp(services, {name: Plugins.SERVICES, dependencies: [Plugins.INFLUXDB, Plugins.MONGODB] });
+export default fp(services, { name: Plugins.SERVICES, dependencies: [Plugins.INFLUXDB, Plugins.MONGODB] });

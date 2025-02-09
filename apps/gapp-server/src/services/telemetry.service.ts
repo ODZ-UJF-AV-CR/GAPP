@@ -8,20 +8,33 @@ import { EventBus } from '../utils/event-bus';
 import { Events } from '../plugins/event-bus';
 import { setInterval } from 'timers';
 import { EventMessage } from 'fastify-sse-v2';
+import { Collection, Db } from 'mongodb';
+import { Vessel } from './vessels.service';
+import { ensureCollection } from '../utils/ensure-collection';
+import { Car } from './cars.service';
 
 export class TelemetryService extends InfluxDbServiceBase {
-    private readonly bucket = 'telemetry';
+    private readonly bucketName = 'telemetry';
     private writeApi: WriteApi;
     private queryAPi: QueryApi;
     private timer: NodeJS.Timer;
+    private vesselsCollection: Collection<Vessel>;
+    private carsCollection: Collection<Car>;
 
-    constructor(private client: InfluxDB, org: Organization, private eventBus: EventBus<Events>) {
+    constructor(private client: InfluxDB, org: Organization, private eventBus: EventBus<Events>, private db: Db) {
         super(client, org.id);
     }
 
     public async init() {
-        await this.ensureBucket(this.bucket);
-        this.writeApi = this.client.getWriteApi(this.orgID, this.bucket);
+        const [vesselsCollection, carsCollection] = await Promise.all([
+            ensureCollection<Vessel>(this.db, 'vessels'),
+            ensureCollection<Car>(this.db, 'cars'),
+            this.ensureBucket(this.bucketName),
+        ]);
+
+        this.vesselsCollection = vesselsCollection;
+        this.carsCollection = carsCollection;
+        this.writeApi = this.client.getWriteApi(this.orgID, this.bucketName);
         this.queryAPi = this.client.getQueryApi(this.orgID);
     }
 
@@ -55,14 +68,14 @@ export class TelemetryService extends InfluxDbServiceBase {
     }
 
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<CallsignLocation[]> {
-        let query = `from(bucket: "${this.bucket}")
+        let query = `from(bucket: "${this.bucketName}")
             |> range(start: -24h)
             |> last()
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
             |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "_measurement"])`;
 
         if (callsigns?.length) {
-            query = `from(bucket: "${this.bucket}")
+            query = `from(bucket: "${this.bucketName}")
                 |> range(start: -24h)
                 |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
                 |> last()

@@ -1,4 +1,5 @@
 import { Collection, Db, ObjectId } from 'mongodb';
+import { ensureCollection } from '../utils/ensure-collection';
 
 export enum VesselType {
     BALLOON = 'balloon',
@@ -18,15 +19,7 @@ export class VesselsService {
     constructor(private db: Db) {}
 
     public async init() {
-        const collections = await this.db.listCollections({ name: 'vessels' }).toArray();
-
-        if (!collections) {
-            this.vesselsCollection = await this.db.createCollection('vessels');
-
-            await this.vesselsCollection.createIndex({ callsign: 1 }, { unique: true });
-        } else {
-            this.vesselsCollection = this.db.collection<Vessel>('vessels');
-        }
+        this.vesselsCollection = await ensureCollection(this.db, 'vessels');
     }
 
     public async addVessel(vessel: Vessel) {

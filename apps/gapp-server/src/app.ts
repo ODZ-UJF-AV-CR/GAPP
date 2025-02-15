@@ -10,6 +10,7 @@ import mongoDbPlugin from './plugins/mongodb';
 import { telemetryController } from './controllers/telemetry.controller';
 import servicesPlugin from './plugins/services';
 import eventBusPlugin from './plugins/event-bus';
+import abortControllerPlugin from './plugins/abort-controller';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
@@ -34,6 +35,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     });
     await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
+    await fastify.register(abortControllerPlugin);
     await fastify.register(servicesPlugin);
 
     await fastify.register(swagger, {

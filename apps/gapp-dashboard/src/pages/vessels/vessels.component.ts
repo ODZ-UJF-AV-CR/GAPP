@@ -4,7 +4,7 @@ import { ModalComponent } from '@/components/modal/modal.component';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
-import { Vessel, VesselsService, VesselType } from './vessels.service';
+import { Vessel, VesselsService, VesselType } from '@/services/vessels.service';
 import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 import { tablerTrash, tablerAirBalloon, tablerDrone } from '@ng-icons/tabler-icons';
 import { ApiResponse } from '@/services/api.service.base';

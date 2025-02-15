@@ -5,6 +5,8 @@ import { map } from 'rxjs';
 import { TimeAgoComponent } from '@/components/time-ago/time-ago.component';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
+import { CarsService } from '@/services/cars.service';
+import { VesselsService } from '@/services/vessels.service';
 
 @Component({
     selector: 'dapp-dashboard',
@@ -13,6 +15,8 @@ import { ScrollableComponent } from '@/components/scrollable/scrollable.componen
 })
 export class DashboardComponent implements OnInit {
     private dashboardService = inject(DashboardService);
+    private carsService = inject(CarsService);
+    private vesselsService = inject(VesselsService);
     private destroyRef = inject(DestroyRef);
 
     public readonly cars = signal<TelemetryStatus[]>([]);

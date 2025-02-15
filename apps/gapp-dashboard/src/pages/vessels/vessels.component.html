@@ -5,9 +5,7 @@
 
     <ng-container blockBody>
         @if(vesselsSignal().loading) {
-        <div class="flex flex-row justify-center">
-            <span class="loading loading-dots loading-lg"></span>
-        </div>
+        <loader></loader>
         } @else {
         <scrollable>
             @for(vessel of vesselsSignal().data; track vessel._id) {

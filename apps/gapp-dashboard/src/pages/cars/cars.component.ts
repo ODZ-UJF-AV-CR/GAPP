@@ -8,11 +8,12 @@ import { ToastService } from '@/services/toast.service';
 import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
+import { LoaderComponent } from '@/components/loader/loader.component';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent],
+    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent],
 })
 export class CarsComponent implements OnInit {
     private carsService = inject(CarsService);

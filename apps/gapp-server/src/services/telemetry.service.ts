@@ -86,13 +86,13 @@ export class TelemetryService extends InfluxDbServiceBase {
         return await this.queryAPi.collectRows(query);
     }
 
-    public async *streamGenerator(abortCotroller: AbortController): AsyncGenerator<EventMessage> {
+    public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
         const abortSignal = abortCotroller.signal;
         const queue: EventMessage[] = [];
         const interval = setInterval(() => queue.push({ data: 'ping' }), 5_000);
 
         const eventHandler = async () => {
-            const data = await this.getCallsignsLastLocation();
+            const data = await this.getCallsignsLastLocation(callsigns);
             queue.push({ data: JSON.stringify(data) });
         };
 

@@ -1,4 +1,6 @@
 import { ApiServiceBase } from '@/services/api.service.base';
+import { Car } from '@/services/cars.service';
+import { Vessel } from '@/services/vessels.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -9,9 +11,10 @@ export interface TelemetryStatus {
     callsign: string;
     latitude: number;
     longitude: number;
-    result: string;
-    table: number;
 }
+
+export type CarStatus = { telemetry: TelemetryStatus; car: Car };
+export type VesselStatus = { telemetry: TelemetryStatus[]; vessel: Vessel };
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService extends ApiServiceBase {
@@ -19,8 +22,8 @@ export class DashboardService extends ApiServiceBase {
         return this.get$<TelemetryStatus>(this.apiUrl('/telemetry'));
     }
 
-    public dashboardStatus$(): Observable<TelemetryStatus[]> {
-        const source = new EventSource(this.apiUrl('/telemetry/stream'));
+    public dashboardStatus$(callsigns: string[]): Observable<TelemetryStatus[]> {
+        const source = new EventSource(this.apiUrl(`/telemetry/stream?callsigns=${callsigns.join(',')}`));
 
         return new Observable((observer) => {
             source.onmessage = (message) => {

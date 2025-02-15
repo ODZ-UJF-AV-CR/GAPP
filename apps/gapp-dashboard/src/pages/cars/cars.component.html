@@ -5,9 +5,7 @@
 
     <ng-container blockBody>
         @if(carsSignal().loading) {
-        <div class="flex flex-row justify-center">
-            <span class="loading loading-dots loading-lg"></span>
-        </div>
+        <loader></loader>
         } @else {
         <scrollable>
             @for(car of carsSignal().data; track car._id) {

@@ -127,7 +127,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         async (req, res) => {
             const ac = req.server.getAbortController();
             req.raw.on('close', () => ac.abort());
-            res.sse(req.server.telemetryService.streamGenerator(ac));
+            res.sse(req.server.telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
         }
     );
 };

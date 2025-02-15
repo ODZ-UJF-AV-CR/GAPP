@@ -10,11 +10,12 @@ import { tablerTrash, tablerAirBalloon, tablerDrone } from '@ng-icons/tabler-ico
 import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
+import { LoaderComponent } from '@/components/loader/loader.component';
 
 @Component({
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent],
+    imports: [ModalComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent, LoaderComponent],
     providers: [provideIcons({ tablerTrash, tablerAirBalloon, tablerDrone }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent implements OnInit {

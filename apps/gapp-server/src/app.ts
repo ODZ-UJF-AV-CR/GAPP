@@ -36,23 +36,21 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(servicesPlugin);
 
-    if (opts.isDevelopment) {
-        await fastify.register(swagger, {
-            openapi: {
-                info: {
-                    title: 'GAPP API',
-                    version: '0.0.1',
-                    description: 'API Docs for ground app',
-                },
-                tags: [
-                    { name: 'cars', description: 'Chase cars API' },
-                    { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
-                    { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
-                ],
+    await fastify.register(swagger, {
+        openapi: {
+            info: {
+                title: 'GAPP API',
+                version: '0.0.1',
+                description: 'API Docs for ground app',
             },
-        });
-        await fastify.register(swaggerUi, { routePrefix: '/docs', uiConfig: {} });
-    }
+            tags: [
+                { name: 'cars', description: 'Chase cars API' },
+                { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
+                { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
+            ],
+        },
+    });
+    await fastify.register(swaggerUi, { routePrefix: '/docs', uiConfig: {} });
 
     // ROUTES
     fastify.register(

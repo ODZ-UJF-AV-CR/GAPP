@@ -121,6 +121,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'Get live data',
                 description: 'Stream live data updates from vessels and chase cars using servewr sent events',
+                querystring: Q_OptionalCallsign,
             },
         },
         async (req, res) => {

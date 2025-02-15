@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MenuComponent } from '@/components/menu/menu.component';
+import { NavbarComponent } from '@/components/navbar/navbar.component';
 import { ToastsComponent } from '@/components/toasts/toasts.component';
-import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
-import { tablerMoonStars, tablerSun } from '@ng-icons/tabler-icons';
+import { MenuComponent } from '@/components/menu/menu.component';
 
 @Component({
     selector: 'gapp-root',
     templateUrl: './layout.component.html',
-    imports: [RouterOutlet, MenuComponent, ToastsComponent, NgIcon],
-    providers: [provideIcons({ tablerSun, tablerMoonStars }), provideNgIconsConfig({ size: '1.75rem', strokeWidth: '1.5' })],
+    imports: [RouterOutlet, NavbarComponent, ToastsComponent, MenuComponent]
 })
 export class LayoutComponent {}

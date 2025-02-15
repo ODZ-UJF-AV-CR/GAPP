@@ -1,7 +1,28 @@
-<div class="flex flex-row justify-center gap-1 p-2">
-    <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" routerLink="/home"><ng-icon name="tablerHome"></ng-icon></a>
-    <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" routerLink="/cars"><ng-icon name="tablerCar"></ng-icon></a>
-    <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" routerLink="/vessels"><ng-icon name="tablerDrone"></ng-icon></a>
-    <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" routerLink="/dashboard"><ng-icon name="tablerLayoutDashboard"></ng-icon></a>
-    <!-- <a class="btn btn-ghost btn-primary btn-active" routerLinkActive="btn-outline" routerLink="/map"><ng-icon name="tablerMapPin"></ng-icon></a> -->
+<div class="dropdown dropdown-end">
+    <div tabindex="0" role="button"><ng-icon name="tablerSettings"></ng-icon></div>
+    <div tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-[1] w-52 p-3 shadow">
+        <div class="flex flex-row justify-between">
+            <div class="font-bold flex items-center">Theme:</div>
+            <div class="join">
+                <input
+                    [checked]="isChecked('light')"
+                    (input)="selectTheme('light')"
+                    type="radio"
+                    name="theme-buttons"
+                    class="btn btn-xs theme-controller join-item cursor-pointer"
+                    aria-label="Light"
+                    value="light"
+                />
+                <input
+                    [checked]="isChecked('dark')"
+                    (input)="selectTheme('dark')"
+                    type="radio"
+                    name="theme-buttons"
+                    class="btn btn-xs theme-controller join-item cursor-pointer"
+                    aria-label="Dark"
+                    value="dark"
+                />
+            </div>
+        </div>
+    </div>
 </div>

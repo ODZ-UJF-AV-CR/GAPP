@@ -4,14 +4,12 @@
     </div>
 
     <div class="absolute bottom-0 w-full">
-        <gapp-menu></gapp-menu>
+        <gapp-navbar></gapp-navbar>
     </div>
 
     <gapp-toasts></gapp-toasts>
 
-    <label class="swap swap-rotate absolute top-3 right-3">
-        <input type="checkbox" class="theme-controller" value="dark" />
-        <ng-icon class="swap-on" name="tablerSun"></ng-icon>
-        <ng-icon class="swap-off" name="tablerMoonStars"></ng-icon>
-    </label>
+    <div class="absolute top-3 right-3">
+        <gapp-menu></gapp-menu>
+    </div>
 </ng-container>

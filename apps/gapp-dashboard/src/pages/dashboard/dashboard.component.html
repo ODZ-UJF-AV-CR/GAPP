@@ -2,7 +2,7 @@
     <page-block title="Vessels">
         <scrollable blockBody class="card bg-base-200 p-4">
             @for (vessel of availableVessels()?.data; track $index) {
-            <vessel-status-card [vessel]="vessel"></vessel-status-card>
+            <vessel-status-card [vessel]="vessel" [telemetry]="filterTelemetry$(vessel.transmitters) | async"></vessel-status-card>
             } @empty { @if (availableVessels()?.loading) {
             <loader></loader>
             } @else { No data available. } }
@@ -12,7 +12,7 @@
     <page-block title="Cars">
         <scrollable blockBody class="card bg-base-200 p-4">
             @for (car of availableCars()?.data; track $index) {
-            <car-status-card [car]="car"></car-status-card>
+            <car-status-card [car]="car" [telemetry]="(filterTelemetry$([car.callsign]) | async)?.[0]"></car-status-card>
             } @empty { @if (availableCars()?.loading) {
             <loader></loader>
             } @else { No data available. } }

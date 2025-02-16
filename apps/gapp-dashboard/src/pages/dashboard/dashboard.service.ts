@@ -22,8 +22,8 @@ export class DashboardService extends ApiServiceBase {
         return this.get$<TelemetryStatus>(this.apiUrl('/telemetry'));
     }
 
-    public dashboardStatus$(callsigns: string[]): Observable<TelemetryStatus[]> {
-        const source = new EventSource(this.apiUrl(`/telemetry/stream?callsigns=${callsigns.join(',')}`));
+    public dashboardStatus$(): Observable<TelemetryStatus[]> {
+        const source = new EventSource(this.apiUrl(`/telemetry/stream`));
 
         return new Observable((observer) => {
             source.onmessage = (message) => {

@@ -24,7 +24,7 @@ export const vesselsController: FastifyPluginAsyncTypebox = async (fastify) => {
                     _id: inserted.insertedId.toString(),
                 };
 
-                req.server.log.info(vessel, 'Created new vessel');
+                req.server.log.debug(vessel, 'Created new vessel');
                 rep.status(200).send(vessel);
             } catch (err) {
                 req.server.log.error(err, 'Failed to create car');

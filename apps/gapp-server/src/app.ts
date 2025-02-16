@@ -52,7 +52,12 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
             ],
         },
     });
-    await fastify.register(swaggerUi, { routePrefix: '/docs', uiConfig: {} });
+    await fastify.register(swaggerUi, {
+        routePrefix: '/docs',
+        theme: {
+            title: 'GAPP API - Docs',
+        },
+    });
 
     // ROUTES
     fastify.register(

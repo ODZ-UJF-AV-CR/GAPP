@@ -23,7 +23,7 @@ export const carsController: FastifyPluginAsyncTypebox = async (fastify) => {
                     ...req.body,
                     _id: inserted.insertedId.toString(),
                 };
-                req.server.log.info(car, 'Created new car');
+                req.server.log.debug(car, 'Created new car');
                 return rep.status(200).send(req.body);
             } catch (err) {
                 req.server.log.error(err, 'Failed to create car');

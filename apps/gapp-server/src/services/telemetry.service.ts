@@ -102,6 +102,7 @@ export class TelemetryService extends InfluxDbServiceBase {
         try {
             while (!abortSignal.aborted) {
                 if (queue.length) {
+                    console.log('Processing event');
                     yield queue.shift();
                 } else {
                     await new Promise((r) => setTimeout(r, 1000));

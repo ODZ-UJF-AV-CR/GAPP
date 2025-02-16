@@ -1,4 +1,6 @@
 <div class="flex flex-col lg:flex-row gap-8 px-4">
+    {{ telemetry() | json }} xx
+
     <page-block title="Vessels">
         <scrollable blockBody class="card bg-base-200 p-4">
             @for (vessel of availableVessels()?.data; track $index) {
@@ -12,7 +14,7 @@
     <page-block title="Cars">
         <scrollable blockBody class="card bg-base-200 p-4">
             @for (car of availableCars()?.data; track $index) {
-            <car-status-card [car]="car" [telemetry]="(filterTelemetry$([car.callsign]) | async)?.[0]"></car-status-card>
+            <car-status-card [car]="car" [telemetry]="filterTelemetry$([car.callsign]) | async"></car-status-card>
             } @empty { @if (availableCars()?.loading) {
             <loader></loader>
             } @else { No data available. } }

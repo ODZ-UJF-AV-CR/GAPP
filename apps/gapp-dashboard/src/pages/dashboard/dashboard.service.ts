@@ -32,6 +32,10 @@ export class DashboardService extends ApiServiceBase {
                 }
             };
 
+            source.onerror = (error) => {
+                console.error(error);
+            };
+
             return () => {
                 source.close();
             };

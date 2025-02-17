@@ -24,31 +24,14 @@ export class DashboardComponent {
     private destroyRef = inject(DestroyRef);
     private cdr = inject(ChangeDetectorRef);
 
-    private telemetry$ = this.dashboardService.dashboardStatus$().pipe(
-        tap((data) => console.log(data)),
-        map((data) => data.sort((a, b) => Date.parse(b._time) - Date.parse(a._time))),
-        tap((data) => console.log(data)),
-        takeUntilDestroyed(this.destroyRef)
-    );
-
-    public telemetry = signal<TelemetryStatus[]>([]);
+    public telemetry = toSignal(this.dashboardService.dashboardStatus$().pipe(
+      map((data) => data.sort((a, b) => Date.parse(b._time) - Date.parse(a._time)))
+    ));
 
     public availableCars = toSignal(this.carsService.getCars$());
     public availableVessels = toSignal(this.vesselsService.getVessels$());
 
-    public filterTelemetry$(callsigns: string[]) {
-        return this.telemetry$.pipe(
-            map((data) => data.filter((item) => callsigns.includes(item.callsign))),
-            tap((data) => {
-                console.log('Data for: ', data);
-                this.cdr.markForCheck();
-            })
-        );
-    }
-
     constructor() {
         (window as any).dbg = this;
-
-        this.telemetry$.subscribe((data) => this.telemetry.set(data));
     }
 }

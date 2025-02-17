@@ -9,13 +9,13 @@ import { VesselsService } from '@/services/vessels.service';
 import { LoaderComponent } from '@/components/loader/loader.component';
 import { CarStatusCardComponent } from './car-status-card.component';
 import { VesselStatusCardComponent } from './vessel-status-card.component';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'dapp-dashboard',
     templateUrl: './dashboard.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [PageBlockComponent, ScrollableComponent, LoaderComponent, CarStatusCardComponent, VesselStatusCardComponent, AsyncPipe, JsonPipe],
+    imports: [PageBlockComponent, ScrollableComponent, LoaderComponent, CarStatusCardComponent, VesselStatusCardComponent, AsyncPipe],
 })
 export class DashboardComponent {
     private dashboardService = inject(DashboardService);

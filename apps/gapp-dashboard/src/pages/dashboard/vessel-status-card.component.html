@@ -1,14 +1,34 @@
-<div class="flex flex-row justify-between py-2">
-    <span class="font-bold">
-        {{ vessel()?.callsign }}
-    </span>
-    <span>
-        @if(lastContact(); as lastContact) {
-        <span [class-range]="options" [value]="secondsAgo$ | async" class="badge badge-outline">
-            <time-ago [date]="lastContact._time"></time-ago>
-        </span>
-        } @else {
-        <span class="badge badge-ghost badge-outline">Not connected</span>
-        }
-    </span>
+<div tabindex="0" class="collapse collapse-arrow bg-base-200">
+    <input type="checkbox" />
+    <div class="collapse-title flex flex-row justify-between">
+        <div class="font-bold">
+            {{ vessel()?.callsign }}
+        </div>
+        <div>
+            @if(lastContact(); as lastContact) {
+            <time-ago-badge [date]="lastContact._time"></time-ago-badge>
+            } @else {
+            <span class="badge badge-ghost badge-outline">Not connected</span>
+            }
+        </div>
+    </div>
+
+    <div class="collapse-content">
+        <div class="flex flex-col gap-2 border-l-2 border-neutral pl-2">
+            <ul class="flex flex-col gap-1">
+                @for(transmitter of vessel()?.transmitters; track $index) {
+                <li class="flex flex-row justify-start gap-2">
+                    <div>{{ transmitter }}</div>
+                    <div>
+                        @if(getTransmitterTelemetry(transmitter)()?._time; as time) {
+                        <time-ago-badge [date]="time"></time-ago-badge>
+                        }
+                    </div>
+                </li>
+                }
+            </ul>
+
+            <!-- <a class="btn btn-sm btn-info" href="https://amateur.sondehub.org/{{ vessel()?.callsign }}" target="_blank">Open in SondeHub</a> -->
+        </div>
+    </div>
 </div>

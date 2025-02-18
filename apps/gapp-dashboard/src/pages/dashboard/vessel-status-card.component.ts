@@ -1,18 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TelemetryStatus } from './dashboard.service';
 import { Vessel } from '@/services/vessels.service';
-import { TimeAgoComponent } from '@gapp/ui/time-ago';
-import { ClassRangeDirective, ClassRangeOptions } from '@/utils/class-range.directive';
-import { AsyncPipe } from '@angular/common';
-import { timeDifference } from '@/utils/time-difference';
-import { interval, map, merge } from 'rxjs';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { TimeAgoBadgeComponent } from '@/components/time-ago-badge/time-ago-badge.component';
 
 @Component({
     selector: 'vessel-status-card',
     templateUrl: './vessel-status-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TimeAgoComponent, ClassRangeDirective, AsyncPipe],
+    imports: [TimeAgoBadgeComponent],
 })
 export class VesselStatusCardComponent {
     public vessel = input<Vessel>();
@@ -23,12 +18,7 @@ export class VesselStatusCardComponent {
         return telemetry?.sort((a, b) => Date.parse(b._time) - Date.parse(a._time))?.[0];
     });
 
-    public options: ClassRangeOptions = {
-        180: 'badge-success',
-        360: 'badge-warning',
-        3600: 'badge-error',
-        100_000: 'badge-ghost',
-    };
-
-    public secondsAgo$ = merge(interval(1000), toObservable(this.lastContact)).pipe(map(() => timeDifference(this.lastContact()?._time)));
+    public getTransmitterTelemetry(transmitter: string) {
+        return computed(() => this.telemetry()?.find((t) => t.callsign === transmitter));
+    }
 }

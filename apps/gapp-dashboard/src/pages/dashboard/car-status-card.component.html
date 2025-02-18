@@ -1,15 +1,23 @@
-<div class="flex flex-row justify-between py-2">
-    <span class="font-bold">
-        {{ car()?.callsign }}
-    </span>
+<div tabindex="0" class="collapse collapse-arrow bg-base-200">
+    <input type="checkbox" />
+    <div class="collapse-title flex flex-row justify-between">
+        <div class="font-bold">
+            {{ car()?.callsign }}
+        </div>
 
-    <span>
-        @if(telemetry(); as telemetry) {
-        <span [class-range]="options" [value]="secondsAgo$ | async" class="badge badge-outline">
-            <time-ago [date]="telemetry._time"></time-ago>
-        </span>
-        } @else {
-        <span class="badge badge-ghost badge-outline">Not connected</span>
-        }
-    </span>
+        <div>
+            @if(telemetry(); as telemetry) {
+            <time-ago-badge [date]="telemetry._time"></time-ago-badge>
+            } @else {
+            <span class="badge badge-ghost badge-outline">Not connected</span>
+            }
+        </div>
+    </div>
+
+    <div class="collapse-content">
+        <div class="flex flex-col gap-2 border-l-2 border-neutral pl-2">
+            <span>{{ car()?.description }}</span>
+            <!-- <button class="btn btn-sm btn-info">Detail</button> -->
+        </div>
+    </div>
 </div>

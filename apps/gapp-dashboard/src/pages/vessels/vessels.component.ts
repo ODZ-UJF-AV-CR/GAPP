@@ -9,7 +9,7 @@ import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 import { tablerTrash, tablerAirBalloon, tablerDrone } from '@ng-icons/tabler-icons';
 import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
-import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
+import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
 
 @Component({

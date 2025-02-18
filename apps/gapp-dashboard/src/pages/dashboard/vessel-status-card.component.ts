@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TelemetryStatus } from './dashboard.service';
 import { Vessel } from '@/services/vessels.service';
 import { TimeAgoComponent } from '@gapp/ui/time-ago';
@@ -11,6 +11,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 @Component({
     selector: 'vessel-status-card',
     templateUrl: './vessel-status-card.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TimeAgoComponent, ClassRangeDirective, AsyncPipe],
 })
 export class VesselStatusCardComponent {
@@ -25,7 +26,8 @@ export class VesselStatusCardComponent {
     public options: ClassRangeOptions = {
         180: 'badge-success',
         360: 'badge-warning',
-        10_000: 'badge-error',
+        3600: 'badge-error',
+        100_000: 'badge-ghost',
     };
 
     public secondsAgo$ = merge(interval(1000), toObservable(this.lastContact)).pipe(map(() => timeDifference(this.lastContact()?._time)));

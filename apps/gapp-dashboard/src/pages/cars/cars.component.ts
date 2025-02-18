@@ -7,7 +7,7 @@ import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
 import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
-import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
+import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
 
 @Component({

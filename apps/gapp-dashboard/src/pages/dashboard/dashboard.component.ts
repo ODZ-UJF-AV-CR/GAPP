@@ -3,7 +3,7 @@ import { DashboardService } from './dashboard.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
-import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
+import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { CarsService } from '@/services/cars.service';
 import { VesselsService } from '@/services/vessels.service';
 import { LoaderComponent } from '@gapp/ui/loader';

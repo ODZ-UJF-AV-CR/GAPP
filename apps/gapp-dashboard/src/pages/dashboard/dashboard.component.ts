@@ -6,7 +6,7 @@ import { PageBlockComponent } from '@/components/page-block/page-block.component
 import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
 import { CarsService } from '@/services/cars.service';
 import { VesselsService } from '@/services/vessels.service';
-import { LoaderComponent } from '@/components/loader/loader.component';
+import { LoaderComponent } from '@gapp/ui/loader';
 import { CarStatusCardComponent } from './car-status-card.component';
 import { VesselStatusCardComponent } from './vessel-status-card.component';
 

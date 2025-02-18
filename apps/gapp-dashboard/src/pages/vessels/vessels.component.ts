@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ModalComponent } from '@/components/modal/modal.component';
+import { ModalComponent } from '@gapp/ui/modal';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
@@ -10,7 +10,7 @@ import { tablerTrash, tablerAirBalloon, tablerDrone } from '@ng-icons/tabler-ico
 import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
-import { LoaderComponent } from '@/components/loader/loader.component';
+import { LoaderComponent } from '@gapp/ui/loader';
 
 @Component({
     selector: 'gapp-vessels',

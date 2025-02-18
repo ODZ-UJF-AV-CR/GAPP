@@ -21,12 +21,8 @@ export class DashboardComponent {
     private dashboardService = inject(DashboardService);
     private carsService = inject(CarsService);
     private vesselsService = inject(VesselsService);
-    private destroyRef = inject(DestroyRef);
-    private cdr = inject(ChangeDetectorRef);
 
-    public telemetry = toSignal(this.dashboardService.dashboardStatus$().pipe(
-      map((data) => data.sort((a, b) => Date.parse(b._time) - Date.parse(a._time)))
-    ));
+    public telemetry = toSignal(this.dashboardService.dashboardStatus$().pipe(map((data) => data.sort((a, b) => Date.parse(b._time) - Date.parse(a._time)))));
 
     public availableCars = toSignal(this.carsService.getCars$());
     public availableVessels = toSignal(this.vesselsService.getVessels$());

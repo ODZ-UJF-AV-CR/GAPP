@@ -14,6 +14,12 @@ const eventBus: FastifyPluginAsync = async (fastify) => {
     fastify.decorate('getAbortController', () => {
         const ac = new AbortController();
         abortControllers.push(ac);
+        ac.signal.addEventListener('abort', () => {
+            const index = abortControllers.indexOf(ac);
+            if (index !== -1) {
+                abortControllers.splice(index, 1);
+            }
+        });
         return ac;
     });
 

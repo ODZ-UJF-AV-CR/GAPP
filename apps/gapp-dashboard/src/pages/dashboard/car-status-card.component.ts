@@ -10,5 +10,5 @@ import { JsonPipe } from '@angular/common';
 })
 export class CarStatusCardComponent {
     public car = input<Car>();
-    public telemetry = input<TelemetryStatus[] | null>();
+    public telemetry = input<TelemetryStatus[]>();
 }

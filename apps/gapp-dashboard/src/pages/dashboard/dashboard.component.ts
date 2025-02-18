@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, signal } from '@angular/core';
-import { DashboardService, TelemetryStatus } from './dashboard.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { map, tap } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { DashboardService } from './dashboard.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@/components/scrollable/scrollable.component';
 import { CarsService } from '@/services/cars.service';
@@ -9,13 +9,12 @@ import { VesselsService } from '@/services/vessels.service';
 import { LoaderComponent } from '@/components/loader/loader.component';
 import { CarStatusCardComponent } from './car-status-card.component';
 import { VesselStatusCardComponent } from './vessel-status-card.component';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'dapp-dashboard',
     templateUrl: './dashboard.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [PageBlockComponent, ScrollableComponent, LoaderComponent, CarStatusCardComponent, VesselStatusCardComponent, AsyncPipe],
+    imports: [PageBlockComponent, ScrollableComponent, LoaderComponent, CarStatusCardComponent, VesselStatusCardComponent],
 })
 export class DashboardComponent {
     private dashboardService = inject(DashboardService);
@@ -29,5 +28,11 @@ export class DashboardComponent {
 
     constructor() {
         (window as any).dbg = this;
+    }
+
+    public getTelemetry(callsigns: string[]) {
+        return computed(() => {
+            return this.telemetry()?.filter((t) => callsigns.includes(t.callsign));
+        });
     }
 }

@@ -100,13 +100,10 @@ export class TelemetryService extends InfluxDbServiceBase {
         this.eventBus.on('influx.write', eventHandler);
 
         try {
-            abortSignal.addEventListener('abort', () => console.log('Aborted'));
-
             while (!abortSignal.aborted) {
                 if (queue.length) {
                     yield queue.shift();
                 } else {
-                    console.log('Running - ', Date.now());
                     await new Promise((r) => setTimeout(r, 1000));
                 }
             }

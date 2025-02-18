@@ -1,5 +1,11 @@
-<div>
-    {{ car()?.callsign }}
+<div class="flex flex-row justify-between py-2">
+    <span class="font-bold">
+        {{ car()?.callsign }}
+    </span>
 
-    {{ telemetry() | json }}
+    <span>
+        @if(telemetry(); as telemetry) {
+        <time-ago [date]="telemetry._time"></time-ago>
+        } @else { No contact yet. }
+    </span>
 </div>

@@ -26,10 +26,6 @@ export class DashboardComponent {
     public availableCars = toSignal(this.carsService.getCars$());
     public availableVessels = toSignal(this.vesselsService.getVessels$());
 
-    constructor() {
-        (window as any).dbg = this;
-    }
-
     public getTelemetry(callsigns: string[]) {
         return computed(() => {
             return this.telemetry()?.filter((t) => callsigns.includes(t.callsign));

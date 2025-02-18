@@ -12,7 +12,7 @@
     <page-block title="Cars">
         <scrollable blockBody class="card bg-base-200 p-4">
             @for (car of availableCars()?.data; track $index) {
-            <car-status-card [car]="car" [telemetry]="getTelemetry([car.callsign])()"></car-status-card>
+            <car-status-card [car]="car" [telemetry]="getTelemetry([car.callsign])()?.[0]"></car-status-card>
             } @empty { @if (availableCars()?.loading) {
             <loader></loader>
             } @else { No data available. } }

@@ -1,5 +1,10 @@
-<div>
-    {{ vessel()?.callsign }}
-
-    {{ telemetry() | json }}
+<div class="flex flex-row justify-between py-2">
+    <span class="font-bold">
+        {{ vessel()?.callsign }}
+    </span>
+    <span>
+        @if(lastContact(); as lastContact) {
+        <time-ago [date]="lastContact._time"></time-ago>
+        } @else { No contact yet. }
+    </span>
 </div>

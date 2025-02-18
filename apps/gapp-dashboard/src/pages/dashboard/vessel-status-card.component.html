@@ -4,7 +4,11 @@
     </span>
     <span>
         @if(lastContact(); as lastContact) {
-        <time-ago [date]="lastContact._time"></time-ago>
-        } @else { No contact yet. }
+        <span [class-range]="options" [value]="secondsAgo$ | async" class="badge badge-outline">
+            <time-ago [date]="lastContact._time"></time-ago>
+        </span>
+        } @else {
+        <span class="badge badge-neutral">Not connected</span>
+        }
     </span>
 </div>

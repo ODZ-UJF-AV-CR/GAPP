@@ -1,5 +1,5 @@
 <dialog #modal class="modal" (close)="closed.emit()">
-    <div class="modal-box">
+    <div class="modal-box" [ngClass]="">
         <h3 class="text-lg font-bold">{{ title() }}</h3>
 
         <form method="dialog">
@@ -14,8 +14,8 @@
             <form method="dialog">
                 <button class="btn">Close</button>
             </form>
-            @if(action()) {
-            <button class="btn btn-primary" (click)="actionUsed.emit()">{{ action() }}</button>
+            @if(action(); as action) {
+            <button class="btn btn-primary" (click)="actionUsed.emit()">{{ action }}</button>
             }
         </div>
     </div>

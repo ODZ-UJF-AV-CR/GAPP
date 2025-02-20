@@ -17,7 +17,12 @@
     <div class="collapse-content">
         <div class="flex flex-col gap-2 border-l-2 border-neutral pl-2">
             <span>{{ car()?.description }}</span>
-            <!-- <button class="btn btn-sm btn-info">Detail</button> -->
+            <span>
+                <a class="btn btn-sm btn-info whitespace-nowrap" href="https://amateur.sondehub.org/{{ car()?.callsign }}_chase" target="_blank">
+                    SondeHub
+                    <ng-icon name="tablerExternalLink"></ng-icon>
+                </a>
+            </span>
         </div>
     </div>
 </div>

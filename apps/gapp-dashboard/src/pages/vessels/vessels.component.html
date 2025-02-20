@@ -47,6 +47,7 @@
     action="Create"
     [formGroup]="vesselForm"
     (actionUsed)="createVessel()"
+    [width]="'w-full'"
 >
     @if(errorMessage()) {
     <div role="alert" class="alert alert-error">

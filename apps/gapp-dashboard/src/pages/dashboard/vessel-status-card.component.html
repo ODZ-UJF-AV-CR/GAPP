@@ -15,25 +15,26 @@
 
     <div class="collapse-content">
         <div class="flex flex-col gap-2 border-l-2 border-neutral pl-2">
-            <ul class="flex flex-col gap-1">
-                @for(transmitter of vessel()?.transmitters; track $index) {
-                <li class="flex flex-row justify-start gap-2">
+            @for(transmitter of vessel()?.transmitters; track $index) {
+            <div class="flex flex-row justify-between py-2">
+                <div class="flex flex-row gap-3">
                     <div>{{ transmitter }}</div>
                     <div>
                         @if(getTransmitterTelemetry(transmitter)()?._time; as time) {
                         <time-ago-badge [date]="time"></time-ago-badge>
+                        } @else {
+                        <span class="badge badge-ghost badge-outline">Not connected</span>
                         }
                     </div>
-                </li>
-                }
-            </ul>
-
-            <span>
-                <a class="btn btn-sm btn-info" href="https://amateur.sondehub.org/{{ vessel()?.callsign }}" target="_blank">
-                    SondeHub
-                    <ng-icon name="tablerExternalLink"></ng-icon>
-                </a>
-            </span>
+                </div>
+                <div>
+                    <a class="btn btn-xs btn-info" href="https://amateur.sondehub.org/{{ vessel()?.callsign }}" target="_blank">
+                        SondeHub
+                        <ng-icon name="tablerExternalLink"></ng-icon>
+                    </a>
+                </div>
+            </div>
+            }
         </div>
     </div>
 </div>

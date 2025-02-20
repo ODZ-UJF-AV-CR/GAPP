@@ -15,14 +15,14 @@
                 "browser": "apps/gapp-dashboard/src/main.ts",
                 "polyfills": [],
                 "tsConfig": "apps/gapp-dashboard/tsconfig.app.json",
-                "inlineStyleLanguage": "scss",
+                "inlineStyleLanguage": "css",
                 "assets": [
                     {
                         "glob": "**/*",
                         "input": "apps/gapp-dashboard/public"
                     }
                 ],
-                "styles": ["apps/gapp-dashboard/src/styles.scss"],
+                "styles": ["apps/gapp-dashboard/src/styles.css"],
                 "scripts": []
             },
             "configurations": {

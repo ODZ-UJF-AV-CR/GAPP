@@ -27,6 +27,7 @@
                     </ul>
 
                     <p>{{ vessel?.description }}</p>
+
                     <div class="flex justify-end">
                         <button class="btn btn-error btn-sm" (click)="deleteVessel(vessel._id)">Remove</button>
                     </div>
@@ -54,55 +55,48 @@
         <span>{{ errorMessage() }}</span>
     </div>
     }
-    <label class="form-control w-full mb-2">
-        <div class="label">
-            <span class="label-text">Callsign</span>
-        </div>
-        <input class="input input-bordered w-full" name="callsign" type="text" formControlName="callsign" />
-        <div class="label">
-            <span class="label-text-alt">Unique identification of vessel</span>
-            <span [hidden]="!hasError('callsign')" class="label-text-alt text-error">Callsign is required</span>
-        </div>
-    </label>
 
-    <div formArrayName="transmitters" class="flex flex-col w-3/4 mb-2">
-        <div class="label">
-            <span class="label-text">Transmitter callsigns</span>
-        </div>
-        @for(control of transmitters.controls; track control.value.id; let index = $index) {
-        <div class="join mb-2" [formGroupName]="index">
-            <input class="input input-bordered w-full input-sm join-item" name="transmitter" type="text" formControlName="transmitter" />
-            <button class="btn btn-error join-item btn-sm btn-outline" (click)="removeTransmitter(index)" [disabled]="transmitters.length === 1">
-                <ng-icon name="tablerTrash"></ng-icon>
-            </button>
-        </div>
-        }
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Callsign</legend>
+        <input required type="text" class="input validator w-11/12" formControlName="callsign"/>
+      <p class="fieldset-label">Unique identification of vessel.</p>
+      <p class="validator-hint">Callsign is required.</p>
+    </fieldset>
 
-        <button class="btn btn-primary btn-sm btn-outline w-min" (click)="addTransmitter()">Add</button>
+    <div formArrayName="transmitters" class="flex flex-col mb-2 w-11/12">
+        <fieldset class="fieldset bg-base-200 border border-base-300 p-4 rounded-box">
+            <legend class="fieldset-legend">Transmitter callsigns</legend>
 
-        <div class="label">
-            <span [hidden]="!hasError('transmitters')" class="label-text-alt text-error">At least one transmitter is required</span>
-        </div>
+            @for(control of transmitters.controls; track control.value.id; let index = $index) {
+            <div class="join mb-2" [formGroupName]="index">
+                <input class="input input-bordered input-sm join-item w-3/4" name="transmitter" type="text" formControlName="transmitter" />
+                <button class="btn btn-error join-item btn-sm btn-outline" (click)="removeTransmitter(index)" [disabled]="transmitters.length === 1">
+                    <ng-icon name="tablerTrash"></ng-icon>
+                </button>
+            </div>
+            }
+
+            <div class="label">
+                <span [hidden]="!hasError('transmitters')" class="label-text-alt validator-hint">At least one transmitter is required</span>
+            </div>
+
+            <button class="btn btn-primary btn-sm btn-outline w-min mt-2" (click)="addTransmitter()">Add</button>
+        </fieldset>
+
     </div>
 
-    <label class="form-control w-full max-w-xs mb-2">
-        <div class="label">
-            <span class="label-text">Vessel type</span>
-        </div>
-        <select class="select select-bordered" formControlName="type">
-            @for(type of vesselTypes; track $index) {
-            <option>{{ type }}</option>
-            }
-        </select>
-    </label>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Vessel type</legend>
+      <select class="select w-11/12" formControlName="type">
+        @for(type of vesselTypes; track $index) {
+        <option>{{ type }}</option>
+        }
+      </select>
+    </fieldset>
 
-    <label class="form-control w-full">
-        <div class="label">
-            <span class="label-text">Notes</span>
-        </div>
-        <textarea class="textarea textarea-bordered h-24" rows="2" formControlName="description"></textarea>
-        <div class="label">
-            <span class="label-text-alt">Vessel type, mission goal...</span>
-        </div>
-    </label>
+    <fieldset class="fieldset">
+        <legend class="fieldset-legend">Notes</legend>
+        <textarea class="textarea h-24 w-11/12" formControlName="description"></textarea>
+        <div class="fieldset-label">Vessel type, mission goal...</div>
+    </fieldset>
 </gapp-modal>

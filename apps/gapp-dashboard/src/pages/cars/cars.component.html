@@ -40,24 +40,17 @@
         <span>{{ errorMessage() }}</span>
     </div>
     }
-    <label class="form-control w-full mb-2">
-        <div class="label">
-            <span class="label-text">Callsign</span>
-        </div>
-        <input class="input input-bordered w-full" name="callsign" type="text" formControlName="callsign" />
-        <div class="label">
-            <span class="label-text-alt">Unique identification of car</span>
-            <span [hidden]="!hasError('callsign')" class="label-text-alt text-error">Callsign is required</span>
-        </div>
-    </label>
 
-    <label class="form-control w-full">
-        <div class="label">
-            <span class="label-text">Notes</span>
-        </div>
-        <textarea class="textarea textarea-bordered h-24" rows="2" formControlName="description"></textarea>
-        <div class="label">
-            <span class="label-text-alt">Car type, crew...</span>
-        </div>
-    </label>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Callsign</legend>
+        <input required type="text" class="input validator w-11/12" formControlName="callsign"/>
+      <p class="fieldset-label">Unique identification of car.</p>
+      <p class="validator-hint">Callsign is required.</p>
+    </fieldset>
+
+    <fieldset class="fieldset">
+        <legend class="fieldset-legend">Notes</legend>
+        <textarea class="textarea h-24 w-11/12" formControlName="description"></textarea>
+        <div class="fieldset-label">Car type, crew...</div>
+    </fieldset>
 </gapp-modal>

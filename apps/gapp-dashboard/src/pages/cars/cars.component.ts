@@ -84,9 +84,4 @@ export class CarsComponent implements OnInit {
                 this.loadCars();
             });
     }
-
-    public hasError(fieldName: string) {
-        const field = this.carForm.get(fieldName);
-        return !field?.valid && (field?.dirty || field?.touched);
-    }
 }

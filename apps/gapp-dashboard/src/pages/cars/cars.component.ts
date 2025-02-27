@@ -51,7 +51,6 @@ export class CarsComponent implements OnInit {
 
     public createCar() {
         if (!this.carForm.valid) {
-            console.log('Error')
             this.carForm.markAllAsTouched();
             return;
         }

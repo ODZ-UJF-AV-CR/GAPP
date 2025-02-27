@@ -11,6 +11,7 @@ import { telemetryController } from './controllers/telemetry.controller';
 import servicesPlugin from './plugins/services';
 import eventBusPlugin from './plugins/event-bus';
 import abortControllerPlugin from './plugins/abort-controller';
+import cors from '@fastify/cors'
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
@@ -26,6 +27,9 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     // LIBRARIES
     fastify.register(Sensible);
     fastify.register(eventBusPlugin);
+    fastify.register(cors, {
+        origin: '*'
+    });
 
     // PLUGINS
     await fastify.register(influxDbPlugin, {

@@ -1,28 +1,18 @@
 {
     "compilerOptions": {
         "target": "es2022",
-        "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
         "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/*"],
-            "@gapp/ui/*": ["../../libs/ui/src/lib/*"],
-            "@gapp/forms-ui": ["../../libs/forms-ui/src/index.ts"],
-        }
+        "noFallthroughCasesInSwitch": true
     },
     "files": [],
     "include": [],
     "references": [
         {
-            "path": "./tsconfig.editor.json"
-        },
-        {
-            "path": "./tsconfig.app.json"
+            "path": "./tsconfig.lib.json"
         },
         {
             "path": "./tsconfig.spec.json"

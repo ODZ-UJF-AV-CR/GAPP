@@ -9,11 +9,12 @@ import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
+import { TextInputComponent } from '@gapp/forms-ui';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent],
+    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent, TextInputComponent],
 })
 export class CarsComponent implements OnInit {
     private carsService = inject(CarsService);
@@ -50,6 +51,7 @@ export class CarsComponent implements OnInit {
 
     public createCar() {
         if (!this.carForm.valid) {
+            console.log('Error')
             this.carForm.markAllAsTouched();
             return;
         }

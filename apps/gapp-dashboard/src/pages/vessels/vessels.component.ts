@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@gapp/ui/modal';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
 import { Vessel, VesselsService, VesselType } from '@/services/vessels.service';
@@ -11,11 +11,12 @@ import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
+import { ErrorClassDirective } from '@gapp/forms-ui';
 
 @Component({
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent, LoaderComponent],
+    imports: [ModalComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective],
     providers: [provideIcons({ tablerTrash, tablerAirBalloon, tablerDrone }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent implements OnInit {
@@ -35,6 +36,10 @@ export class VesselsComponent implements OnInit {
         type: [VesselType.BALLOON],
         description: [null],
     });
+
+    public getControl(controlName: string) {
+        return this.vesselForm.get(controlName) as AbstractControl;
+    }
 
     public ngOnInit() {
         this.loadVessels();

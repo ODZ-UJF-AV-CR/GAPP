@@ -57,10 +57,10 @@
     }
 
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Callsign</legend>
-        <input required type="text" class="input validator w-11/12" formControlName="callsign"/>
-      <p class="fieldset-label">Unique identification of vessel.</p>
-      <p class="validator-hint">Callsign is required.</p>
+        <legend class="fieldset-legend">Callsign</legend>
+        <input [control]="getControl('callsign')" errorClass="input-error" type="text" class="input validator w-11/12" formControlName="callsign" />
+        <p class="fieldset-label">Unique identification of vessel.</p>
+        <p [control]="getControl('callsign')" errorClass="visible" class="text-error hidden">Callsign is required.</p>
     </fieldset>
 
     <div formArrayName="transmitters" class="flex flex-col mb-2 w-11/12">
@@ -82,16 +82,15 @@
 
             <button class="btn btn-primary btn-sm btn-outline w-min mt-2" (click)="addTransmitter()">Add</button>
         </fieldset>
-
     </div>
 
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Vessel type</legend>
-      <select class="select w-11/12" formControlName="type">
-        @for(type of vesselTypes; track $index) {
-        <option>{{ type }}</option>
-        }
-      </select>
+        <legend class="fieldset-legend">Vessel type</legend>
+        <select class="select w-11/12" formControlName="type">
+            @for(type of vesselTypes; track $index) {
+            <option>{{ type }}</option>
+            }
+        </select>
     </fieldset>
 
     <fieldset class="fieldset">

@@ -2,19 +2,19 @@ import { Car, CarsService } from '../../services/cars.service';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalComponent } from '@gapp/ui/modal';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
 import { ApiResponse } from '@/services/api.service.base';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
-import { TextInputComponent } from '@gapp/forms-ui';
+import { ErrorClassDirective } from '@gapp/forms-ui';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent, TextInputComponent],
+    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective],
 })
 export class CarsComponent implements OnInit {
     private carsService = inject(CarsService);
@@ -30,6 +30,9 @@ export class CarsComponent implements OnInit {
         callsign: ['', Validators.required],
         description: [null],
     });
+
+    public readonly carInput = this.carForm.get('callsign') as AbstractControl;
+    public readonly descriptionInput = this.carForm.get('description') as AbstractControl;
 
     public ngOnInit() {
         this.loadCars();

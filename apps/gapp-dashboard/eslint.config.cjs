@@ -24,6 +24,7 @@ module.exports = [
                     style: 'kebab-case',
                 },
             ],
+            '@typescript-eslint/no-non-null-assertion': ['off'],
         },
     },
     {

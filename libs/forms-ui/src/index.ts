@@ -1,1 +1,1 @@
-export * from './lib/text-input/text-input.component';
+export * from './lib/validation/error-class.directive';

@@ -1,7 +1,7 @@
-import { Car, CarsService } from '../../services/cars.service';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Car, CarsService } from '@/services/cars.service';
+import { Component, DestroyRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ModalComponent } from '@gapp/ui/modal';
+import { DialogButton, DialogComponent, DialogDirective } from '@gapp/ui/dialog';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
@@ -10,11 +10,14 @@ import { PageBlockComponent } from '@/components/page-block/page-block.component
 import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
 import { ErrorClassDirective } from '@gapp/forms-ui';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { tablerTrash } from '@ng-icons/tabler-icons';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective],
+    imports: [DialogComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective, NgIcon, DialogDirective],
+    providers: [provideIcons({ tablerTrash })],
 })
 export class CarsComponent implements OnInit {
     private carsService = inject(CarsService);
@@ -22,8 +25,9 @@ export class CarsComponent implements OnInit {
     private toastService = inject(ToastService);
     private destroyRef = inject(DestroyRef);
 
-    public carsSignal = signal<ApiResponse<Car[]>>({ loading: true });
-    public readonly isCarModalOpened = signal(false);
+    private addCarDialog = viewChild.required<DialogComponent>('addCarDialog');
+
+    public readonly carsSignal = signal<ApiResponse<Car[]>>({ loading: true });
     public readonly errorMessage = signal<string | undefined>(undefined);
 
     public readonly carForm = this.formBuilder.group({
@@ -34,22 +38,21 @@ export class CarsComponent implements OnInit {
     public readonly carInput = this.carForm.get('callsign') as AbstractControl;
     public readonly descriptionInput = this.carForm.get('description') as AbstractControl;
 
+    public get modalButton(): DialogButton {
+        return {
+            label: 'Create',
+            style: 'btn-primary',
+            action: () => this.createCar(),
+        };
+    }
+
     public ngOnInit() {
         this.loadCars();
     }
 
-    private loadCars() {
-        this.carsService
-            .getCars$()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((response) => {
-                this.carsSignal.set(response);
-            });
-    }
-
     public openCarModal() {
         this.errorMessage.set(undefined);
-        this.isCarModalOpened.set(true);
+        this.addCarDialog().open();
     }
 
     public createCar() {
@@ -70,7 +73,7 @@ export class CarsComponent implements OnInit {
                     return;
                 }
 
-                this.isCarModalOpened.set(false);
+                this.addCarDialog().close();
                 this.toastService.toast('alert-success', 'Chase car added');
                 this.loadCars();
                 this.carForm.reset();
@@ -86,6 +89,15 @@ export class CarsComponent implements OnInit {
             )
             .subscribe(() => {
                 this.loadCars();
+            });
+    }
+
+    private loadCars() {
+        this.carsService
+            .getCars$()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((response) => {
+                this.carsSignal.set(response);
             });
     }
 }

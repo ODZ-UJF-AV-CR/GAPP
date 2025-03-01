@@ -1,21 +1,25 @@
 <div class="flex flex-col lg:flex-row gap-8 px-4">
     <page-block title="Vessels">
-        <scrollable blockBody class="card bg-base-200 p-4">
-            @for (vessel of availableVessels()?.data; track $index) {
-            <vessel-status-card [vessel]="vessel" [telemetry]="getTelemetry(vessel.transmitters)()"></vessel-status-card>
-            } @empty { @if (availableVessels()?.loading) {
-            <loader></loader>
-            } @else { No data available. } }
+        <scrollable blockBody>
+            <ul class="list bg-base-200 rounded-box">
+                @for (vessel of availableVessels()?.data; track $index) {
+                <vessel-status-card [vessel]="vessel" [telemetry]="getTelemetry(vessel.transmitters)()"></vessel-status-card>
+                } @empty { @if (availableVessels()?.loading) {
+                <loader></loader>
+                } @else { No data available. } }
+            </ul>
         </scrollable>
     </page-block>
 
     <page-block title="Cars">
-        <scrollable blockBody class="card bg-base-200 p-4">
-            @for (car of availableCars()?.data; track $index) {
-            <car-status-card [car]="car" [telemetry]="getTelemetry([car.callsign])()?.[0]"></car-status-card>
-            } @empty { @if (availableCars()?.loading) {
-            <loader></loader>
-            } @else { No data available. } }
+        <scrollable blockBody>
+            <ul class="list bg-base-200 rounded-box">
+                @for (car of availableCars()?.data; track $index) {
+                <car-status-card [car]="car" [telemetry]="getTelemetry([car.callsign])()?.[0]"></car-status-card>
+                } @empty { @if (availableCars()?.loading) {
+                <loader></loader>
+                } @else { No data available. } }
+            </ul>
         </scrollable>
     </page-block>
 </div>

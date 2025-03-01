@@ -1,6 +1,5 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ModalComponent } from '@gapp/ui/modal';
 import { AbstractControl, FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter } from 'rxjs';
 import { ToastService } from '@/services/toast.service';
@@ -12,11 +11,12 @@ import { PageBlockComponent } from '@/components/page-block/page-block.component
 import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
 import { ErrorClassDirective } from '@gapp/forms-ui';
+import { DialogButton, DialogComponent, DialogDirective } from '@gapp/ui/dialog';
 
 @Component({
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
-    imports: [ModalComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective],
+    imports: [DialogComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective, DialogDirective],
     providers: [provideIcons({ tablerTrash, tablerAirBalloon, tablerDrone }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent implements OnInit {
@@ -25,8 +25,9 @@ export class VesselsComponent implements OnInit {
     private toastService = inject(ToastService);
     private destroyRef = inject(DestroyRef);
 
+    private addVesselDialog = viewChild.required<DialogComponent>('addVesselDialog');
+
     public vesselsSignal = signal<ApiResponse<Vessel[]>>({ loading: true });
-    public readonly isVesselModalOpened = signal(false);
     public readonly errorMessage = signal<string | undefined>(undefined);
     public readonly vesselTypes = Object.values(VesselType);
 
@@ -36,6 +37,14 @@ export class VesselsComponent implements OnInit {
         type: [VesselType.BALLOON, Validators.required],
         description: [null],
     });
+
+    public get modalButton(): DialogButton {
+        return {
+            label: 'Create',
+            style: 'btn-primary',
+            action: () => this.createVessel(),
+        };
+    }
 
     public getControl(controlName: string) {
         return this.vesselForm.get(controlName) as AbstractControl;
@@ -77,7 +86,7 @@ export class VesselsComponent implements OnInit {
 
     public openCarModal() {
         this.errorMessage.set(undefined);
-        this.isVesselModalOpened.set(true);
+        this.addVesselDialog().open();
     }
 
     public createVessel() {
@@ -103,7 +112,7 @@ export class VesselsComponent implements OnInit {
                     return;
                 }
 
-                this.isVesselModalOpened.set(false);
+                this.addVesselDialog().close();
                 this.toastService.toast('alert-success', `Vessel added`);
                 this.loadVessels();
                 this.vesselForm.reset();

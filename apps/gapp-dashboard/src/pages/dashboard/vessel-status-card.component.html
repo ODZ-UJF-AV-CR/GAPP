@@ -1,4 +1,20 @@
-<div tabindex="0" class="collapse collapse-arrow bg-base-200">
+<li class="list-row">
+    <div class="font-bold">
+        {{ vessel()?.callsign }}
+    </div>
+
+    <div></div>
+
+    <div>
+        @if(lastContact(); as lastContact) {
+        <time-ago-badge [date]="lastContact._time"></time-ago-badge>
+        } @else {
+        <span class="badge badge-ghost badge-outline">Not connected</span>
+        }
+    </div>
+</li>
+
+<!-- <div tabindex="0" class="collapse collapse-arrow bg-base-200">
     <input type="checkbox" />
     <div class="collapse-title flex flex-row justify-between">
         <div class="font-bold">
@@ -37,4 +53,4 @@
             }
         </div>
     </div>
-</div>
+</div> -->

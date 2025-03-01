@@ -8,33 +8,33 @@
         <loader></loader>
         } @else {
         <scrollable>
-            @for(car of carsSignal().data; track car._id) {
-            <div class="collapse collapse-arrow bg-base-200">
-                <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">{{ car.callsign }}</div>
-                <div class="collapse-content">
-                    <p>{{ car?.description }}</p>
-                    <div class="flex justify-end">
-                        <button class="btn btn-error btn-sm" (click)="deleteCar(car._id)">Remove</button>
+            <ul class="list bg-base-200 rounded-box">
+                @for(car of carsSignal().data; track car._id) {
+                <li class="list-row hover:bg-base-300">
+                    <div>
+                        <div class="font-semibold">{{ car.callsign }}</div>
+                        <div class="text-xs font-semibold opacity-60">{{ car?.description }}</div>
                     </div>
-                </div>
-            </div>
-            } @empty {
-            <p class="text-center">No chase cars yet.</p>
-            }
+                    <div></div>
+                    <button
+                        [dialog]="'Delete car'"
+                        content="Are you sure you want to delete {{ car.callsign }} car?"
+                        (dialogResolved)="deleteCar(car._id)"
+                        class="btn btn-sm btn-ghost"
+                    >
+                        <ng-icon name="tablerTrash" size="1.2rem"></ng-icon>
+                    </button>
+                </li>
+                } @empty {
+                <p class="text-center">No chase cars yet.</p>
+                }
+            </ul>
         </scrollable>
         }
     </ng-container>
 </page-block>
 
-<gapp-modal
-    title="Add new chase car"
-    [isOpen]="isCarModalOpened()"
-    (closed)="isCarModalOpened.set(false)"
-    action="Create"
-    [formGroup]="carForm"
-    (actionUsed)="createCar()"
->
+<gapp-dialog #addCarDialog title="Add new car" [formGroup]="carForm" [buttons]="[modalButton]">
     @if(errorMessage(); as error) {
     <div role="alert" class="alert alert-error">
         <span>{{ error }}</span>
@@ -53,4 +53,4 @@
         <textarea class="textarea h-24 w-11/12" formControlName="description"></textarea>
         <div class="fieldset-label">Car type, crew...</div>
     </fieldset>
-</gapp-modal>
+</gapp-dialog>

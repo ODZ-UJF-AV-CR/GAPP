@@ -2,15 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TelemetryStatus } from './dashboard.service';
 import { Vessel } from '@/services/vessels.service';
 import { TimeAgoBadgeComponent } from '@/components/time-ago-badge/time-ago-badge.component';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { tablerExternalLink } from '@ng-icons/tabler-icons';
 
 @Component({
     selector: 'vessel-status-card',
     templateUrl: './vessel-status-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TimeAgoBadgeComponent, NgIcon],
-    providers: [provideIcons({ tablerExternalLink })],
+    imports: [TimeAgoBadgeComponent],
+    // providers: [provideIcons({ tablerExternalLink })],
 })
 export class VesselStatusCardComponent {
     public vessel = input<Vessel>();

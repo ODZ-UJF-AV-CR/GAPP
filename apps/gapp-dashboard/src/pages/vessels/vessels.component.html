@@ -8,48 +8,39 @@
         <loader></loader>
         } @else {
         <scrollable>
-            @for(vessel of vesselsSignal().data; track vessel._id) {
-            <div class="collapse collapse-arrow bg-base-200">
-                <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">
-                    @if(vessel.type === 'balloon') {
-                    <ng-icon name="tablerAirBalloon" size="1.2rem"></ng-icon>
-                    } @else if(vessel.type === 'uav') {
-                    <ng-icon name="tablerDrone" size="1.2rem"></ng-icon>
-                    }
-                    {{ vessel.callsign }}
-                </div>
-                <div class="collapse-content">
-                    <ul class="list-disc list-inside mb-2">
-                        @for(transmitter of vessel.transmitters; track $index) {
-                        <li>{{ transmitter }}</li>
+            <ul class="list bg-base-200 rounded-box">
+                @for(vessel of vesselsSignal().data; track vessel._id) {
+                <li class="list-row hover:bg-base-300">
+                    <div class="flex items-center">
+                        @if(vessel.type === 'balloon') {
+                        <ng-icon name="tablerAirBalloon" size="1.6rem"></ng-icon>
+                        } @else if(vessel.type === 'uav') {
+                        <ng-icon name="tablerDrone" size="1.6rem"></ng-icon>
                         }
-                    </ul>
-
-                    <p>{{ vessel?.description }}</p>
-
-                    <div class="flex justify-end">
-                        <button class="btn btn-error btn-sm" (click)="deleteVessel(vessel._id)">Remove</button>
                     </div>
-                </div>
-            </div>
-            } @empty {
-            <p class="text-center">No vessels yet.</p>
-            }
+                    <div>
+                        <div class="font-semibold">{{ vessel.callsign }}</div>
+                        <div class="text-xs font-semibold opacity-60">{{ vessel?.description }}</div>
+                    </div>
+                    <button
+                        [dialog]="'Delete vessel'"
+                        content="Are you sure you want to delete {{ vessel.callsign }} vessel?"
+                        (dialogResolved)="deleteVessel(vessel._id)"
+                        class="btn btn-sm btn-ghost"
+                    >
+                        <ng-icon name="tablerTrash" size="1.2rem"></ng-icon>
+                    </button>
+                </li>
+                } @empty {
+                <p class="text-center">No vessels yet.</p>
+                }
+            </ul>
         </scrollable>
         }
     </ng-container>
 </page-block>
 
-<gapp-modal
-    title="Add new mission vessel"
-    action="Create"
-    [isOpen]="isVesselModalOpened()"
-    [formGroup]="vesselForm"
-    [width]="'w-full'"
-    (closed)="isVesselModalOpened.set(false)"
-    (actionUsed)="createVessel()"
->
+<gapp-dialog #addVesselDialog title="Add new mission vessel" [formGroup]="vesselForm" [buttons]="[modalButton]">
     @if(errorMessage()) {
     <div role="alert" class="alert alert-error">
         <span>{{ errorMessage() }}</span>
@@ -99,4 +90,4 @@
         <textarea class="textarea h-24 w-11/12" formControlName="description"></textarea>
         <div class="fieldset-label">Vessel type, mission goal...</div>
     </fieldset>
-</gapp-modal>
+</gapp-dialog>

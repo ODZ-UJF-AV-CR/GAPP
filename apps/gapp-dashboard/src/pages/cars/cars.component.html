@@ -17,7 +17,7 @@
                     </div>
                     <div></div>
                     <button
-                        [dialog]="'Delete car'"
+                        [dialog]="'Delete car?'"
                         content="Are you sure you want to delete {{ car.callsign }} car?"
                         (dialogResolved)="deleteCar(car._id)"
                         class="btn btn-sm btn-ghost"

@@ -28,7 +28,7 @@ export class DashboardComponent {
 
     public getTelemetry(callsigns: string[]) {
         return computed(() => {
-            return this.telemetry()?.filter((t) => callsigns.includes(t.callsign));
+            return this.telemetry()?.filter((t) => callsigns.includes(t.callsign)) || [];
         });
     }
 }

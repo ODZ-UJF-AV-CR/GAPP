@@ -23,7 +23,7 @@
                         <div class="text-xs font-semibold opacity-60">{{ vessel?.description }}</div>
                     </div>
                     <button
-                        [dialog]="'Delete vessel'"
+                        [dialog]="'Delete vessel?'"
                         content="Are you sure you want to delete {{ vessel.callsign }} vessel?"
                         (dialogResolved)="deleteVessel(vessel._id)"
                         class="btn btn-sm btn-ghost"

@@ -1,6 +1,6 @@
-<li class="list-row">
+<li class="list-row hover:bg-base-300 cursor-pointer" (click)="detail.open()">
     <div class="font-bold">
-        {{ vessel()?.callsign }}
+        {{ vessel().callsign }}
     </div>
 
     <div></div>
@@ -14,43 +14,38 @@
     </div>
 </li>
 
-<!-- <div tabindex="0" class="collapse collapse-arrow bg-base-200">
-    <input type="checkbox" />
-    <div class="collapse-title flex flex-row justify-between">
-        <div class="font-bold">
-            {{ vessel()?.callsign }}
-        </div>
+<gapp-dialog
+    #detail
+    [title]="vessel().callsign"
+>
+    <div class="flex flex-col gap-6">
         <div>
-            @if(lastContact(); as lastContact) {
-            <time-ago-badge [date]="lastContact._time"></time-ago-badge>
-            } @else {
-            <span class="badge badge-ghost badge-outline">Not connected</span>
-            }
+            <p>{{ vessel().description }}</p>
         </div>
-    </div>
 
-    <div class="collapse-content">
-        <div class="flex flex-col gap-2 border-l-2 border-neutral pl-2">
-            @for(transmitter of vessel()?.transmitters; track $index) {
-            <div class="flex flex-row justify-between py-2">
-                <div class="flex flex-row gap-3">
-                    <div>{{ transmitter }}</div>
-                    <div>
-                        @if(getTransmitterTelemetry(transmitter)()?._time; as time) {
-                        <time-ago-badge [date]="time"></time-ago-badge>
-                        } @else {
-                        <span class="badge badge-ghost badge-outline">Not connected</span>
-                        }
-                    </div>
+        <ul class="list bg-base-200 rounded-box">
+            @for(transmitter of vessel().transmitters; track $index) {
+            <li class="list-row">
+                <div class="font-bold text-lg">
+                    {{ transmitter }}
                 </div>
+
+                <div>
+                    @if(getTransmitterTelemetry(transmitter)()?._time; as time) {
+                    <time-ago-badge [date]="time"></time-ago-badge>
+                    } @else {
+                    <span class="badge badge-ghost badge-outline">Not connected</span>
+                    }
+                </div>
+
                 <div>
                     <a class="btn btn-xs btn-info" href="https://amateur.sondehub.org/{{ vessel()?.callsign }}" target="_blank">
                         SondeHub
                         <ng-icon name="tablerExternalLink"></ng-icon>
                     </a>
                 </div>
-            </div>
+            </li>
             }
-        </div>
+        </ul>
     </div>
-</div> -->
+</gapp-dialog>

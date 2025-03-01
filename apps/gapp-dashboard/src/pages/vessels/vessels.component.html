@@ -43,12 +43,12 @@
 
 <gapp-modal
     title="Add new mission vessel"
-    [isOpen]="isVesselModalOpened()"
-    (closed)="isVesselModalOpened.set(false)"
     action="Create"
+    [isOpen]="isVesselModalOpened()"
     [formGroup]="vesselForm"
-    (actionUsed)="createVessel()"
     [width]="'w-full'"
+    (closed)="isVesselModalOpened.set(false)"
+    (actionUsed)="createVessel()"
 >
     @if(errorMessage()) {
     <div role="alert" class="alert alert-error">
@@ -58,18 +58,18 @@
 
     <fieldset class="fieldset">
         <legend class="fieldset-legend">Callsign</legend>
-        <input [control]="getControl('callsign')" errorClass="input-error" type="text" class="input validator w-11/12" formControlName="callsign" />
+        <input [control]="getControl('callsign')" errorClass="input-error" type="text" class="input w-11/12" formControlName="callsign" />
         <p class="fieldset-label">Unique identification of vessel.</p>
-        <p [control]="getControl('callsign')" errorClass="visible" class="text-error hidden">Callsign is required.</p>
+        <p [control]="getControl('callsign')" errorClass="visible" class="text-error invisible">Callsign is required.</p>
     </fieldset>
 
     <div formArrayName="transmitters" class="flex flex-col mb-2 w-11/12">
-        <fieldset class="fieldset bg-base-200 border border-base-300 p-4 rounded-box">
+        <fieldset class="fieldset">
             <legend class="fieldset-legend">Transmitter callsigns</legend>
 
             @for(control of transmitters.controls; track control.value.id; let index = $index) {
             <div class="join mb-2" [formGroupName]="index">
-                <input class="input input-bordered input-sm join-item w-3/4" name="transmitter" type="text" formControlName="transmitter" />
+                <input class="input input-bordered input-sm join-item w-3/4" type="text" formControlName="transmitter" />
                 <button class="btn btn-error join-item btn-sm btn-outline" (click)="removeTransmitter(index)" [disabled]="transmitters.length === 1">
                     <ng-icon name="tablerTrash"></ng-icon>
                 </button>
@@ -77,7 +77,7 @@
             }
 
             <div class="label">
-                <span [hidden]="!hasError('transmitters')" class="label-text-alt validator-hint">At least one transmitter is required</span>
+                <span [control]="getControl('transmitters')" errorClass="visible" class="text-error invisible">At least one transmitter is required</span>
             </div>
 
             <button class="btn btn-primary btn-sm btn-outline w-min mt-2" (click)="addTransmitter()">Add</button>
@@ -86,11 +86,12 @@
 
     <fieldset class="fieldset">
         <legend class="fieldset-legend">Vessel type</legend>
-        <select class="select w-11/12" formControlName="type">
+        <select [control]="getControl('type')" errorClass="select-error" class="select w-11/12" formControlName="type">
             @for(type of vesselTypes; track $index) {
             <option>{{ type }}</option>
             }
         </select>
+        <span [control]="getControl('type')" errorClass="visible" class="text-error invisible">Please select a vessel type.</span>
     </fieldset>
 
     <fieldset class="fieldset">

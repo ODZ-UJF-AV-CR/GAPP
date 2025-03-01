@@ -31,9 +31,9 @@ export class VesselsComponent implements OnInit {
     public readonly vesselTypes = Object.values(VesselType);
 
     public readonly vesselForm = this.formBuilder.group({
-        callsign: ['', Validators.required],
+        callsign: ['', [Validators.required, Validators.minLength(1)]],
         transmitters: this.formBuilder.array([this.getTransmitterControl()], Validators.required),
-        type: [VesselType.BALLOON],
+        type: [VesselType.BALLOON, Validators.required],
         description: [null],
     });
 
@@ -61,7 +61,7 @@ export class VesselsComponent implements OnInit {
     private getTransmitterControl() {
         return this.formBuilder.group({
             id: Date.now(),
-            transmitter: ['', Validators.required],
+            transmitter: ['', [Validators.required, Validators.minLength(1)]],
         });
     }
 

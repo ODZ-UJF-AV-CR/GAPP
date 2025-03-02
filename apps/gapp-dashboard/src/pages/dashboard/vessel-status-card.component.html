@@ -39,7 +39,7 @@
                 </div>
 
                 <div>
-@if(getTransmitterTelemetry(transmitter)()?._time {
+@if(getTransmitterTelemetry(transmitter)()?._time) {
                     <a class="btn btn-xs btn-info" href="https://amateur.sondehub.org/{{ transmitter }}" target="_blank">
                         SondeHub
                         <ng-icon name="tablerExternalLink"></ng-icon>

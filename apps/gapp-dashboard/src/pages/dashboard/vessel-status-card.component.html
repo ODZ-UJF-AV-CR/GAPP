@@ -14,10 +14,7 @@
     </div>
 </li>
 
-<gapp-dialog
-    #detail
-    [title]="vessel().callsign"
->
+<gapp-dialog #detail [title]="vessel().callsign">
     <div class="flex flex-col gap-6">
         <div>
             <p>{{ vessel().description }}</p>
@@ -39,11 +36,11 @@
                 </div>
 
                 <div>
-@if(getTransmitterTelemetry(transmitter)()?._time) {
+                    @if(getTransmitterTelemetry(transmitter)()?._time) {
                     <a class="btn btn-xs btn-info" href="https://amateur.sondehub.org/{{ transmitter }}" target="_blank">
                         SondeHub
-                        <ng-icon name="tablerExternalLink"></ng-icon>
-                    </a>}
+                        <ng-icon name="tablerExternalLink"></ng-icon> </a
+                    >}
                 </div>
             </li>
             }

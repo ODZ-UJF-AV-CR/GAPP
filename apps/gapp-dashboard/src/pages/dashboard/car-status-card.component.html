@@ -1,6 +1,6 @@
-<li class="list-row">
+<li class="list-row hover:bg-base-300 cursor-pointer" (click)="detail.open()">
     <div class="font-bold">
-        {{ car()?.callsign }}
+        {{ car().callsign }}
     </div>
 
     <div></div>
@@ -14,32 +14,26 @@
     </div>
 </li>
 
-<!--
-<div tabindex="0" class="collapse collapse-arrow bg-base-200">
-    <input type="checkbox" />
-    <div class="collapse-title flex flex-row justify-between">
-        <div class="font-bold">
-            {{ car()?.callsign }}
-        </div>
-
+<gapp-dialog #detail [title]="car().callsign">
+    <div class="flex flex-col gap-6">
         <div>
-            @if(telemetry(); as telemetry) {
-            <time-ago-badge [date]="telemetry._time"></time-ago-badge>
-            } @else {
-            <span class="badge badge-ghost badge-outline">Not connected</span>
-            }
+            <p>{{ car().description }}</p>
         </div>
-    </div>
 
-    <div class="collapse-content">
-        <div class="flex flex-col gap-2 border-l-2 border-neutral pl-2">
-            <span>{{ car()?.description }}</span>
-            <span>
-                <a class="btn btn-sm btn-info whitespace-nowrap" href="https://amateur.sondehub.org/{{ car()?.callsign }}_chase" target="_blank">
-                    SondeHub
-                    <ng-icon name="tablerExternalLink"></ng-icon>
-                </a>
-            </span>
+        <div class="flex justify-between">
+            <div>
+                @if(telemetry()?._time; as time) {
+                <time-ago-badge [date]="time"></time-ago-badge>
+                } @else {
+                <span class="badge badge-ghost badge-outline">Not connected</span>
+                }
+            </div>
+
+            @if(telemetry()?._time) {
+            <a class="btn btn-xs btn-info" href="https://amateur.sondehub.org/{{ car().callsign }}" target="_blank">
+                SondeHub
+                <ng-icon name="tablerExternalLink"></ng-icon> </a
+            >}
         </div>
     </div>
-</div> -->
+</gapp-dialog>

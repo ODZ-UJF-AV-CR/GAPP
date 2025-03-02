@@ -9,7 +9,7 @@ import { interval, map, merge } from 'rxjs';
 @Component({
     selector: 'time-ago-badge',
     template: `
-        <span [class-range]="options" [value]="secondsAgo$ | async" class="badge badge-outline">
+        <span [class-range]="options" [value]="secondsAgo$ | async" class="badge">
             <time-ago [date]="date()"></time-ago>
         </span>
     `,

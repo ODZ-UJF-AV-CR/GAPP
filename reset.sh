@@ -3,4 +3,4 @@ rm -rfv .angular
 rm -rfv dist
 rm -rfv tmp
 
-npm ci
+pnpm install --frozen-lockfile

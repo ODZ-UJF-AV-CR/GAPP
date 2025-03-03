@@ -4,13 +4,21 @@
 
 1. You need to use NodeJS version `v22.13.1` or newer or use `nvm use` to switch to the correct version.
 
-2. Instal dependencies by running `npm install`
+2. Since we are using [PNPM](https://pnpm.io/), you need to install corepack:
 
-3. Run dependencies by `docker compose up -d`.
+```bash
+npm install -g corepack0.32.0
 
-4. To develop dashboard, run `npm run dashboard:dev`
+corepack enable
+```
 
-5. To develop server, run `npm run server:dev`
+3. Install dependencies by running `pnpm install`
+
+4. Run dependencies by `docker compose up -d`.
+
+5. To develop dashboard, run `pnpm run dashboard:dev`
+
+6. To develop server, run `pnpm run server:dev`
 
 ## API Documentation
 

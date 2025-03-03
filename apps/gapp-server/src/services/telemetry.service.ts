@@ -17,7 +17,6 @@ export class TelemetryService extends InfluxDbServiceBase {
     private readonly bucketName = 'telemetry';
     private writeApi: WriteApi;
     private queryAPi: QueryApi;
-    private timer: NodeJS.Timer;
     private vesselsCollection: Collection<Vessel>;
     private carsCollection: Collection<Car>;
 
@@ -39,7 +38,6 @@ export class TelemetryService extends InfluxDbServiceBase {
     }
 
     public async deinit() {
-        clearInterval(this.timer);
         await this.writeApi.close();
     }
 

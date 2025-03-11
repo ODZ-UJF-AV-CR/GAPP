@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { booleanAttribute, Component, effect, ElementRef, Input, input, output, Signal, signal, viewChild } from '@angular/core';
+import { TextLimitDirective } from '../utils';
 
 export interface DialogButton {
     label: string;
@@ -10,7 +11,7 @@ export interface DialogButton {
 @Component({
     selector: 'gapp-dialog',
     templateUrl: './dialog.component.html',
-    imports: [NgClass],
+    imports: [NgClass, TextLimitDirective],
 })
 export class DialogComponent {
     private readonly modalRef = viewChild.required<ElementRef<HTMLDialogElement>>('modal');

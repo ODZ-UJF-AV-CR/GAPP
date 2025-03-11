@@ -5,12 +5,13 @@ import { TimeAgoBadgeComponent } from '@/components/time-ago-badge/time-ago-badg
 import { DialogComponent } from '@gapp/ui/dialog';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerExternalLink } from '@ng-icons/tabler-icons';
+import { TextLimitDirective } from '@gapp/ui/utils';
 
 @Component({
     selector: 'car-status-card',
     templateUrl: './car-status-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TimeAgoBadgeComponent, DialogComponent, NgIcon],
+    imports: [TimeAgoBadgeComponent, DialogComponent, NgIcon, TextLimitDirective],
     providers: [provideIcons({ tablerExternalLink })],
 })
 export class CarStatusCardComponent {

@@ -10,7 +10,7 @@
         <scrollable>
             <ul class="list bg-base-200 rounded-box">
                 @for(vessel of vesselsSignal().data; track vessel._id) {
-                <li class="list-row hover:bg-base-300">
+                <li class="list-row">
                     <div class="flex items-center">
                         @if(vessel.type === 'balloon') {
                         <ng-icon name="tablerAirBalloon" size="1.6rem"></ng-icon>
@@ -19,17 +19,19 @@
                         }
                     </div>
                     <div>
-                        <div class="font-semibold">{{ vessel.callsign }}</div>
-                        <div class="text-xs font-semibold opacity-60">{{ vessel?.description }}</div>
+                        <div textLimit="1" class="font-semibold">{{ vessel.callsign }}</div>
+                        <div textLimit="2" class="text-xs font-semibold opacity-60">{{ vessel?.description }}</div>
                     </div>
-                    <button
-                        [dialog]="'Delete vessel?'"
-                        content="Are you sure you want to delete {{ vessel.callsign }} vessel?"
-                        (dialogResolved)="deleteVessel(vessel._id)"
-                        class="btn btn-sm btn-ghost"
-                    >
-                        <ng-icon name="tablerTrash" size="1.2rem"></ng-icon>
-                    </button>
+                    <div class="flex items-center">
+                        <button
+                            [dialog]="'Delete vessel?'"
+                            content="Are you sure you want to delete {{ vessel.callsign }} vessel?"
+                            (dialogResolved)="deleteVessel(vessel._id)"
+                            class="btn btn-sm btn-ghost"
+                        >
+                            <ng-icon name="tablerTrash" size="1.2rem"></ng-icon>
+                        </button>
+                    </div>
                 </li>
                 } @empty {
                 <p class="text-center">No vessels yet.</p>

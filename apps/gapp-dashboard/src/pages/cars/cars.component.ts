@@ -12,11 +12,22 @@ import { LoaderComponent } from '@gapp/ui/loader';
 import { ErrorClassDirective } from '@gapp/forms-ui';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
+import { TextLimitDirective } from '@gapp/ui/utils';
 
 @Component({
     selector: 'gapp-cars',
     templateUrl: './cars.component.html',
-    imports: [DialogComponent, ReactiveFormsModule, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective, NgIcon, DialogDirective],
+    imports: [
+        DialogComponent,
+        ReactiveFormsModule,
+        PageBlockComponent,
+        ScrollableComponent,
+        LoaderComponent,
+        ErrorClassDirective,
+        NgIcon,
+        DialogDirective,
+        TextLimitDirective,
+    ],
     providers: [provideIcons({ tablerTrash })],
 })
 export class CarsComponent implements OnInit {

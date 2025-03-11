@@ -10,20 +10,22 @@
         <scrollable>
             <ul class="list bg-base-200 rounded-box">
                 @for(car of carsSignal().data; track car._id) {
-                <li class="list-row hover:bg-base-300">
-                    <div>
-                        <div class="font-semibold">{{ car.callsign }}</div>
-                        <div class="text-xs font-semibold opacity-60">{{ car?.description }}</div>
+                <li class="list-row">
+                    <div class="flex flex-col gap-4">
+                        <div textLimit="1" class="font-semibold">{{ car.callsign }}</div>
+                        <div textLimit="2" class="text-xs font-semibold opacity-60">{{ car?.description }}</div>
                     </div>
                     <div></div>
-                    <button
-                        [dialog]="'Delete car?'"
-                        content="Are you sure you want to delete {{ car.callsign }} car?"
-                        (dialogResolved)="deleteCar(car._id)"
-                        class="btn btn-sm btn-ghost"
-                    >
-                        <ng-icon name="tablerTrash" size="1.2rem"></ng-icon>
-                    </button>
+                    <div class="flex items-center">
+                        <button
+                            [dialog]="'Delete car?'"
+                            content="Are you sure you want to delete {{ car.callsign }} car?"
+                            (dialogResolved)="deleteCar(car._id)"
+                            class="btn btn-sm btn-ghost"
+                        >
+                            <ng-icon name="tablerTrash" size="1.2rem"></ng-icon>
+                        </button>
+                    </div>
                 </li>
                 } @empty {
                 <p class="text-center">No chase cars yet.</p>

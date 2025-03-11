@@ -1,5 +1,4 @@
-import { ClassRangeDirective, ClassRangeOptions } from '@/utils/class-range.directive';
-import { timeDifference } from '@/utils/time-difference';
+import { ClassRangeDirective, ClassRangeOptions, timeDifference } from '@gapp/ui/utils';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';

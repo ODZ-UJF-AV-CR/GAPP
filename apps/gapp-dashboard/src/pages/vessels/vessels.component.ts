@@ -12,11 +12,22 @@ import { ScrollableComponent } from '@gapp/ui/scrollable';
 import { LoaderComponent } from '@gapp/ui/loader';
 import { ErrorClassDirective } from '@gapp/forms-ui';
 import { DialogButton, DialogComponent, DialogDirective } from '@gapp/ui/dialog';
+import { TextLimitDirective } from '@gapp/ui/utils';
 
 @Component({
     selector: 'gapp-vessels',
     templateUrl: './vessels.component.html',
-    imports: [DialogComponent, ReactiveFormsModule, NgIcon, PageBlockComponent, ScrollableComponent, LoaderComponent, ErrorClassDirective, DialogDirective],
+    imports: [
+        DialogComponent,
+        ReactiveFormsModule,
+        NgIcon,
+        PageBlockComponent,
+        ScrollableComponent,
+        LoaderComponent,
+        ErrorClassDirective,
+        DialogDirective,
+        TextLimitDirective,
+    ],
     providers: [provideIcons({ tablerTrash, tablerAirBalloon, tablerDrone }), provideNgIconsConfig({ size: '1rem' })],
 })
 export class VesselsComponent implements OnInit {

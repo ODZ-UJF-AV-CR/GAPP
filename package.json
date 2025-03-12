@@ -10,7 +10,8 @@
         "server:dev": "nx serve gapp-server | pino-pretty",
         "server:build": "nx build gapp-server",
         "format": "nx format:write",
-        "server:start": "node dist/apps/gapp-server/main.js"
+        "server:start": "node dist/apps/gapp-server/main.js",
+        "create-migration": "kysely migrate:make -x ts"
     },
     "private": true,
     "dependencies": {
@@ -85,6 +86,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-environment-node": "^29.7.0",
         "jest-preset-angular": "~14.4.0",
+        "kysely-ctl": "^0.12.1",
         "nx": "20.4.6",
         "pino-pretty": "^13.0.0",
         "postcss": "^8.4.5",

@@ -5,20 +5,20 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { carsController } from './controllers/cars.controller';
 import sondehubPlugin from './plugins/sondehub';
+import postgresDbPlugin from './plugins/postgresdb';
 import { vesselsController } from './controllers/vessels.controller';
-import mongoDbPlugin from './plugins/mongodb';
 import { telemetryController } from './controllers/telemetry.controller';
 import servicesPlugin from './plugins/services';
 import eventBusPlugin from './plugins/event-bus';
 import abortControllerPlugin from './plugins/abort-controller';
-import cors from '@fastify/cors'
+import cors from '@fastify/cors';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
     influxDbHost: string;
     influxDbOrg: string;
 
-    mongoDbUri: string;
+    postgresDbUri: string;
 
     isDevelopment: boolean;
 }
@@ -28,7 +28,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     fastify.register(Sensible);
     fastify.register(eventBusPlugin);
     fastify.register(cors, {
-        origin: '*'
+        origin: '*',
     });
 
     // PLUGINS
@@ -37,7 +37,8 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         token: opts.influxDbToken,
         org: opts.influxDbOrg,
     });
-    await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
+    await fastify.register(postgresDbPlugin, { uri: opts.postgresDbUri });
+    // await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(abortControllerPlugin);
     await fastify.register(servicesPlugin);

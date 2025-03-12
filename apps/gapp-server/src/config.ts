@@ -12,6 +12,7 @@ const envSchema = {
     INFLUXDB_ORG: str({ desc: 'Influx db organization', default: 'flight' }),
 
     MONGODB_URI: url({ desc: 'Mongo db uri', devDefault: 'mongodb://fik:tajne-heslo@localhost:27018/' }),
+    POSTGRESDB_URI: url({ desc: 'Postgres db uri', devDefault: 'postgresql://postgres:password@localhost:5434/gapp' }),
 };
 
 export const getConfig = (configObject: object) => {

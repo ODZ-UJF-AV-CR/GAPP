@@ -54,6 +54,7 @@ const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify
         fastify.log.info('Connected to InfluxDB');
     } catch (err) {
         fastify.log.fatal(err, 'Failed to connect to InfluxDB');
+        process.exit(1);
     }
 };
 

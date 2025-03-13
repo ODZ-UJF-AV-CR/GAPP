@@ -6,6 +6,7 @@ export interface Car {
     description?: string;
 }
 
+/** @deprecated */
 export class CarsService {
     private carsCollection: Collection<Car>;
 

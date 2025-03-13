@@ -13,6 +13,7 @@ export interface Vessel {
     description?: string;
 }
 
+/** @deprecated */
 export class VesselsService {
     private vesselsCollection: Collection<Vessel>;
 

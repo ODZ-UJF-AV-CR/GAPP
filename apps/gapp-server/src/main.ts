@@ -16,6 +16,7 @@ server.register(app, {
     influxDbOrg: config.INFLUXDB_ORG,
     isDevelopment: config.isDevelopment,
     postgresDbUri: config.POSTGRESDB_URI,
+    mongoDbUri: config.MONGODB_URI,
 });
 
 if (config.isProd) {

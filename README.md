@@ -1,6 +1,15 @@
 # GAPP
 
+### ⚠️ WARNING - DEVELOPMENT IN PROGRESS ⚠️
+> **CAUTION**: This repository is still under active development!
+> - The app is not stable yet
+> - Breaking changes may be introduced in future releases
+> - Data loss may occur during updates
+> - Please backup your data before updating
+
+
 This is ground application for managing high altitude balloons flights. It works with [amateur.sondehub.org](https://amateur.sondehub.org/).
+
 
 ## Run using docker compose
 

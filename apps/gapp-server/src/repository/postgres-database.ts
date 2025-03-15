@@ -11,6 +11,7 @@ export type DatabaseInstance = Kysely<Database>;
 export interface VehicleTable {
     id: Generated<number>;
     callsign: ColumnType<string, string, never>;
+    description: ColumnType<string | undefined>;
     created_at: ColumnType<Date, string, never>;
     deleted_at: ColumnType<Date | undefined, never, Date>;
     type: ColumnType<number>;

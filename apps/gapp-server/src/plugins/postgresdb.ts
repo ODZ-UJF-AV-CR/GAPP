@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fasti
 import fp from 'fastify-plugin';
 import { Plugins } from './plugins';
 import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from 'kysely';
-import { Database } from '../repository/database';
+import { Database } from '../repository/postgres-database';
 import { Pool } from 'pg';
 import * as path from 'path';
 import { promises as fs } from 'fs';

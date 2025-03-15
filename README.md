@@ -77,7 +77,7 @@ services:
 
 Or you can check out [compose.example.yml](./compose.example.yml)
 
-> **NOTE: ** If you can’t pull from ghcr.io, simply just run `docker logout ghcr.io`
+> **NOTE**: If you can’t pull from ghcr.io, simply just run `docker logout ghcr.io`
 
 ## Local development
 

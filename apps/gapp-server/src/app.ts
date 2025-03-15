@@ -3,16 +3,15 @@ import Sensible from '@fastify/sensible';
 import influxDbPlugin from './plugins/influxdb';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import { carsController } from './controllers/cars.controller';
 import sondehubPlugin from './plugins/sondehub';
 import postgresDbPlugin from './plugins/postgresdb';
 import mongoDbPlugin from './plugins/mongodb';
-import { vesselsController } from './controllers/vessels.controller';
-import { telemetryController } from './controllers/telemetry.controller';
+import repositoriesPlugin from './plugins/repositories';
 import servicesPlugin from './plugins/services';
 import eventBusPlugin from './plugins/event-bus';
 import abortControllerPlugin from './plugins/abort-controller';
 import cors from '@fastify/cors';
+import { telemetryController, vehicleController } from './controllers';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
@@ -43,6 +42,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(abortControllerPlugin);
+    await fastify.register(repositoriesPlugin);
     await fastify.register(servicesPlugin);
 
     await fastify.register(swagger, {
@@ -53,8 +53,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
                 description: 'API Docs for ground app',
             },
             tags: [
-                { name: 'cars', description: 'Chase cars API' },
-                { name: 'vessel', description: 'API for vessels (Balloons, UAVs)' },
+                { name: 'vehicle', description: 'API for vehicles (Cars, Vessels, Balloons, etc.)' },
                 { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
             ],
         },
@@ -69,9 +68,8 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     // ROUTES
     fastify.register(
         async (fastify) => {
-            fastify.register(carsController, { prefix: '/cars' });
-            fastify.register(vesselsController, { prefix: '/vessels' });
             fastify.register(telemetryController, { prefix: '/telemetry' });
+            fastify.register(vehicleController, { prefix: '/vehicles' });
         },
         { prefix: '/api' }
     );

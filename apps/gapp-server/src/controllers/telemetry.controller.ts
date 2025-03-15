@@ -21,9 +21,9 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         async (req, rep) => {
             const telemetryPacket = ttnPacketDto(req.body);
 
-            if (!(await req.server.vesselsService.ensureCallsign(telemetryPacket.payload_callsign))) {
-                return rep.unprocessableEntity(`Callsign ${telemetryPacket.payload_callsign} does not exist`);
-            }
+            // if (!(await req.server.vesselsService.ensureCallsign(telemetryPacket.payload_callsign))) {
+            //     return rep.unprocessableEntity(`Callsign ${telemetryPacket.payload_callsign} does not exist`);
+            // }
 
             req.server.telemetryService.writeVesselLocation(telemetryPacket);
             req.server.sondehub.addTelemetry(telemetryPacket);
@@ -43,9 +43,9 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            if (!(await req.server.carsService.ensureCallsign(req.body.callsign))) {
-                return rep.unprocessableEntity(`Callsign ${req.body.callsign} does not exist`);
-            }
+            // if (!(await req.server.carsService.ensureCallsign(req.body.callsign))) {
+            //     return rep.unprocessableEntity(`Callsign ${req.body.callsign} does not exist`);
+            // }
 
             req.server.telemetryService.writeCarLocation(req.body);
 
@@ -70,9 +70,9 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            if (!(await req.server.vesselsService.ensureCallsign(req.body.callsign))) {
-                return rep.unprocessableEntity(`Callsign ${req.body.callsign} does not exist`);
-            }
+            // if (!(await req.server.vesselsService.ensureCallsign(req.body.callsign))) {
+            //     return rep.unprocessableEntity(`Callsign ${req.body.callsign} does not exist`);
+            // }
 
             const packet = {
                 payload_callsign: req.body.callsign,

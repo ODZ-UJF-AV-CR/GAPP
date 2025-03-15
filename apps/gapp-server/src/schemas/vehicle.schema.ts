@@ -15,10 +15,10 @@ export const B_CreateVehicle = T.Object({
     beacons: T.Array(Beacon)
 });
 
-export const R_Vehicle = T.Object({
-    id: T.Number(),
-    callsign: T.String(),
-    description: T.Optional(T.String()),
-    type: T.Number(),
-    beacons: T.Optional(T.Array(Beacon))
-});
+export const R_Vehicle = T.Intersect([
+    Vehicle,
+    T.Object({
+        id: T.Number(),
+        beacons: T.Array(Beacon)
+    })
+])

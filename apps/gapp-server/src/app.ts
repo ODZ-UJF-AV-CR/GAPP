@@ -5,7 +5,6 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import sondehubPlugin from './plugins/sondehub';
 import postgresDbPlugin from './plugins/postgresdb';
-import mongoDbPlugin from './plugins/mongodb';
 import repositoriesPlugin from './plugins/repositories';
 import servicesPlugin from './plugins/services';
 import eventBusPlugin from './plugins/event-bus';
@@ -19,7 +18,6 @@ interface AppOptions extends FastifyPluginOptions {
     influxDbOrg: string;
 
     postgresDbUri: string;
-    mongoDbUri: string;
 
     isDevelopment: boolean;
 }
@@ -39,7 +37,6 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         org: opts.influxDbOrg,
     });
     await fastify.register(postgresDbPlugin, { uri: opts.postgresDbUri });
-    await fastify.register(mongoDbPlugin, { uri: opts.mongoDbUri });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(abortControllerPlugin);
     await fastify.register(repositoriesPlugin);

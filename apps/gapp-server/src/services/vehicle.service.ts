@@ -1,13 +1,13 @@
-import { NewBeacon, NewVehicle, Vehicle } from "../repository/postgres-database";
+import { NewBeacon, NewVehicle } from "../repository/postgres-database";
 import { VehiclesRepository } from "../repository/vehicles.repository";
 
 export class VehicleService {
     constructor(private readonly vehiclesRepository: VehiclesRepository) {}
 
-    public async createVehicle(data: { vehicle: NewVehicle, beacons: NewBeacon[] }): Promise<Vehicle> {
+    public async createVehicle(data: { vehicle: NewVehicle, beacons: NewBeacon[] }) {
         const createdVehicle = await this.vehiclesRepository.createVehicle(data.vehicle);
 
-        const beaconsWithVehicleId = data.beacons.map((b) => ({...b, vehicle_id: createdVehicle.id }));
+        const beaconsWithVehicleId = data.beacons.map((b) => ({...b, vehicle_id: createdVehicle.id, callsign: b.callsign || '' }));
 
         try {
             await this.vehiclesRepository.createBeacons(beaconsWithVehicleId);
@@ -16,7 +16,10 @@ export class VehicleService {
             throw e;
         }
 
-        return createdVehicle;
+        return {
+            ...createdVehicle,
+            beacons: beaconsWithVehicleId
+        };
     }
 
     public async getVehicles() {

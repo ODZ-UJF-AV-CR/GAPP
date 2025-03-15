@@ -33,7 +33,7 @@ export class VehiclesRepository {
                 .select(['beacons.callsign'])
                 .whereRef('beacons.vehicle_id', '=', 'vehicles.id')
             ).as('beacons'),
-          ]).where('deleted_at', '=', null).execute();
+          ]).where('vehicles.deleted_at', 'is', null).execute();
     }
 
     public async getBeacons() {

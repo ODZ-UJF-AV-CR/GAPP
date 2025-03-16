@@ -1,6 +1,6 @@
-import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
-import { B_CreateVehicle, R_Vehicle } from "../schemas/vehicle.schema";
-import { Type } from "@sinclair/typebox";
+import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
+import { B_CreateVehicle, R_Vehicle } from '../schemas/vehicle.schema';
+import { Type } from '@sinclair/typebox';
 
 export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -12,8 +12,8 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 description: 'Creates new vehicle with associated beacons.',
                 body: B_CreateVehicle,
                 response: {
-                    201: R_Vehicle
-                }
+                    201: R_Vehicle,
+                },
             },
         },
         async (req, rep) => {
@@ -30,7 +30,6 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 req.server.log.error(e, 'Error creating vehicle');
                 return rep.internalServerError('Error creating vehicle');
             }
-
         }
     );
 
@@ -42,8 +41,8 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 summary: 'Get all vehicles',
                 description: 'Returns all vehicles with list of its beacons.',
                 response: {
-                    200: Type.Array(R_Vehicle)
-                }
+                    200: Type.Array(R_Vehicle),
+                },
             },
         },
         async (req, rep) => {
@@ -55,7 +54,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 return rep.internalServerError('Error getting vehicles');
             }
         }
-    )
+    );
 
     fastify.delete(
         '/:id',
@@ -65,11 +64,11 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 summary: 'Delete vehicle',
                 description: 'Deletes vehicle with given id.',
                 params: Type.Object({
-                    id: Type.Number()
+                    id: Type.Number(),
                 }),
                 response: {
-                    204: Type.Null()
-                }
+                    204: Type.Null(),
+                },
             },
         },
         async (req, rep) => {
@@ -81,5 +80,5 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 return rep.internalServerError('Error deleting vehicle');
             }
         }
-    )
-}
+    );
+};

@@ -36,7 +36,7 @@ export const B_VesselTelemetry = T.Object({
 /** @deprecated */
 export type VesselTelemetry = Static<typeof B_VesselTelemetry>;
 
-export const B_SondeTtnTelemetry = T.Object({
+export const B_TtnTelemetry = T.Object({
     end_device_ids: T.Object({
         device_id: T.String(),
     }),
@@ -101,6 +101,7 @@ export const B_SondeTtnTelemetry = T.Object({
         }),
     }),
 });
+export type TtnTelemetry = Static<typeof B_TtnTelemetry>;
 
 /** @deprecated */
 export const R_CarsStatus = T.Array(

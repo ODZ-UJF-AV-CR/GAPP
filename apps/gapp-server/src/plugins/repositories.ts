@@ -6,8 +6,8 @@ import { TelemetryRepository } from '../repository/telemetry.repository';
 
 declare module 'fastify' {
     interface FastifyInstance {
-        vehiclesRepository: VehiclesRepository,
-        telemetryRepository: TelemetryRepository
+        vehiclesRepository: VehiclesRepository;
+        telemetryRepository: TelemetryRepository;
     }
 }
 
@@ -19,7 +19,7 @@ const repositories: FastifyPluginAsync = async (fastify) => {
     fastify.decorate('vehiclesRepository', new VehiclesRepository(fastify.postgresdb));
     fastify.decorate('telemetryRepository', telemetryRepository);
 
-    fastify.addHook('onClose', () => telemetryRepository.deinit())
+    fastify.addHook('onClose', () => telemetryRepository.deinit());
 };
 
 export default fp(repositories, { name: Plugins.REPOSITORIES, dependencies: [Plugins.POSTGRESDB, Plugins.INFLUXDB] });

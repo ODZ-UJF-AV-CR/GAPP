@@ -1,31 +1,15 @@
-import { NewBeacon, NewVehicle } from "../repository/postgres-database";
-import { VehiclesRepository } from "../repository/vehicles.repository";
+import { NewBeacon, NewVehicle, Vehicle } from '../repository/postgres-database';
+import { VehiclesRepository } from '../repository/vehicles.repository';
 
 export class VehicleService {
     constructor(private readonly vehiclesRepository: VehiclesRepository) {}
 
-    public async createVehicle(data: { vehicle: NewVehicle, beacons: NewBeacon[] }) {
-        const createdVehicle = await this.vehiclesRepository.createVehicle(data.vehicle);
-
-        const beaconsWithVehicleId = data.beacons.map((b) => ({...b, vehicle_id: createdVehicle.id, callsign: b.callsign || '' }));
-
-        try {
-            await this.vehiclesRepository.createBeacons(beaconsWithVehicleId);
-        } catch(e) {
-            await this.vehiclesRepository.hardDeleteVehicle(createdVehicle.id);
-            throw e;
-        }
-
-        return {
-            ...createdVehicle,
-            beacons: beaconsWithVehicleId
-        };
+    public async createVehicle(data: { vehicle: NewVehicle; beacons: NewBeacon[] }) {
+        return await this.vehiclesRepository.createVehicleWithBeacons(data.vehicle, data.beacons);
     }
 
     public async getVehicles() {
-        const vehicles = await this.vehiclesRepository.getVehicles();
-
-        return vehicles;
+        return await this.vehiclesRepository.getVehicles();
     }
 
     public async deleteVehicle(id: number, force = false): Promise<void> {
@@ -36,8 +20,17 @@ export class VehicleService {
         }
     }
 
+    public async getVehicleByBeaconCallsign(callsign: string): Promise<Vehicle | undefined> {
+        return await this.vehiclesRepository.getVehicleByBeaconCallsign(callsign);
+    }
+
     public async isValidCallsign(callsign: string): Promise<boolean> {
         const beacon = await this.vehiclesRepository.getBeaconByCallsign(callsign);
+        const vehicle = await this.vehiclesRepository.getVehicleById(beacon.vehicle_id);
+
+        if (vehicle.deleted_at) {
+            return false;
+        }
 
         return !!beacon;
     }

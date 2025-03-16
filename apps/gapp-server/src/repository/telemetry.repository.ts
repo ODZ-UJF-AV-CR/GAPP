@@ -1,7 +1,7 @@
-import { InfluxDB, Point, QueryApi, WriteApi } from "@influxdata/influxdb-client";
-import { Bucket, BucketsAPI, Organization } from "@influxdata/influxdb-client-apis";
-import { CallsignLocation } from "../schemas";
-import { arrayAsString } from "../utils/array-as-atring";
+import { InfluxDB, Point, QueryApi, WriteApi } from '@influxdata/influxdb-client';
+import { Bucket, BucketsAPI, Organization } from '@influxdata/influxdb-client-apis';
+import { CallsignLocation } from '../schemas';
+import { arrayAsString } from '../utils/array-as-atring';
 
 export interface TelemetryData {
     timestamp: Date;
@@ -24,10 +24,7 @@ export class TelemetryRepository {
     private writeApi: WriteApi;
     private queryAPi: QueryApi;
 
-    constructor(
-        private readonly client: InfluxDB,
-        private readonly org: Organization,
-    ) { }
+    constructor(private readonly client: InfluxDB, private readonly org: Organization) {}
 
     private async ensureBucket(name: string): Promise<Bucket> {
         const bucketsApi = new BucketsAPI(this.client);
@@ -57,7 +54,7 @@ export class TelemetryRepository {
         await this.writeApi.close();
     }
 
-    public writeTelemetry(pointType: PointType, data: TelemetryData, additionalData: TelemetryAdditionalData) {
+    public writeTelemetry(pointType: PointType, data: TelemetryData, additionalData?: TelemetryAdditionalData) {
         const dataPoint = new Point(pointType)
             .tag('callsign', data.callsign)
             .floatField('latitude', data.latitude)
@@ -65,11 +62,11 @@ export class TelemetryRepository {
             .floatField('altitude', data.altitude);
 
         for (const [key, value] of Object.entries(additionalData)) {
-            if(typeof value === 'string') {
+            if (typeof value === 'string') {
                 dataPoint.stringField(key, value);
-            } else if(typeof value === 'number') {
+            } else if (typeof value === 'number') {
                 dataPoint.floatField(key, value);
-            } else if(typeof value === 'boolean') {
+            } else if (typeof value === 'boolean') {
                 dataPoint.booleanField(key, value);
             }
         }

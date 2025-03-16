@@ -2,17 +2,20 @@ import { EventBus } from '../utils/event-bus';
 import { Events } from '../plugins/event-bus';
 import { setInterval } from 'timers';
 import { EventMessage } from 'fastify-sse-v2';
-import { TelemetryRepository } from '../repository/telemetry.repository';
-import { CallsignLocation, CarTelemetry } from '../schemas';
-import { TelemetryPacket } from '@gapp/sondehub';
+import { PointType, TelemetryRepository } from '../repository/telemetry.repository';
+import { CallsignLocation, CarTelemetry, TtnTelemetry } from '../schemas';
+import { TelemetryPacket, Uploader } from '@gapp/sondehub';
 import { VehiclesRepository } from '../repository/vehicles.repository';
+import { VehicleWithBeacons } from '../schemas/vehicle.schema';
+import { ttnPacketDto } from '../utils/ttn-packet-dto';
 
 export class TelemetryService {
     constructor(
         private readonly telemetryRepository: TelemetryRepository,
         private readonly vehiclesRepository: VehiclesRepository,
+        private readonly sondehub: Uploader,
         private readonly eventBus: EventBus<Events>
-    ) { }
+    ) {}
 
     /** @deprecated */
     public writeVesselLocation(telemetry: TelemetryPacket) {
@@ -28,6 +31,22 @@ export class TelemetryService {
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<CallsignLocation[]> {
         console.log('Getting callsigns last location: ', callsigns);
         return [];
+    }
+
+    public async writeTtnTelemetry(vehicle: VehicleWithBeacons, telemetry: TtnTelemetry) {
+        console.log('Writing TTN telemetry');
+
+        const telemetryPacket = ttnPacketDto(telemetry);
+
+        this.sondehub.addTelemetry(telemetryPacket);
+
+        this.telemetryRepository.writeTelemetry(PointType.LOCATION, {
+            timestamp: new Date(telemetryPacket.time_received),
+            callsign: vehicle.callsign,
+            latitude: telemetryPacket.lat,
+            longitude: telemetryPacket.lon,
+            altitude: telemetryPacket.alt,
+        });
     }
 
     public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {

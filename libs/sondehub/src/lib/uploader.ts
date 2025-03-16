@@ -13,7 +13,7 @@ interface BasePacket {
 
 export interface TelemetryPacket extends Partial<BasePacket> {
     dev?: string;
-    time_received?: string;
+    time_received: string;
     payload_callsign: string;
     datetime: string;
     lat: number;

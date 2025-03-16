@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_CarTelemetry, B_SondeTtnTelemetry, B_VesselTelemetry, Q_OptionalCallsign, R_CallsignLocation } from '../schemas';
+import { B_CarTelemetry, B_TtnTelemetry, B_VesselTelemetry, Q_OptionalCallsign, R_CallsignLocation } from '../schemas';
 import { ttnPacketDto } from '../utils/ttn-packet-dto';
 import { Type } from '@sinclair/typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
@@ -12,21 +12,21 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'TTN webhook',
                 description: 'Endpoint for receiving telemetry data from TheThingsNetwork. Data are stored in InfluxDB and forwarded to Sondehub.',
-                body: B_SondeTtnTelemetry,
+                body: B_TtnTelemetry,
                 response: {
                     200: Type.String(),
                 },
             },
         },
         async (req, rep) => {
-            const telemetryPacket = ttnPacketDto(req.body);
+            const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.end_device_ids.device_id);
 
-            // if (!(await req.server.vesselsService.ensureCallsign(telemetryPacket.payload_callsign))) {
-            //     return rep.unprocessableEntity(`Callsign ${telemetryPacket.payload_callsign} does not exist`);
-            // }
+            if (!vehicle) {
+                return rep.unprocessableEntity(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
+            }
 
-            req.server.telemetryService.writeVesselLocation(telemetryPacket);
-            req.server.sondehub.addTelemetry(telemetryPacket);
+            // req.server.telemetryService.writeVesselLocation(telemetryPacket);
+            // req.server.sondehub.addTelemetry(telemetryPacket);
 
             rep.code(200).send('OK');
         }

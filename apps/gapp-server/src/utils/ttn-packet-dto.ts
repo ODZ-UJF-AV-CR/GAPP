@@ -1,8 +1,8 @@
 import { Static } from '@sinclair/typebox';
-import { B_SondeTtnTelemetry } from '../schemas';
+import { B_TtnTelemetry } from '../schemas';
 import { TelemetryPacket } from '@gapp/sondehub';
 
-export const ttnPacketDto = (ttnPayload: Static<typeof B_SondeTtnTelemetry>): TelemetryPacket => {
+export const ttnPacketDto = (ttnPayload: Static<typeof B_TtnTelemetry>): TelemetryPacket => {
     return {
         time_received: ttnPayload.uplink_message.received_at,
         payload_callsign: ttnPayload.end_device_ids.device_id,

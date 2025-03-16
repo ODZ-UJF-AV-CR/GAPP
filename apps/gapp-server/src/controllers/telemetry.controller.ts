@@ -19,15 +19,11 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.end_device_ids.device_id);
-
-            if (!vehicle) {
+            if (!(await req.server.vehicleService.isValidCallsign(req.body.end_device_ids.device_id))) {
                 return rep.unprocessableEntity(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
             }
 
-            // req.server.telemetryService.writeVesselLocation(telemetryPacket);
-            // req.server.sondehub.addTelemetry(telemetryPacket);
-
+            req.server.telemetryService.writeTtnTelemetry(req.body);
             rep.code(200).send('OK');
         }
     );

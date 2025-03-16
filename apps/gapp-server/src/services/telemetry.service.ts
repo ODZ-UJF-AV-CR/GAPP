@@ -33,16 +33,14 @@ export class TelemetryService {
         return [];
     }
 
-    public async writeTtnTelemetry(vehicle: VehicleWithBeacons, telemetry: TtnTelemetry) {
-        console.log('Writing TTN telemetry');
-
+    public writeTtnTelemetry(telemetry: TtnTelemetry) {
         const telemetryPacket = ttnPacketDto(telemetry);
 
         this.sondehub.addTelemetry(telemetryPacket);
 
         this.telemetryRepository.writeTelemetry(PointType.LOCATION, {
             timestamp: new Date(telemetryPacket.time_received),
-            callsign: vehicle.callsign,
+            callsign: telemetryPacket.payload_callsign,
             latitude: telemetryPacket.lat,
             longitude: telemetryPacket.lon,
             altitude: telemetryPacket.alt,

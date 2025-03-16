@@ -13,7 +13,8 @@ export class VehiclesRepository {
     public async createVehicleWithBeacons(vehicle: NewVehicle, beacons: NewBeacon[]) {
         return this.db.transaction().execute(async (trx) => {
             const createdVehicle = await trx.insertInto('vehicles').values(vehicle).returningAll().executeTakeFirstOrThrow();
-            const createdBeacons = await trx.insertInto('beacons').values(beacons).returningAll().execute();
+            const beaconsWithVehicleId = beacons.map((beacon) => ({ ...beacon, vehicle_id: createdVehicle.id }));
+            const createdBeacons = await trx.insertInto('beacons').values(beaconsWithVehicleId).returningAll().execute();
 
             return { ...createdVehicle, beacons: createdBeacons };
         });

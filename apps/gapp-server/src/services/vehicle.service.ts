@@ -25,13 +25,6 @@ export class VehicleService {
     }
 
     public async isValidCallsign(callsign: string): Promise<boolean> {
-        const beacon = await this.vehiclesRepository.getBeaconByCallsign(callsign);
-        const vehicle = await this.vehiclesRepository.getVehicleById(beacon.vehicle_id);
-
-        if (vehicle.deleted_at) {
-            return false;
-        }
-
-        return !!beacon;
+        return !!(await this.vehiclesRepository.getVehicleByBeaconCallsign(callsign));
     }
 }

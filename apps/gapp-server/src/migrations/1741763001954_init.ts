@@ -1,17 +1,14 @@
 import { sql, type Kysely } from 'kysely';
+import { VehicleType } from '../repository/postgres-database';
 
-export async function up(db: Kysely<unknown>) {
-    await db.schema
-        .createTable('vehicle_types')
-        .addColumn('id', 'serial', (col) => col.primaryKey())
-        .addColumn('name', 'text', (col) => col.notNull().unique())
-        .execute();
+export async function up(db: Kysely<any>) {
+    await db.schema.createType('vehicle_type').asEnum(Object.values(VehicleType)).execute();
 
     await db.schema
         .createTable('vehicles')
         .addColumn('id', 'serial', (col) => col.primaryKey())
+        .addColumn('type', sql`"vehicle_type"`, (col) => col.notNull())
         .addColumn('callsign', 'varchar(32)', (col) => col.notNull().unique())
-        .addColumn('type', 'bigint', (col) => col.notNull().references('vehicle_types.id').onDelete('cascade'))
         .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
         .execute();
 
@@ -23,8 +20,8 @@ export async function up(db: Kysely<unknown>) {
         .execute();
 }
 
-export async function down(db: Kysely<unknown>) {
+export async function down(db: Kysely<any>) {
     await db.schema.dropTable('beacons').execute();
     await db.schema.dropTable('vehicles').execute();
-    await db.schema.dropTable('vehicle_types').execute();
+    await db.schema.dropType('vehicle_type').execute();
 }

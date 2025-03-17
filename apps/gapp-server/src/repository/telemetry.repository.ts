@@ -3,16 +3,12 @@ import { Bucket, BucketsAPI, Organization } from '@influxdata/influxdb-client-ap
 import { CallsignLocation } from '../schemas';
 import { arrayAsString } from '../utils/array-as-atring';
 
-export interface TelemetryData {
-    timestamp: Date;
+export interface TelemetryData extends Record<string, number | string | boolean | undefined> {
+    timestamp: string;
     callsign: string;
     latitude: number;
     longitude: number;
     altitude: number;
-}
-
-export interface TelemetryAdditionalData {
-    [key: string]: number | string | boolean;
 }
 
 export enum PointType {
@@ -54,15 +50,15 @@ export class TelemetryRepository {
         await this.writeApi.close();
     }
 
-    public writeTelemetry(pointType: PointType, data: TelemetryData, additionalData?: TelemetryAdditionalData) {
-        const dataPoint = new Point(pointType)
-            .tag('callsign', data.callsign)
-            .floatField('latitude', data.latitude)
-            .floatField('longitude', data.longitude)
-            .floatField('altitude', data.altitude);
+    public writeTelemetry(pointType: PointType, data: TelemetryData) {
+        const dataPoint = new Point(pointType);
 
-        for (const [key, value] of Object.entries(additionalData)) {
-            if (typeof value === 'string') {
+        for (const [key, value] of Object.entries(data)) {
+            if (key === 'callsign') {
+                dataPoint.tag(key, value as string);
+            } else if (key === 'timestamp') {
+                dataPoint.timestamp(new Date(value as string));
+            } else if (typeof value === 'string') {
                 dataPoint.stringField(key, value);
             } else if (typeof value === 'number') {
                 dataPoint.floatField(key, value);

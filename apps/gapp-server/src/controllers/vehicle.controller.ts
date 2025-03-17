@@ -24,7 +24,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 if (e.constraint === 'vehicles_callsign_key') {
                     return rep.conflict(`Vehicle callsign ${req.body.vehicle.callsign} already exists.`);
                 } else if (e.constraint === 'beacons_callsign_key') {
-                    return rep.conflict(`Vehicle beacon already exists.`);
+                    return rep.conflict(`Beacon already exists.`);
                 }
 
                 req.server.log.error(e, 'Error creating vehicle');

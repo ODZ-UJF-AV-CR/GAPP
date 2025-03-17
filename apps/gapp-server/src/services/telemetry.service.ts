@@ -2,12 +2,13 @@ import { EventBus } from '../utils/event-bus';
 import { Events } from '../plugins/event-bus';
 import { setInterval } from 'timers';
 import { EventMessage } from 'fastify-sse-v2';
-import { PointType, TelemetryRepository } from '../repository/telemetry.repository';
-import { CallsignLocation, CarTelemetry, TtnTelemetry } from '../schemas';
-import { TelemetryPacket, Uploader } from '@gapp/sondehub';
+import { PointType, TelemetryData, TelemetryRepository } from '../repository/telemetry.repository';
+import { CallsignLocation } from '../schemas';
+import { TtnTelemetry } from '../schemas/telemetry.schema';
+import { Uploader } from '@gapp/sondehub';
 import { VehiclesRepository } from '../repository/vehicles.repository';
-import { VehicleWithBeacons } from '../schemas/vehicle.schema';
-import { ttnPacketDto } from '../utils/ttn-packet-dto';
+import { TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet';
+import { Vehicle, VehicleType } from '../repository/postgres-database';
 
 export class TelemetryService {
     constructor(
@@ -18,33 +19,19 @@ export class TelemetryService {
     ) {}
 
     /** @deprecated */
-    public writeVesselLocation(telemetry: TelemetryPacket) {
-        console.log('Writing vessel location: ', telemetry);
-    }
-
-    /** @deprecated */
-    public writeCarLocation(status: CarTelemetry) {
-        console.log('Writing car location: ', status);
-    }
-
-    /** @deprecated */
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<CallsignLocation[]> {
         console.log('Getting callsigns last location: ', callsigns);
         return [];
     }
 
-    public writeTtnTelemetry(telemetry: TtnTelemetry) {
-        const telemetryPacket = ttnPacketDto(telemetry);
+    public writeTtnTelemetry(vehicle: Vehicle, telemetry: TtnTelemetry) {
+        const packet = new TelemetryPacketFromTtn(telemetry);
+        this.writeTelemetry(vehicle.type, packet);
+    }
 
-        this.sondehub.addTelemetry(telemetryPacket);
-
-        this.telemetryRepository.writeTelemetry(PointType.LOCATION, {
-            timestamp: new Date(telemetryPacket.time_received),
-            callsign: telemetryPacket.payload_callsign,
-            latitude: telemetryPacket.lat,
-            longitude: telemetryPacket.lon,
-            altitude: telemetryPacket.alt,
-        });
+    public writeGeneralTelemetry(vehicle: Vehicle, telemetry: TelemetryData) {
+        const packet = new TelemetryPacketGeneral(telemetry);
+        this.writeTelemetry(vehicle.type, packet);
     }
 
     public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
@@ -75,5 +62,15 @@ export class TelemetryService {
 
             this.eventBus.off('influx.write', eventHandler);
         }
+    }
+
+    private writeTelemetry(vehicleType: VehicleType, packet: TelemetryPacket) {
+        if (vehicleType === VehicleType.CAR) {
+            this.sondehub.uploadStationPosition(packet.sondehubStationPosition);
+        } else {
+            this.sondehub.addTelemetry(packet.sondehubPacket);
+        }
+
+        this.telemetryRepository.writeTelemetry(PointType.LOCATION, packet.data);
     }
 }

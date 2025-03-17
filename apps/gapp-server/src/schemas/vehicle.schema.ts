@@ -1,9 +1,10 @@
 import { Static, Type as T } from '@sinclair/typebox';
+import { VehicleType } from '../repository/postgres-database';
 
 const Vehicle = T.Object({
     callsign: T.String(),
     description: T.Optional(T.String()),
-    type: T.Number(),
+    type: T.Enum(VehicleType),
 });
 
 const Beacon = T.Object({

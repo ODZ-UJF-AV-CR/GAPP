@@ -3,7 +3,6 @@ import { Events } from '../plugins/event-bus';
 import { setInterval } from 'timers';
 import { EventMessage } from 'fastify-sse-v2';
 import { PointType, TelemetryData, TelemetryRepository } from '../repository/telemetry.repository';
-import { CallsignLocation } from '../schemas';
 import { TtnTelemetry } from '../schemas/telemetry.schema';
 import { Uploader } from '@gapp/sondehub';
 import { VehiclesRepository } from '../repository/vehicles.repository';
@@ -17,12 +16,6 @@ export class TelemetryService {
         private readonly sondehub: Uploader,
         private readonly eventBus: EventBus<Events>
     ) {}
-
-    /** @deprecated */
-    public async getCallsignsLastLocation(callsigns?: string[]): Promise<CallsignLocation[]> {
-        console.log('Getting callsigns last location: ', callsigns);
-        return [];
-    }
 
     public writeTtnTelemetry(vehicle: Vehicle, telemetry: TtnTelemetry) {
         const packet = new TelemetryPacketFromTtn(telemetry);

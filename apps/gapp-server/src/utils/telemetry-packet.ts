@@ -57,7 +57,7 @@ export class TelemetryPacketFromTtn extends TelemetryPacket {
                 longitude: ttnPayload.uplink_message.decoded_payload.lon,
                 altitude: ttnPayload.uplink_message.decoded_payload.alt_m,
                 heading: ttnPayload.uplink_message.decoded_payload.course,
-                velocity_horizontal: ttnPayload.uplink_message.decoded_payload.speed_mps,
+                speed_horizontal: ttnPayload.uplink_message.decoded_payload.speed_mps,
             },
             options
         );

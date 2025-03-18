@@ -1,7 +1,16 @@
 import { InfluxDB, Point, QueryApi, WriteApi } from '@influxdata/influxdb-client';
 import { Bucket, BucketsAPI, Organization } from '@influxdata/influxdb-client-apis';
-import { CallsignLocation } from '../schemas';
 import { arrayAsString } from '../utils/array-as-atring';
+
+export type LocationData = {
+    _time: string;
+    altitude: number;
+    callsign: string;
+    latitude: number;
+    longitude: number;
+    result: string;
+    table: number;
+}
 
 export interface TelemetryData extends Record<string, number | string | boolean | undefined> {
     timestamp: string;
@@ -70,7 +79,7 @@ export class TelemetryRepository {
         this.writeApi.writePoint(dataPoint);
     }
 
-    public async getCallsignsLastLocation(callsigns?: string[]): Promise<CallsignLocation[]> {
+    public async getCallsignsLastLocation(callsigns?: string[]): Promise<LocationData[]> {
         let query = `from(bucket: "${this.bucketName}")
             |> range(start: -24h)
             |> last()

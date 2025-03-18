@@ -25,3 +25,10 @@ export const R_Vehicle = T.Intersect([
 ]);
 
 export type VehicleWithBeacons = Static<typeof R_Vehicle>;
+
+export const Q_OptionalCallsign = T.Object(
+    {
+        callsign: T.Optional(T.String()),
+    },
+    { nullable: true }
+);

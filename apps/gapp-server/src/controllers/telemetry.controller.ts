@@ -1,8 +1,8 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { Q_OptionalCallsign } from '../schemas';
 import { B_Telemetry, B_TtnTelemetry } from '../schemas/telemetry.schema';
 import { Type } from '@sinclair/typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
+import { Q_OptionalCallsign } from '../schemas/vehicle.schema';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(

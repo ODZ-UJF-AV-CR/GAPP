@@ -1,0 +1,12 @@
+<fieldset class="fieldset w-full">
+    @if(label(); as label) {
+    <legend class="fieldset-legend">{{ label }}</legend>
+    }
+    <input [formControl]="formControl()" type="text" class="input w-full" [placeholder]="placeholder()" />
+
+    @if(showError()) {
+    <p class="fieldset-label text-error">{{ errorMessage() }}</p>
+    } @else if (help()) {
+    <p class="fieldset-label">{{ help() }}</p>
+    }
+</fieldset>

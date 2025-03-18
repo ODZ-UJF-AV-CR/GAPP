@@ -10,7 +10,7 @@ export type LocationData = {
     longitude: number;
     result: string;
     table: number;
-}
+};
 
 export interface TelemetryData extends Record<string, number | string | boolean | undefined> {
     timestamp: string;

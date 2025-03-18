@@ -1,0 +1,15 @@
+<form [formGroup]="form">
+    <label class="select">
+        <span class="label">Type</span>
+        <select formControlName="type">
+            <option disabled selected value="">Vehicle type</option>
+            @for(type of vehicleTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+            }
+        </select>
+    </label>
+
+    <text-input [formControl]="getControl('callsign')" label="Callsign" help="Unique identification of vehicle."></text-input>
+
+    <text-input [formControl]="getControl('description')" label="Description" help="Optional description of vehicle."></text-input>
+</form>

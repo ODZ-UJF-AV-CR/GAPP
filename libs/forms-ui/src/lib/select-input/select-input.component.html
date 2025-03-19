@@ -6,11 +6,15 @@
         <span class="text-error">*</span>
         }
     </legend>
-    } @if(type() === 'textarea') {
-    <textarea [formControl]="control" [placeholder]="placeholder()" class="textarea w-full"></textarea>
-    } @else {
-    <input [formControl]="control" [type]="type()" class="input w-full" [placeholder]="placeholder()" />
-    } @if(showError()) {
+    }
+
+    <select [formControl]="control" class="select w-full">
+        @for(option of options(); track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+        }
+    </select>
+
+    @if(showError()) {
     <p class="fieldset-label text-error">{{ errorMessage() }}</p>
     } @else if (help()) {
     <p class="fieldset-label">{{ help() }}</p>

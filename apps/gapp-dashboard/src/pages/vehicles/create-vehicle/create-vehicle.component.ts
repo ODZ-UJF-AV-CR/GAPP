@@ -1,12 +1,12 @@
 import { VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.service';
 import { Component, inject, output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TextInputComponent } from '@gapp/forms-ui';
+import { OptionDefinition, SelectInputComponent, TextInputComponent } from '@gapp/forms-ui';
 
 @Component({
     selector: 'create-vehicle',
     templateUrl: './create-vehicle.component.html',
-    imports: [ReactiveFormsModule, TextInputComponent],
+    imports: [ReactiveFormsModule, TextInputComponent, SelectInputComponent],
 })
 export class CreateVehicleComponent {
     private vehiclesService = inject(VehicleService);
@@ -14,7 +14,7 @@ export class CreateVehicleComponent {
 
     public vehicleCreated = output<void>();
 
-    public vehicleTypes = Object.values(VehicleType);
+    public vehicleTypes: OptionDefinition[] = Object.values(VehicleType).map((type) => ({ label: type, value: type }));
 
     public form = this.formBuilder.nonNullable.group({
         callsign: ['', [Validators.required, Validators.maxLength(5)]],

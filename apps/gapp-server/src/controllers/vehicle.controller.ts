@@ -22,7 +22,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 rep.status(201).send(vehicle);
             } catch (e) {
                 if (e.constraint === 'vehicles_callsign_key') {
-                    return rep.conflict(`Vehicle callsign ${req.body.vehicle.callsign} already exists.`);
+                    return rep.conflict(`Vehicle callsign ${req.body.callsign} already exists.`);
                 } else if (e.constraint === 'beacons_callsign_key') {
                     return rep.conflict(`Beacon already exists.`);
                 }

@@ -1,6 +1,6 @@
 <page-block title="Vehicles">
     <ng-container blockHeader>
-        <button class="btn btn-primary" (click)="vehicleDialog.open()">Add</button>
+        <button class="btn btn-primary" (click)="createVehicle.open()">Add</button>
     </ng-container>
 
     <ng-container blockBody>
@@ -11,7 +11,7 @@
             <ul class="list bg-base-200 rounded-box">
                 @for(vehicle of vehicles(); track vehicle.id) {
                 <li class="list-row">
-                    {{ vehicle.callsign }}
+                    {{ vehicle?.callsign || 'N/A' }}
                 </li>
                 } @empty {
                 <li class="list-row">No vehicles yet.</li>
@@ -22,6 +22,4 @@
     </ng-container>
 </page-block>
 
-<gapp-dialog #vehicleDialog title="Create new vehicle" closeButton="">
-    <create-vehicle (vehicleCreated)="vehicleDialog.close()"></create-vehicle>
-</gapp-dialog>
+<create-vehicle #createVehicle></create-vehicle>

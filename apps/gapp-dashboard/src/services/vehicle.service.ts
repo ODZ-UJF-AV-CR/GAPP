@@ -29,7 +29,6 @@ export class VehicleService extends ApiServiceBase {
     public vehiclesLoading = computed(() => this.vehiclesResponse().loading);
     public vehiclesList = computed(() => {
         const vehicles = this.vehiclesResponse().data ?? [];
-        return [];
         return vehicles.sort((a, b) => a.type.localeCompare(b.type));
     });
 
@@ -37,10 +36,7 @@ export class VehicleService extends ApiServiceBase {
         return this.post$<Vehicle>(this.apiUrl('/vehicles'), vehicle).pipe(
             tap(({ data }) => {
                 if (data) {
-                    this.vehiclesResponse.update((vehicles) => {
-                        vehicles.data?.push(data);
-                        return vehicles;
-                    });
+                    this.vehiclesResponse.update((response) => ({ ...response, data: [...(response.data || []), data] }));
                 }
             })
         );

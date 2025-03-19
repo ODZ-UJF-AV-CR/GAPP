@@ -11,10 +11,14 @@ const Beacon = T.Object({
     callsign: T.String(),
 });
 
-export const B_CreateVehicle = T.Object({
-    vehicle: Vehicle,
-    beacons: T.Array(Beacon),
-});
+export const B_CreateVehicle = T.Intersect([
+    Vehicle,
+    T.Object({
+        beacons: T.Array(Beacon),
+    }),
+]);
+
+export type CreateVehicle = Static<typeof B_CreateVehicle>;
 
 export const R_Vehicle = T.Intersect([
     Vehicle,

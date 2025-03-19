@@ -1,11 +1,14 @@
-import { NewBeacon, NewVehicle, Vehicle } from '../repository/postgres-database';
+import { Vehicle } from '../repository/postgres-database';
 import { VehiclesRepository } from '../repository/vehicles.repository';
+import { CreateVehicle } from '../schemas/vehicle.schema';
 
 export class VehicleService {
     constructor(private readonly vehiclesRepository: VehiclesRepository) {}
 
-    public async createVehicle(data: { vehicle: NewVehicle; beacons: NewBeacon[] }) {
-        return await this.vehiclesRepository.createVehicleWithBeacons(data.vehicle, data.beacons);
+    public async createVehicle(vehicle: CreateVehicle) {
+        const beacons = vehicle.beacons;
+        delete vehicle.beacons;
+        return await this.vehiclesRepository.createVehicleWithBeacons(vehicle, beacons);
     }
 
     public async getVehicles() {

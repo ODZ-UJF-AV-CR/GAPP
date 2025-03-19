@@ -6,16 +6,6 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('@/pages/homepage/homepage.component').then((c) => c.HomepageComponent),
     },
     {
-        path: 'cars',
-        loadComponent: () => import('@/pages/cars/cars.component').then((c) => c.CarsComponent),
-        title: 'GAPP | Cars',
-    },
-    {
-        path: 'vessels',
-        loadComponent: () => import('@/pages/vessels/vessels.component').then((c) => c.VesselsComponent),
-        title: 'GAPP | Vessels',
-    },
-    {
         path: 'map',
         loadComponent: () => import('@/pages/map/map.component').then((c) => c.MapComponent),
         title: 'GAPP | Map',

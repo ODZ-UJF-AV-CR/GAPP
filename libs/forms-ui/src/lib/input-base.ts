@@ -1,8 +1,9 @@
 import { Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { injectNgControl } from './input-helper';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControlStatus, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 
+export type InputSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ErrorMessageDefinition = Record<string, string>;
 
 @Component({ template: `` })
@@ -10,11 +11,12 @@ export abstract class InputBase implements OnInit {
     private destroyRef = inject(DestroyRef);
     private ngControl = injectNgControl();
 
-    private controlStatus = signal<FormControlStatus>('PENDING');
+    private controlStatus = signal<unknown>(undefined);
 
     public errorMessages = input<ErrorMessageDefinition>({});
     public label = input<string>();
     public help = input<string>();
+    public size = input<InputSize>('md');
     public get control() {
         return this.ngControl.control;
     }
@@ -42,7 +44,7 @@ export abstract class InputBase implements OnInit {
 
     protected init() {
         this.isRequired = this.ngControl.control.hasValidator(Validators.required);
-        this.control.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => this.controlStatus.set(status));
+        this.control.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => this.controlStatus.set(event));
     }
 
     public ngOnInit() {

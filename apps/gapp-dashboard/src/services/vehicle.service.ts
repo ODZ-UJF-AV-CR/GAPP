@@ -43,7 +43,13 @@ export class VehicleService extends ApiServiceBase {
     }
 
     public deleteVehicle$(id: number) {
-        return this.delete$(this.apiUrl(`/vehicles/${id}`));
+        return this.delete$(this.apiUrl(`/vehicles/${id}`)).pipe(
+            tap(({ data }) => {
+                if (data === null) {
+                    this.vehiclesResponse.update((response) => ({ ...response, data: response.data?.filter((v) => v.id !== id) }));
+                }
+            })
+        );
     }
 
     public loadVehicles() {

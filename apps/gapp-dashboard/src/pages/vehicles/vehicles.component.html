@@ -10,9 +10,7 @@
         <scrollable>
             <ul class="list bg-base-200 rounded-box">
                 @for(vehicle of vehicles(); track vehicle.id) {
-                <li class="list-row">
-                    {{ vehicle?.callsign || 'N/A' }}
-                </li>
+                <vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>
                 } @empty {
                 <li class="list-row">No vehicles yet.</li>
                 }

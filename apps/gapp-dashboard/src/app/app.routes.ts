@@ -6,11 +6,6 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('@/pages/homepage/homepage.component').then((c) => c.HomepageComponent),
     },
     {
-        path: 'map',
-        loadComponent: () => import('@/pages/map/map.component').then((c) => c.MapComponent),
-        title: 'GAPP | Map',
-    },
-    {
         path: 'dashboard',
         loadComponent: () => import('@/pages/dashboard/dashboard.component').then((c) => c.DashboardComponent),
         title: 'GAPP | Dashboard',

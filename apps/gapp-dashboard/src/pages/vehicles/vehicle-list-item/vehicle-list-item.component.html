@@ -1,0 +1,23 @@
+<li class="list-row">
+    <div class="flex items-center">
+        <ng-icon [name]="icon()" size="1.6rem"></ng-icon>
+    </div>
+
+    <div>
+        <div textLimit="1" class="font-semibold">{{ vehicle().callsign }}</div>
+        @if(vehicle().description; as description) {
+        <div textLimit="2" class="text-xs font-semibold opacity-60">{{ description }}</div>
+        }
+    </div>
+
+    <div clas="flex items-center">
+        <button
+            [dialog]="'Delete vehicle?'"
+            content="Are you sure you want to delete {{ vehicle().callsign }} vessel?"
+            (dialogResolved)="deleteVehicle()"
+            class="btn btn-error btn-ghost btn-sm"
+        >
+            <ng-icon name="tablerTrash" size="1rem"></ng-icon>
+        </button>
+    </div>
+</li>

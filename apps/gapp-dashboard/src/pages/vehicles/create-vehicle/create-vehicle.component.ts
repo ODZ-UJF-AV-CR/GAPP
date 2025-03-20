@@ -2,7 +2,7 @@ import { ToastService } from '@/services/toast.service';
 import { VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.service';
 import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OptionDefinition, SelectInputComponent, TextInputComponent } from '@gapp/forms-ui';
 import { DialogButton, DialogComponent } from '@gapp/ui/dialog';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -58,8 +58,8 @@ export class CreateVehicleComponent {
             });
     }
 
-    public getControl(name: string) {
-        return this.form.get(name) as FormControl;
+    public getTransmitterPlaceholder(index: number) {
+        return `${this.form.get('callsign')?.value || 'CALLSIGN'}_${index + 1}`;
     }
 
     public createVehicle() {
@@ -84,6 +84,7 @@ export class CreateVehicleComponent {
             .subscribe(() => {
                 this.toastService.toast('alert-success', 'Vehicle created successfully.');
                 this.form.reset();
+                this.form.markAsUntouched();
                 this.showBeacons.set(false);
                 this.dialogRef().close();
             });

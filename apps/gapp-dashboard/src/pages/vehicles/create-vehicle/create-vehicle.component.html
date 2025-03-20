@@ -10,8 +10,8 @@
         <ng-container formArrayName="beacons">
             @for(beacon of beaconsInput.controls; track beacon; let index = $index) {
             <ng-container [formGroupName]="index">
-                <text-input formControlName="callsign" placeholder="Callsign_{{ index + 1 }}" size="sm">
-                    <button rightPart class="btn btn-error btn-outline btn-sm" (click)="removeBeacon(index)" [disabled]="beaconsInput.controls.length === 1">
+                <text-input formControlName="callsign" [placeholder]="getTransmitterPlaceholder(index)" size="sm">
+                    <button rightPart class="btn btn-error btn-outline" (click)="removeBeacon(index)" [disabled]="beaconsInput.controls.length === 1">
                         <ng-icon name="tablerTrash" size="1rem"></ng-icon>
                     </button>
                 </text-input>
@@ -19,7 +19,7 @@
             }
         </ng-container>
 
-        <button (click)="addBeacon()" class="btn btn-primary btn-sm btn-soft">Add transmitter</button>
+        <button (click)="addBeacon()" class="btn btn-primary btn-sm">Add transmitter</button>
         }
     </form>
 </gapp-dialog>

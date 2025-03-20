@@ -1,0 +1,39 @@
+<fieldset class="fieldset w-full">
+    @if(label(); as label) {
+    <legend class="fieldset-legend">
+        {{ label }}
+        @if(isRequired) {
+        <span class="text-error">*</span>
+        }
+    </legend>
+    }
+
+    <div class="flex flex-row gap-1 w-full">
+        <ng-content select="[leftPart]"></ng-content>
+
+        @if(type() === 'textarea') {
+        <textarea
+            [formControl]="control"
+            [placeholder]="placeholder()"
+            class="textarea w-full {{ textareaSizeClass() }}"
+            [ngClass]="{ 'textarea-error': showError() }"
+        ></textarea>
+        } @else {
+        <input
+            [formControl]="control"
+            [type]="type()"
+            class="input w-full {{ inputSizeClass() }}"
+            [placeholder]="placeholder()"
+            [ngClass]="{ 'input-error': showError() }"
+        />
+        }
+
+        <ng-content select="[rightPart]"></ng-content>
+    </div>
+
+    @if(showError()) {
+    <p class="fieldset-label text-error">{{ errorMessage() }}</p>
+    } @else if (help()) {
+    <p class="fieldset-label">{{ help() }}</p>
+    }
+</fieldset>

@@ -34,10 +34,8 @@ export class DialogComponent {
     private _title = signal<string>('');
 
     public readonly isOpen = input(false, { transform: booleanAttribute });
-    // public readonly title = input('');
     public readonly content = input('');
     public readonly closeButton = input<string | null>('Close');
-    // public readonly buttons = input<DialogButton[]>([]);
     public readonly closed = output<void>();
 
     constructor() {

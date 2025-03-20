@@ -15,15 +15,15 @@ services:
             - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
             - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=development-influx-token
 
-    mongodb:
-        image: mongo:8
-        container_name: gapp_mongodb
+    postgres:
+        image: postgres:17.4-alpine
+        container_name: gapp_postgresdb
         restart: unless-stopped
         ports:
-            - 27018:27017
+            - 5434:5432
         volumes:
-            - ./.data/mongodb:/data/db:rw
+            - ./.data/postgres:/var/lib/postgresql/data:rw
         environment:
-            MONGO_INITDB_ROOT_USERNAME: fik
-            MONGO_INITDB_ROOT_PASSWORD: tajne-heslo
-            MONGO_INITDB_DATABASE: gapp
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=gapp

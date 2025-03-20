@@ -2,31 +2,21 @@ import { FastifyPluginAsync } from 'fastify';
 import { TelemetryService } from '../services/telemetry.service';
 import fp from 'fastify-plugin';
 import { Plugins } from './plugins';
-import { CarsService } from '../services/cars.service';
-import { VesselsService } from '../services/vessels.service';
+import { VehicleService } from '../services/vehicle.service';
 
 declare module 'fastify' {
     interface FastifyInstance {
         telemetryService: TelemetryService;
-        carsService: CarsService;
-        vesselsService: VesselsService;
+        vehicleService: VehicleService;
     }
 }
 
 const services: FastifyPluginAsync = async (fastify) => {
-    const telemetryService = new TelemetryService(fastify.influxClient, fastify.influxOrg, fastify.eventBus, fastify.mongodb);
-    const carsService = new CarsService(fastify.mongodb);
-    const vesselsService = new VesselsService(fastify.mongodb);
-
-    await Promise.all([carsService.init(), telemetryService.init(), vesselsService.init()]);
+    const telemetryService = new TelemetryService(fastify.telemetryRepository, fastify.vehiclesRepository, fastify.sondehub, fastify.eventBus);
+    const vehicleService = new VehicleService(fastify.vehiclesRepository);
 
     fastify.decorate('telemetryService', telemetryService);
-    fastify.decorate('carsService', carsService);
-    fastify.decorate('vesselsService', vesselsService);
-
-    fastify.addHook('onClose', async () => {
-        await telemetryService.deinit();
-    });
+    fastify.decorate('vehicleService', vehicleService);
 };
 
-export default fp(services, { name: Plugins.SERVICES, dependencies: [Plugins.INFLUXDB, Plugins.MONGODB] });
+export default fp(services, { name: Plugins.SERVICES, dependencies: [Plugins.REPOSITORIES, Plugins.SONDEHUB, Plugins.EVENT_BUS] });

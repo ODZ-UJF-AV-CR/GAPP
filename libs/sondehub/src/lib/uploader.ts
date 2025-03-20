@@ -13,7 +13,7 @@ interface BasePacket {
 
 export interface TelemetryPacket extends Partial<BasePacket> {
     dev?: string;
-    time_received?: string;
+    time_received: string;
     payload_callsign: string;
     datetime: string;
     lat: number;
@@ -39,7 +39,7 @@ export interface TelemetryPacket extends Partial<BasePacket> {
 type StationBasePayload = Partial<Omit<BasePacket, 'uploader_callsign' | 'uploader_position'>> &
     Required<Pick<BasePacket, 'uploader_callsign' | 'uploader_position'>>;
 
-interface StationPositionPacket extends StationBasePayload {
+export interface StationPositionPacket extends StationBasePayload {
     uploader_radio?: string;
     uploader_contact_email?: string;
     mobile?: boolean;

@@ -1,44 +1,46 @@
 import { ApiServiceBase } from '@/services/api.service.base';
-import { Car } from '@/services/cars.service';
-import { Vessel } from '@/services/vessels.service';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { TelemetryData, TelemetryService } from '@/services/telemetry.service';
+import { Beacon, Vehicle, VehicleService } from '@/services/vehicle.service';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { Subscription } from 'rxjs';
 
-export interface TelemetryStatus {
-    _time: string;
-    _measurement: 'car_location' | 'vessel_location';
-    altitude: number;
-    callsign: string;
-    latitude: number;
-    longitude: number;
+export type BeaconWithTelemetry = Beacon & { telemetry?: TelemetryData };
+
+export interface VehicleWithTelemetry extends Vehicle {
+    beacons: BeaconWithTelemetry[];
 }
-
-export type CarStatus = { telemetry: TelemetryStatus; car: Car };
-export type VesselStatus = { telemetry: TelemetryStatus[]; vessel: Vessel };
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService extends ApiServiceBase {
-    public getDashboardStatus$() {
-        return this.get$<TelemetryStatus>(this.apiUrl('/telemetry'));
+    private telemetryService = inject(TelemetryService);
+    private vehicleService = inject(VehicleService);
+
+    private telemetrySubscription?: Subscription;
+    private telemetry = signal<TelemetryData[]>([]);
+
+    public vehiclesWithTelemetry = computed<VehicleWithTelemetry[]>(() => {
+        const vehicles = this.vehicleService.vehiclesList();
+        const telemetry = this.telemetry();
+
+        return vehicles.map((vehicle) => ({
+            ...vehicle,
+            beacons: vehicle.beacons.map((beacon) => ({
+                ...beacon,
+                telemetry: telemetry.find((t) => t.callsign === beacon.callsign),
+            })),
+        }));
+    });
+
+    public init() {
+        if (this.telemetrySubscription) {
+            throw 'DashboardService already initialized';
+        }
+
+        this.telemetrySubscription = this.telemetryService.latestData$().subscribe((telemetry) => this.telemetry.set(telemetry));
     }
 
-    public dashboardStatus$(): Observable<TelemetryStatus[]> {
-        const source = new EventSource(this.apiUrl(`/telemetry/stream`));
-
-        return new Observable((observer) => {
-            source.onmessage = (message) => {
-                if (message.data !== 'ping') {
-                    observer.next(JSON.parse(message.data));
-                }
-            };
-
-            source.onerror = (error) => {
-                console.error(error);
-            };
-
-            return () => {
-                source.close();
-            };
-        });
+    public deinit() {
+        this.telemetrySubscription?.unsubscribe();
+        this.telemetrySubscription = undefined;
     }
 }

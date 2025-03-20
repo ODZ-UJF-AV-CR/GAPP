@@ -5,13 +5,13 @@ export type ClassRangeOptions = {
 };
 
 @Directive({
-    selector: '[class-range]',
+    selector: '[classRange]',
 })
 export class ClassRangeDirective {
     private el = inject(ElementRef);
     private renderer = inject(Renderer2);
 
-    public config = input<ClassRangeOptions>({}, { alias: 'class-range' });
+    public config = input<ClassRangeOptions>({}, { alias: 'classRange' });
     public value = input<number | undefined | null>();
 
     constructor() {

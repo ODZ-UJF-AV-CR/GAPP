@@ -1,3 +1,9 @@
 const baseConfig = require('../../eslint.config.cjs');
 
-module.exports = [...baseConfig];
+module.exports = [
+    ...baseConfig,
+    {
+        files: ['src/migrations/*.ts'],
+        ignores: ['src/migrations/*.ts'],
+    },
+];

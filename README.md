@@ -2,7 +2,7 @@
 
 ### ⚠️ WARNING - DEVELOPMENT IN PROGRESS ⚠️
 
-> **CAUTION**: This repository is still under active development!
+> This repository is still under active development!
 >
 > -   The app is not stable yet
 > -   Breaking changes may be introduced in future releases
@@ -16,8 +16,6 @@ This is ground application for managing high altitude balloons flights. It forwa
 The easiest option to run GAPP is to use docker compose:
 
 ```yml
-version: '3.8'
-
 services:
     influxdb:
         image: influxdb:2
@@ -41,12 +39,14 @@ services:
             - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
             - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=some-long-secret-like-string
 
-    mongodb:
-        image: mongo:8
-        container_name: gapp_mongodb
+    postgresdb:
+        image: postgres:17.4-alpine
+        container_name: gapp_postgresdb
         restart: unless-stopped
+        ports:
+            - 5434:5432
         volumes:
-            - ./.data/postgres:/var/lib/postgresql/data:rw
+            - ./.example-data/postgres:/var/lib/postgresql/data:rw
         healthcheck:
             test: pg_isready -U user -d gapp
             interval: 10s
@@ -63,7 +63,7 @@ services:
         depends_on:
             influxdb:
                 condition: service_healthy
-            mongodb:
+            postgresdb:
                 condition: service_healthy
         ports:
             - 3000:3000
@@ -77,6 +77,7 @@ services:
             - INFLUXDB_ORG=flight
             - INFLUXDB_TOKEN=some-long-secret-like-string
             - INFLUXDB_HOST=http://influxdb:8086
+            - POSTGRESDB_URI=postgresql://postgres:password@postgresdb:5432/gapp
             - POSTGRESDB_URI=postgresql://postgres:password@localhost:5434/gapp
 ```
 

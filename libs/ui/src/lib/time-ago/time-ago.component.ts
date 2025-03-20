@@ -13,7 +13,7 @@ const timeAgo = new TimeAgo('en-GB');
 export class TimeAgoComponent implements OnDestroy {
     private intervalId?: number;
 
-    public date = input('');
+    public date = input.required<Date>();
     public time = signal('');
 
     constructor() {
@@ -22,7 +22,9 @@ export class TimeAgoComponent implements OnDestroy {
                 clearInterval(this.intervalId);
             }
 
-            const updateTime = () => this.time.set(timeAgo.format(new Date(this.date()), 'round', { now: Date.now() }));
+            const time = this.date().getTime();
+
+            const updateTime = () => this.time.set(timeAgo.format(time, 'round', { now: Date.now() }));
             this.intervalId = setInterval(updateTime, 1_000) as unknown as number;
             updateTime();
         });

@@ -1,4 +1,5 @@
 import { Static, Type as T } from '@sinclair/typebox';
+import { PointType } from '../repository/telemetry.repository';
 
 export const B_TtnTelemetry = T.Object({
     end_device_ids: T.Object({
@@ -67,10 +68,24 @@ export const B_TtnTelemetry = T.Object({
 });
 export type TtnTelemetry = Static<typeof B_TtnTelemetry>;
 
-export const B_Telemetry = T.Object({
+const TelemetryBase = T.Object({
     callsign: T.String(),
-    timestamp: T.String(),
     latitude: T.Number(),
     longitude: T.Number(),
     altitude: T.Number(),
 });
+
+export const B_Telemetry = T.Intersect([
+    TelemetryBase,
+    T.Object({
+        timestamp: T.String(),
+    }),
+]);
+
+export const R_Telemetry = T.Intersect([
+    TelemetryBase,
+    T.Object({
+        _time: T.String(),
+        _measurement: T.Enum(PointType),
+    }),
+]);

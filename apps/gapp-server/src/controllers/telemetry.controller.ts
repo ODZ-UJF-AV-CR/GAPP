@@ -1,5 +1,5 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_Telemetry, B_TtnTelemetry } from '../schemas/telemetry.schema';
+import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema';
 import { Type } from '@sinclair/typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 import { Q_OptionalCallsign } from '../schemas/vehicle.schema';
@@ -52,6 +52,26 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         }
     );
 
+    fastify.get(
+        '',
+        {
+            schema: {
+                tags: ['telemetry'],
+                summary: 'Get telemetry data',
+                description: 'Retrieve telemetry data for a specific vehicle.',
+                querystring: Q_OptionalCallsign,
+                response: {
+                    200: Type.Array(R_Telemetry),
+                },
+            },
+        },
+        async (req, rep) => {
+            const callsigns = req.query.callsign?.split(',');
+            const telemetry = await req.server.telemetryService.getCallsignsTelemetry(callsigns);
+            rep.code(200).send(telemetry);
+        }
+    );
+
     fastify.register(FastifySSEPlugin);
 
     fastify.get(
@@ -64,10 +84,10 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 querystring: Q_OptionalCallsign,
             },
         },
-        async (req, res) => {
+        async (req, rep) => {
             const ac = req.server.getAbortController();
             req.raw.on('close', () => ac.abort());
-            res.sse(req.server.telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
+            rep.sse(req.server.telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
         }
     );
 };

@@ -1,0 +1,19 @@
+<li class="list-row">
+    <div class="flex items-center">
+        <vehicle-icon [type]="vehicle().type" size="1.6rem"></vehicle-icon>
+    </div>
+
+    <div class="flex flex-col gap-2">
+        @if(!isSimpleMode()) {
+        <div textLimit="1" class="font-bold uppercase">
+            {{ vehicle().callsign }}
+        </div>
+        }
+
+        <ul class="flex flex-col gap-1">
+            @for(beacon of sortedBeacons(); track trackFn(beacon)) {
+            <beacon-item [beacon]="beacon"></beacon-item>
+            }
+        </ul>
+    </div>
+</li>

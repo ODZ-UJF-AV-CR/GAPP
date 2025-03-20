@@ -27,6 +27,10 @@ export class TelemetryService {
         this.writeTelemetry(vehicle.type, packet);
     }
 
+    public async getCallsignsTelemetry(callsigns?: string[]) {
+        return await this.telemetryRepository.getCallsignsLastLocation(callsigns);
+    }
+
     public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
         const abortSignal = abortCotroller.signal;
         const queue: EventMessage[] = [];

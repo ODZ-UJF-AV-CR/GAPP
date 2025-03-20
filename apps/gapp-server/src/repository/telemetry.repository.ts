@@ -4,12 +4,11 @@ import { arrayAsString } from '../utils/array-as-atring';
 
 export type LocationData = {
     _time: string;
+    _measurement: PointType;
     altitude: number;
     callsign: string;
     latitude: number;
     longitude: number;
-    result: string;
-    table: number;
 };
 
 export interface TelemetryData extends Record<string, number | string | boolean | undefined> {

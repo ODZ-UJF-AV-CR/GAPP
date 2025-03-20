@@ -12,7 +12,7 @@
             <div class="modal-action">
                 @if(closeButton(); as close) {
                 <form method="dialog">
-                    <button class="btn btn-neutral btn-soft">{{ close }}</button>
+                    <button class="btn btn-neutral">{{ close }}</button>
                 </form>
                 } @for (button of buttons(); track button.label) {
                 <button class="btn" [ngClass]="button.style" (click)="button.action($event)">{{ button.label }}</button>

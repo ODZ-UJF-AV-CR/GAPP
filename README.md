@@ -78,7 +78,6 @@ services:
             - INFLUXDB_TOKEN=some-long-secret-like-string
             - INFLUXDB_HOST=http://influxdb:8086
             - POSTGRESDB_URI=postgresql://postgres:password@postgresdb:5432/gapp
-            - POSTGRESDB_URI=postgresql://postgres:password@localhost:5434/gapp
 ```
 
 Or you can check out [compose.example.yml](./compose.example.yml)

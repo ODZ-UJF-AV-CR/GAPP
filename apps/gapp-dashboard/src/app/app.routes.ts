@@ -16,6 +16,11 @@ export const appRoutes: Route[] = [
         title: 'GAPP | Vehicles',
     },
     {
+        path: 'sondehub',
+        loadComponent: () => import('@/pages/sondehub/sondehub.component').then((c) => c.SondehubComponent),
+        title: 'GAPP | Sondehub',
+    },
+    {
         path: '**',
         redirectTo: 'home',
         pathMatch: 'full',

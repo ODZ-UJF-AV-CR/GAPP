@@ -33,8 +33,11 @@ export class DialogComponent {
     private _buttons = signal<DialogButton[]>([]);
     private _title = signal<string>('');
 
+    public readonly _open = signal(false);
+
     public readonly isOpen = input(false, { transform: booleanAttribute });
     public readonly content = input('');
+    public readonly modalClass = input<string | string[]>('');
     public readonly closeButton = input<string | null>('Close');
     public readonly closed = output<void>();
 
@@ -50,9 +53,11 @@ export class DialogComponent {
 
     public open() {
         this.modalRef().nativeElement.showModal();
+        this._open.set(true);
     }
 
     public close() {
         this.modalRef().nativeElement.close();
+        this._open.set(false);
     }
 }

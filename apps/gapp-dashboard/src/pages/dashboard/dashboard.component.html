@@ -1,25 +1,11 @@
-<div class="flex flex-col lg:flex-row gap-8 px-4">
-    <page-block title="Air vehicles">
-        <scrollable blockBody>
-            <ul class="list bg-base-100 rounded-box">
-                @for (vehicle of airVehicles(); track vehicle.id) {
-                <telemetry-card [vehicle]="vehicle"></telemetry-card>
-                } @empty {
-                <li class="list-row">No data available</li>
-                }
-            </ul>
-        </scrollable>
-    </page-block>
-
-    <page-block title="Ground vehicles">
-        <scrollable blockBody>
-            <ul class="list bg-base-100 rounded-box">
-                @for (vehicle of groundVehicles(); track vehicle.id) {
-                <telemetry-card [vehicle]="vehicle"></telemetry-card>
-                } @empty {
-                <li class="list-row">No data available</li>
-                }
-            </ul>
-        </scrollable>
-    </page-block>
-</div>
+<page-block title="Connection status">
+    <scrollable blockBody>
+        <ul class="list bg-base-100 rounded-box">
+            @for (vehicle of telemetry(); track vehicle.id) {
+            <telemetry-card [vehicle]="vehicle"></telemetry-card>
+            } @empty {
+            <li class="list-row">No data available</li>
+            }
+        </ul>
+    </scrollable>
+</page-block>

@@ -1,4 +1,4 @@
-<li class="list-row cursor-pointer" (click)="detail.open()">
+<li class="list-row" (click)="detail.open()">
     <div class="flex items-center">
         <vehicle-icon [type]="vehicle().type" size="1.6rem"></vehicle-icon>
     </div>
@@ -17,16 +17,3 @@
         </ul>
     </div>
 </li>
-
-<gapp-dialog #detail modalClass="max-w-[95vw]">
-    <div class="flex flex-col gap-5">
-        <div class="flex flex-row justify-start gap-3 items-center">
-            <vehicle-icon [type]="vehicle().type" size="2rem"></vehicle-icon>
-            <span textLimit="1" class="font-bold uppercase text-lg">{{ vehicle().callsign }}</span>
-        </div>
-
-        <div class="h-[75vh]">
-            <iframe name="embed_iframe" width="100%" height="100%" [src]="sondehubSource()" class="rounded-box"></iframe>
-        </div>
-    </div>
-</gapp-dialog>

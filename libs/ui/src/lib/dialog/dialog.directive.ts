@@ -1,11 +1,11 @@
-import { Directive, HostListener, inject, input, output } from '@angular/core';
+import { Directive, HostListener, inject, input, OnDestroy, output, TemplateRef } from '@angular/core';
 import { DialogButton } from './dialog.component';
 import { DialogRef, DialogService } from './dialog.service';
 
 @Directive({
     selector: '[dialog]',
 })
-export class DialogDirective {
+export class DialogDirective implements OnDestroy {
     private dialogService = inject(DialogService);
 
     private dialogRef!: DialogRef;
@@ -20,15 +20,19 @@ export class DialogDirective {
         },
     ];
 
-    public readonly dialog = input.required<string>();
-    public readonly content = input.required<string>();
+    public readonly dialog = input.required<string | TemplateRef<unknown>>();
+    public readonly title = input<string>();
     public readonly dialogResolved = output<void>();
 
     @HostListener('click')
     public openDialog() {
-        this.dialogRef = this.dialogService.open(this.content(), {
-            title: this.dialog(),
+        this.dialogRef = this.dialogService.open(this.dialog(), {
+            title: this.title(),
             buttons: this.buttons,
         });
+    }
+
+    public ngOnDestroy(): void {
+        this.dialogRef?.close();
     }
 }

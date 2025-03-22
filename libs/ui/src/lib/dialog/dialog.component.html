@@ -1,5 +1,4 @@
 <dialog #modal class="modal" (close)="closed.emit()">
-    @if(_open()) {
     <div class="modal-box" [ngClass]="modalClass()">
         @if(title(); as title) {
         <h3 [textLimit]="1" class="text-lg font-bold mb-2 pr-4">{{ title }}</h3>
@@ -27,5 +26,4 @@
     <form method="dialog" class="modal-backdrop">
         <button>close</button>
     </form>
-    }
 </dialog>

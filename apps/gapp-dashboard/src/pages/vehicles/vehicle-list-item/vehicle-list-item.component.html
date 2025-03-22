@@ -12,8 +12,8 @@
 
     <div clas="flex items-center">
         <button
-            [dialog]="'Delete vehicle?'"
-            content="Are you sure you want to delete {{ vehicle().callsign }} vessel?"
+            dialog="Are you sure you want to delete {{ vehicle().callsign }} vessel?"
+            title="Delete vehicle?"
             (dialogResolved)="deleteVehicle()"
             class="btn btn-error btn-ghost btn-sm"
         >

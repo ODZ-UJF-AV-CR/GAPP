@@ -1,4 +1,4 @@
-<li class="list-row">
+<li class="list-row cursor-pointer" (click)="detail.open()">
     <div class="flex items-center">
         <vehicle-icon [type]="vehicle().type" size="1.6rem"></vehicle-icon>
     </div>
@@ -17,3 +17,7 @@
         </ul>
     </div>
 </li>
+
+<gapp-dialog #detail [title]="vehicle().callsign">
+    {{ vehicle().description }}
+</gapp-dialog>

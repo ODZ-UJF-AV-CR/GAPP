@@ -4,12 +4,13 @@ import { VehicleIconComponent } from '@/components/vehicle-icon/vehicle-icon.com
 import { TextLimitDirective } from '@gapp/ui/utils';
 import { VehicleType } from '@/services/vehicle.service';
 import { BeaconItemComponent } from './beacon-item.component';
+import { DialogComponent } from '@gapp/ui/dialog';
 
 @Component({
     selector: 'telemetry-card',
     templateUrl: './telemetry-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [VehicleIconComponent, TextLimitDirective, BeaconItemComponent],
+    imports: [VehicleIconComponent, TextLimitDirective, BeaconItemComponent, DialogComponent],
 })
 export class TelemetryCardComponent {
     public vehicle = input.required<VehicleWithTelemetry>();

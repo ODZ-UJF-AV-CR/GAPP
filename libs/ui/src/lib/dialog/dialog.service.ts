@@ -1,17 +1,21 @@
-import { ApplicationRef, createComponent, EnvironmentInjector, inject, Injectable } from '@angular/core';
+import { ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, inject, Injectable, TemplateRef, Type } from '@angular/core';
 import { DialogButton, DialogComponent } from './dialog.component';
 import { DOCUMENT } from '@angular/common';
 
-export type DialogContent = string;
+export type DialogContent<C> = string | Type<C> | TemplateRef<unknown>;
 
 export interface DialogOptions {
     buttons: DialogButton[];
-    title: string;
+    title?: string;
     closeOtherDialogs: boolean;
 }
 
 export interface DialogRef {
     close: () => void;
+}
+
+export interface DialogRefWithComponent<T> extends DialogRef {
+    componentInstance: T;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,15 +26,31 @@ export class DialogService {
 
     private closeCallbacks: (() => void)[] = [];
 
-    public open(content: DialogContent, options?: Partial<DialogOptions>): DialogRef {
+    public open(content: string, options?: Partial<DialogOptions>): DialogRef;
+    public open(content: TemplateRef<unknown>, options?: Partial<DialogOptions>): DialogRef;
+    public open(content: string | TemplateRef<unknown>, options?: Partial<DialogOptions>): DialogRef;
+    public open<C>(content: Type<C>, options?: Partial<DialogOptions>): DialogRefWithComponent<C>;
+    public open<C>(content: DialogContent<C>, options?: Partial<DialogOptions>): DialogRef | DialogRefWithComponent<C> {
         if (options?.closeOtherDialogs !== false) {
             this.closeCallbacks.forEach((cb) => cb());
             this.closeCallbacks = [];
         }
 
+        let projectableNodes: Node[] = [];
+        let componentInstance: ComponentRef<C> | undefined = undefined;
+
+        if (typeof content === 'string') {
+            projectableNodes = [this.document.createTextNode(content)];
+        } else if (content instanceof Type) {
+            componentInstance = createComponent(content, { environmentInjector: this.environmentInjector });
+            projectableNodes = componentInstance.location.nativeElement;
+        } else if (content instanceof TemplateRef) {
+            projectableNodes = content.createEmbeddedView({}).rootNodes;
+        }
+
         const modalComponent = createComponent(DialogComponent, {
             environmentInjector: this.environmentInjector,
-            projectableNodes: [[this.document.createTextNode(content)]],
+            projectableNodes: [projectableNodes],
         });
 
         modalComponent.instance.buttons = options?.buttons || [];
@@ -39,16 +59,20 @@ export class DialogService {
         this.document.body.appendChild(modalComponent.location.nativeElement);
         this.applicationRef.attachView(modalComponent.hostView);
 
-        setTimeout(() => modalComponent.instance.open(), 0);
+        const closedSubscription = modalComponent.instance.closed.subscribe(() => closeCallback());
 
         const closeCallback = () => {
             modalComponent.instance.close();
             modalComponent.destroy();
+            componentInstance?.destroy();
+            closedSubscription.unsubscribe();
         };
 
         this.closeCallbacks.push(closeCallback);
+        setTimeout(() => modalComponent.instance.open(), 0);
 
         return {
+            componentInstance: componentInstance?.instance,
             close: () => {
                 closeCallback();
                 this.closeCallbacks = this.closeCallbacks.filter((cb) => cb !== closeCallback);

@@ -2,6 +2,7 @@
     <div class="modal-box" [ngClass]="modalClass()">
         @if(title(); as title) {
         <h3 [textLimit]="1" class="text-lg font-bold mb-2 pr-4">{{ title }}</h3>
+        <div class="divider"></div>
         }
 
         <form method="dialog">
@@ -12,13 +13,13 @@
 
         <ng-content select="[footer]">
             <div class="modal-action">
-                @if(closeButton(); as close) {
+                @for (button of buttons(); track button.label) { @if(button.close) {
                 <form method="dialog">
-                    <button class="btn btn-neutral">{{ close }}</button>
+                    <button class="btn" [ngClass]="button.style">{{ button.label }}</button>
                 </form>
-                } @for (button of buttons(); track button.label) {
-                <button class="btn" [ngClass]="button.style" (click)="button.action($event)">{{ button.label }}</button>
-                }
+                } @else {
+                <button class="btn" [ngClass]="button.style" (click)="button?.action($event)">{{ button.label }}</button>
+                } }
             </div>
         </ng-content>
     </div>

@@ -14,8 +14,8 @@
         <button
             dialog="Are you sure you want to delete {{ vehicle().callsign }} vessel?"
             title="Delete vehicle?"
-            (dialogResolved)="deleteVehicle()"
             class="btn btn-error btn-ghost btn-sm"
+            [buttons]="buttons"
         >
             <ng-icon name="tablerTrash" size="1rem"></ng-icon>
         </button>

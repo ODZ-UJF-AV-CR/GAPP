@@ -1,13 +1,13 @@
-import { ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, inject, Injectable, TemplateRef, Type } from '@angular/core';
+import { ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, inject, Injectable, TemplateRef, Type, ViewContainerRef } from '@angular/core';
 import { DialogButton, DialogComponent } from './dialog.component';
 import { DOCUMENT } from '@angular/common';
 
 export type DialogContent<C> = string | Type<C> | TemplateRef<unknown>;
 
 export interface DialogOptions {
-    buttons: DialogButton[];
+    buttons?: DialogButton[];
     title?: string;
-    closeOtherDialogs: boolean;
+    closeOtherDialogs?: boolean;
 }
 
 export interface DialogRef {
@@ -26,11 +26,15 @@ export class DialogService {
 
     private closeCallbacks: (() => void)[] = [];
 
-    public open(content: string, options?: Partial<DialogOptions>): DialogRef;
-    public open(content: TemplateRef<unknown>, options?: Partial<DialogOptions>): DialogRef;
-    public open(content: string | TemplateRef<unknown>, options?: Partial<DialogOptions>): DialogRef;
-    public open<C>(content: Type<C>, options?: Partial<DialogOptions>): DialogRefWithComponent<C>;
-    public open<C>(content: DialogContent<C>, options?: Partial<DialogOptions>): DialogRef | DialogRefWithComponent<C> {
+    public open(content: string, vcrOrOptions?: DialogOptions, options?: never): DialogRef;
+
+    public open(content: TemplateRef<unknown>, vcrOrOptions: ViewContainerRef, options?: DialogOptions): DialogRef;
+
+    public open<C>(content: Type<C>, vcrOrOptions?: DialogOptions, options?: never): DialogRefWithComponent<C>;
+
+    public open<C>(content: DialogContent<C>, vcrOrOptions?: ViewContainerRef | DialogOptions, options?: DialogOptions): DialogRef | DialogRefWithComponent<C> {
+        options = vcrOrOptions instanceof ViewContainerRef ? options : vcrOrOptions;
+
         if (options?.closeOtherDialogs !== false) {
             this.closeCallbacks.forEach((cb) => cb());
             this.closeCallbacks = [];
@@ -44,8 +48,11 @@ export class DialogService {
         } else if (content instanceof Type) {
             componentInstance = createComponent(content, { environmentInjector: this.environmentInjector });
             projectableNodes = componentInstance.location.nativeElement;
-        } else if (content instanceof TemplateRef) {
-            projectableNodes = content.createEmbeddedView({}).rootNodes;
+        } else if (content instanceof TemplateRef && vcrOrOptions instanceof ViewContainerRef) {
+            vcrOrOptions.clear();
+            projectableNodes = vcrOrOptions.createEmbeddedView(content).rootNodes;
+        } else {
+            throw 'Not valid input provided as dialog content';
         }
 
         const modalComponent = createComponent(DialogComponent, {

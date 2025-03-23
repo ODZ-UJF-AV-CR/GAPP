@@ -1,4 +1,4 @@
-<li class="list-row cursor-pointer" (click)="detail.open()">
+<li class="list-row cursor-pointer" [dialog]="detail" [title]="vehicle().callsign" [buttons]="buttons" [vcr]="vcr()">
     <div class="flex items-center">
         <vehicle-icon [type]="vehicle().type" size="1.6rem"></vehicle-icon>
     </div>
@@ -18,6 +18,41 @@
     </div>
 </li>
 
-<gapp-dialog #detail [title]="vehicle().callsign">
-    {{ vehicle().description }}
-</gapp-dialog>
+<ng-template #detail>
+    <div class="flex flex-col gap-3">
+        @if(vehicle().description; as description) {
+        <div textLimit="4" class="font-semibold">
+            {{ description }}
+        </div>
+        }
+
+        <ul class="list">
+            @for(beacon of sortedBeacons(); track beacon) {
+            <li class="list-row">
+                <div>
+                    <div class="font-bold text-lg mb-2">
+                        {{ beacon.callsign }}
+                    </div>
+                    @if(beacon.telemetry) {
+                    <ul class="text-sm">
+                        <li>
+                            time: <kbd class="kbd">{{ beacon.telemetry._time.toJSON() }}</kbd>
+                        </li>
+                        <li>
+                            lat: <kbd class="kbd">{{ beacon.telemetry.latitude }}</kbd>
+                        </li>
+                        <li>
+                            lon: <kbd class="kbd">{{ beacon.telemetry.longitude }}</kbd>
+                        </li>
+                        <li>
+                            alt: <kbd class="kbd">{{ beacon.telemetry.altitude }}</kbd>
+                        </li>
+                    </ul>
+                    }
+                </div>
+                <div>@if(!beacon.telemetry) { No data }</div>
+            </li>
+            }
+        </ul>
+    </div>
+</ng-template>

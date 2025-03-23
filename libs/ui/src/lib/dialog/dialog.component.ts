@@ -5,7 +5,8 @@ import { TextLimitDirective } from '../utils';
 export interface DialogButton {
     label: string;
     style?: string;
-    action: (event: MouseEvent) => void;
+    action?: (event: MouseEvent) => void;
+    close?: boolean;
 }
 
 @Component({
@@ -30,13 +31,18 @@ export class DialogComponent {
         return this._title;
     }
 
-    private _buttons = signal<DialogButton[]>([]);
+    private _buttons = signal<DialogButton[]>([
+        {
+            label: 'Close',
+            style: 'btn-neutral',
+            close: true,
+        },
+    ]);
     private _title = signal<string>('');
 
     public readonly isOpen = input(false, { transform: booleanAttribute });
     public readonly content = input('');
     public readonly modalClass = input<string | string[]>('');
-    public readonly closeButton = input<string | null>('Close');
     public readonly closed = output<void>();
 
     constructor() {

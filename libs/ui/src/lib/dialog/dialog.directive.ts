@@ -1,4 +1,4 @@
-import { Directive, HostListener, inject, input, OnDestroy, output, TemplateRef } from '@angular/core';
+import { Directive, HostListener, inject, input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
 import { DialogButton } from './dialog.component';
 import { DialogRef, DialogService } from './dialog.service';
 
@@ -9,27 +9,39 @@ export class DialogDirective implements OnDestroy {
     private dialogService = inject(DialogService);
 
     private dialogRef!: DialogRef;
-    private buttons: DialogButton[] = [
+    private defaultButtons: DialogButton[] = [
         {
             label: 'Delete',
             style: 'btn-error',
             action: () => {
                 this.dialogRef.close();
-                this.dialogResolved.emit(void 0);
             },
         },
     ];
 
     public readonly dialog = input.required<string | TemplateRef<unknown>>();
+    public readonly vcr = input<ViewContainerRef>();
     public readonly title = input<string>();
-    public readonly dialogResolved = output<void>();
+    public readonly buttons = input<DialogButton[]>(this.defaultButtons);
 
     @HostListener('click')
     public openDialog() {
-        this.dialogRef = this.dialogService.open(this.dialog(), {
-            title: this.title(),
-            buttons: this.buttons,
-        });
+        const content = this.dialog();
+        const vcr = this.vcr();
+
+        if (content instanceof TemplateRef && vcr instanceof ViewContainerRef) {
+            this.dialogRef = this.dialogService.open(content, vcr, {
+                title: this.title(),
+                buttons: this.buttons(),
+            });
+        } else if (typeof content === 'string') {
+            this.dialogRef = this.dialogService.open(content, {
+                title: this.title(),
+                buttons: this.buttons(),
+            });
+        } else {
+            throw 'Content must be either a string or a TemplateRef';
+        }
     }
 
     public ngOnDestroy(): void {

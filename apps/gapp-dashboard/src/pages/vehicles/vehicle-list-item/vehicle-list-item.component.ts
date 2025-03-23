@@ -2,7 +2,7 @@ import { VehicleIconComponent } from '@/components/vehicle-icon/vehicle-icon.com
 import { ToastService } from '@/services/toast.service';
 import { Vehicle, VehicleService } from '@/services/vehicle.service';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { DialogDirective } from '@gapp/ui/dialog';
+import { DialogButton, DialogDirective } from '@gapp/ui/dialog';
 import { TextLimitDirective } from '@gapp/ui/utils';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
@@ -20,6 +20,19 @@ export class VehicleListItemComponent {
     private toastService = inject(ToastService);
 
     public vehicle = input.required<Vehicle>();
+
+    public buttons: DialogButton[] = [
+        {
+            label: 'Close',
+            style: 'btn-neutral',
+            close: true,
+        },
+        {
+            label: 'Delete',
+            style: 'btn-error',
+            action: () => this.deleteVehicle(),
+        },
+    ];
 
     public deleteVehicle() {
         this.vehicleServce

@@ -34,7 +34,7 @@
                 </div>
                 <ul class="text-sm">
                     <li>
-                        time: <kbd class="kbd">{{ beacon.telemetry?._time?.toJSON() || 'N/A' }}</kbd>
+                        time: <kbd class="kbd">{{ beacon.telemetry?._time?.toLocaleString() || 'N/A' }}</kbd>
                     </li>
                     <li>
                         lat: <kbd class="kbd">{{ beacon.telemetry?.latitude || 'N/A' }}</kbd>

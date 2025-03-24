@@ -26,33 +26,28 @@
         </div>
         }
 
-        <ul class="list">
+        <div class="flex flex-col gap-2">
             @for(beacon of sortedBeacons(); track beacon) {
-            <li class="list-row">
-                <div>
-                    <div class="font-bold text-lg mb-2">
-                        {{ beacon.callsign }}
-                    </div>
-                    @if(beacon.telemetry) {
-                    <ul class="text-sm">
-                        <li>
-                            time: <kbd class="kbd">{{ beacon.telemetry._time.toJSON() }}</kbd>
-                        </li>
-                        <li>
-                            lat: <kbd class="kbd">{{ beacon.telemetry.latitude }}</kbd>
-                        </li>
-                        <li>
-                            lon: <kbd class="kbd">{{ beacon.telemetry.longitude }}</kbd>
-                        </li>
-                        <li>
-                            alt: <kbd class="kbd">{{ beacon.telemetry.altitude }}</kbd>
-                        </li>
-                    </ul>
-                    }
+            <div>
+                <div class="font-bold text-lg mb-2">
+                    {{ beacon.callsign }}
                 </div>
-                <div>@if(!beacon.telemetry) { No data }</div>
-            </li>
+                <ul class="text-sm">
+                    <li>
+                        time: <kbd class="kbd">{{ beacon.telemetry?._time?.toJSON() || 'N/A' }}</kbd>
+                    </li>
+                    <li>
+                        lat: <kbd class="kbd">{{ beacon.telemetry?.latitude || 'N/A' }}</kbd>
+                    </li>
+                    <li>
+                        lon: <kbd class="kbd">{{ beacon.telemetry?.longitude || 'N/A' }}</kbd>
+                    </li>
+                    <li>
+                        alt: <kbd class="kbd">{{ beacon.telemetry?.altitude || 'N/A' }}</kbd>
+                    </li>
+                </ul>
+            </div>
             }
-        </ul>
+        </div>
     </div>
 </ng-template>

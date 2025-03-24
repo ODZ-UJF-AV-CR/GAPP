@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, viewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { BeaconWithTelemetry, VehicleWithTelemetry } from '../dashboard.service';
 import { VehicleIconComponent } from '@/components/vehicle-icon/vehicle-icon.component';
 import { TextLimitDirective } from '@gapp/ui/utils';
@@ -15,7 +15,6 @@ import { DialogButton, DialogDirective } from '@gapp/ui/dialog';
 export class TelemetryCardComponent {
     public vehicle = input.required<VehicleWithTelemetry>();
     public isSimpleMode = computed(() => this.vehicle().type === VehicleType.CAR);
-    public vcr = viewChild.required('detail', { read: ViewContainerRef });
 
     public sortedBeacons = computed(() => this.vehicle().beacons.sort((a, b) => (b.telemetry?._time.getTime() || 0) - (a.telemetry?._time.getTime() || 0)));
     private sondehubUrl = computed(

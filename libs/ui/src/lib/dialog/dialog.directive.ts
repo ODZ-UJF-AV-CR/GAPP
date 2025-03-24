@@ -7,6 +7,7 @@ import { DialogRef, DialogService } from './dialog.service';
 })
 export class DialogDirective implements OnDestroy {
     private dialogService = inject(DialogService);
+    private viewContainerRef = inject(ViewContainerRef);
 
     private dialogRef!: DialogRef;
     private defaultButtons: DialogButton[] = [
@@ -20,17 +21,15 @@ export class DialogDirective implements OnDestroy {
     ];
 
     public readonly dialog = input.required<string | TemplateRef<unknown>>();
-    public readonly vcr = input<ViewContainerRef>();
     public readonly title = input<string>();
     public readonly buttons = input<DialogButton[]>(this.defaultButtons);
 
     @HostListener('click')
     public openDialog() {
         const content = this.dialog();
-        const vcr = this.vcr();
 
-        if (content instanceof TemplateRef && vcr instanceof ViewContainerRef) {
-            this.dialogRef = this.dialogService.open(content, vcr, {
+        if (content instanceof TemplateRef) {
+            this.dialogRef = this.dialogService.open(content, this.viewContainerRef, {
                 title: this.title(),
                 buttons: this.buttons(),
             });

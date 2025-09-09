@@ -9,7 +9,6 @@ import { toObservable } from '@angular/core/rxjs-interop';
 @Component({
     selector: 'beacon-item',
     templateUrl: './beacon-item.component.html',
-    styleUrls: ['./beacon-item.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AsyncPipe, ClassRangeDirective, TimeAgoComponent],
 })

@@ -5,6 +5,7 @@ import { Component, inject } from '@angular/core';
 @Component({
     selector: 'gapp-toasts',
     templateUrl: './toasts.component.html',
+    styleUrl: './toasts.component.css',
     imports: [NgClass],
 })
 export class ToastsComponent {

@@ -7,8 +7,12 @@
         "watch": "ng build --watch --configuration development",
         "test": "ng test"
     },
-    "main": "./dist/forms/fesm2022/forms.mjs",
-    "types": "./dist/forms/types/forms.d.ts",
+    "exports": {
+        "./forms": {
+            "default": "./dist/forms/package.json",
+            "types": "./dist/forms/types/forms.d.ts"
+        }
+    },
     "private": true,
     "dependencies": {
         "@angular/common": "^21.1.0",

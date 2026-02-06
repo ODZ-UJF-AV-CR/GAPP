@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Forms } from '@gapp/ui';
+import { Forms } from '@gapp/ui/forms';
 
 @Component({
     selector: 'app-root',

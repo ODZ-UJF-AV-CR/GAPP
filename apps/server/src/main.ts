@@ -23,7 +23,7 @@ if (config.isProd) {
         root: path.join(__dirname, '../../../../gapp-dashboard/browser'),
     });
 
-    server.setNotFoundHandler((request, reply) => {
+    server.setNotFoundHandler((_request, reply) => {
         reply.sendFile('index.html');
     });
 }

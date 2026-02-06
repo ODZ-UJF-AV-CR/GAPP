@@ -4,33 +4,33 @@
     "cli": {
         "packageManager": "pnpm"
     },
-    "newProjectRoot": "projects",
+    "newProjectRoot": "libs",
     "projects": {
-      "forms": {
-        "projectType": "library",
-        "root": "projects/forms",
-        "sourceRoot": "projects/forms/src",
-        "prefix": "lib",
-        "architect": {
-          "build": {
-            "builder": "@angular/build:ng-packagr",
-            "configurations": {
-              "production": {
-                "tsConfig": "projects/forms/tsconfig.lib.prod.json"
-              },
-              "development": {
-                "tsConfig": "projects/forms/tsconfig.lib.json"
-              }
-            },
-            "defaultConfiguration": "production"
-          },
-          "test": {
-            "builder": "@angular/build:unit-test",
-            "options": {
-              "tsConfig": "projects/forms/tsconfig.spec.json"
+        "forms": {
+            "projectType": "library",
+            "root": "libs/forms",
+            "sourceRoot": "libs/forms/src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular/build:ng-packagr",
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "libs/forms/tsconfig.lib.prod.json"
+                        },
+                        "development": {
+                            "tsConfig": "libs/forms/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "@angular/build:unit-test",
+                    "options": {
+                        "tsConfig": "libs/forms/tsconfig.spec.json"
+                    }
+                }
             }
-          }
         }
-      }
     }
 }

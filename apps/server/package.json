@@ -6,6 +6,7 @@
     "private": true,
     "packageManager": "npm@10.9.2",
     "dependencies": {
+        "@gapp/sondehub": "workspace:^",
         "@sinclair/typebox": "^0.34.48",
         "envalid": "^8.1.1",
         "fastify": "^5.7.4",

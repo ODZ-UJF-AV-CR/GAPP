@@ -27,10 +27,10 @@
     "files": [],
     "references": [
         {
-            "path": "./projects/forms/tsconfig.lib.json",
+            "path": "./libs/forms/tsconfig.lib.json",
         },
         {
-            "path": "./projects/forms/tsconfig.spec.json",
+            "path": "./libs/forms/tsconfig.spec.json",
         },
     ],
 }

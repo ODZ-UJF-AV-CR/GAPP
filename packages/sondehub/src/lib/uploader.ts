@@ -125,7 +125,7 @@ export class Uploader {
      * await uploader.deinit();
      */
     public async deinit(): Promise<void> {
-        this.timeoutId.unref();
+        this.timeoutId?.unref();
 
         if (this.telemetryQueue.length) {
             await this.uploadTelemetryPackets(this.telemetryQueue);
@@ -192,7 +192,7 @@ export class Uploader {
 
         await this.uploadTelemetryPackets(queue);
 
-        this.timeoutId.unref();
+        this.timeoutId?.unref();
         this.timeoutId = setTimeout(() => this.processQueue(), this.uploaderConfig.uploadRate);
     }
 

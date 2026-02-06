@@ -15,7 +15,7 @@
         "baseUrl": ".",
         "paths": {
             "@gapp/forms-ui": ["libs/forms-ui/src/index.ts"],
-            "@gapp/sondehub": ["libs/sondehub/src/index.ts"]
+            "@gapp/sondehub": ["packages/sondehub/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]

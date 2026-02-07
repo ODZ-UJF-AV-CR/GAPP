@@ -35,6 +35,9 @@ importers:
       '@gapp/ui':
         specifier: workspace:^
         version: link:../../packages/ui
+      daisyui:
+        specifier: ^5.5.18
+        version: 5.5.18
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -2009,6 +2012,9 @@ packages:
   cssstyle@5.3.7:
     resolution: {integrity: sha512-7D2EPVltRrsTkhpQmksIu+LxeWAIEk6wRDMJ1qljlv+CKHJM+cJLlfhWIzNA44eAsHXSNe3+vO6DW1yCYx8SuQ==}
     engines: {node: '>=20'}
+
+  daisyui@5.5.18:
+    resolution: {integrity: sha512-VVzjpOitMGB6DWIBeRSapbjdOevFqyzpk9u5Um6a4tyId3JFrU5pbtF0vgjXDth76mJZbueN/j9Ok03SPrh/og==}
 
   data-urls@6.0.1:
     resolution: {integrity: sha512-euIQENZg6x8mj3fO6o9+fOW8MimUI4PpD/fZBhJfeioZVy9TUpM4UY7KjQNVZFlqwJ0UdzRDzkycB997HEq1BQ==}
@@ -5553,6 +5559,8 @@ snapshots:
       '@csstools/css-syntax-patches-for-csstree': 1.0.26
       css-tree: 3.1.0
       lru-cache: 11.2.5
+
+  daisyui@5.5.18: {}
 
   data-urls@6.0.1:
     dependencies:

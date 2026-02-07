@@ -1,15 +1,14 @@
 {
     "name": "@gapp/server",
-    "version": "1.0.0",
     "type": "module",
+    "private": true,
     "scripts": {
         "dev": "NODE_ENV=development node --experimental-transform-types --watch src/main.ts | pino-pretty",
         "build": "tsc -p tsconfig.app.json",
         "start": "node dist/main.js",
+        "clean": "rm -rf dist",
         "create-migration": "kysely migrate:make -x ts"
     },
-    "private": true,
-    "packageManager": "pnpm@10.5.2",
     "dependencies": {
         "@fastify/cors": "^11.2.0",
         "@fastify/sensible": "^6.0.4",

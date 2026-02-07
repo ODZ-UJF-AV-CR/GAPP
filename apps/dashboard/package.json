@@ -1,13 +1,14 @@
 {
     "name": "@gapp/dashboard",
+    "private": true,
     "scripts": {
         "ng": "ng",
         "dev": "ng serve",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
+        "clean": "rm -rf dist",
         "test": "ng test"
     },
-    "private": true,
     "dependencies": {
         "@angular/common": "^21.1.0",
         "@angular/compiler": "^21.1.0",

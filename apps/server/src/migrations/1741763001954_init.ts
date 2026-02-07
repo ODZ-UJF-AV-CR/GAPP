@@ -1,5 +1,5 @@
 import { sql, type Kysely } from 'kysely';
-import { VehicleType } from '../repository/postgres-database';
+import { VehicleType } from '../types/enums.ts';
 
 export async function up(db: Kysely<any>) {
     await db.schema.createType('vehicle_type').asEnum(Object.values(VehicleType)).execute();

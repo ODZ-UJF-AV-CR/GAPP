@@ -1,8 +1,8 @@
-import { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
+import type { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
 import { InfluxDB } from '@influxdata/influxdb-client';
-import { Plugins } from './plugins';
-import { Organization, OrgsAPI } from '@influxdata/influxdb-client-apis';
+import { Plugins } from './plugins.ts';
+import { OrgsAPI, type Organization } from '@influxdata/influxdb-client-apis';
 
 interface InfluxdbPluginOptions extends FastifyPluginOptions {
     host: string;

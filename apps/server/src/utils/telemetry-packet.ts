@@ -1,6 +1,6 @@
-import { TtnTelemetry } from '../schemas/telemetry.schema';
-import { TelemetryPacket as SondehubTelemetryPacket, StationPositionPacket } from '@gapp/sondehub';
-import { TelemetryData } from '../repository/telemetry.repository';
+import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
+import type { TelemetryPacket as SondehubTelemetryPacket, StationPositionPacket } from '@gapp/sondehub';
+import type { TelemetryData } from '../repository/telemetry.repository.ts';
 
 export interface TelemetryPacketOptions {
     modulation?: SondehubTelemetryPacket['modulation'];

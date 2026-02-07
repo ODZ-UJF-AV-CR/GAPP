@@ -1,10 +1,15 @@
 {
     "name": "@gapp/server",
+    "version": "1.0.0",
+    "type": "module",
     "scripts": {
+        "dev": "NODE_ENV=development node --experimental-transform-types --watch src/main.ts | pino-pretty",
+        "build": "tsc -p tsconfig.app.json",
+        "start": "node dist/main.js",
         "create-migration": "kysely migrate:make -x ts"
     },
     "private": true,
-    "packageManager": "npm@10.9.2",
+    "packageManager": "pnpm@10.5.2",
     "dependencies": {
         "@fastify/cors": "^11.2.0",
         "@fastify/sensible": "^6.0.4",
@@ -25,7 +30,7 @@
         "pino": "^10.3.0"
     },
     "devDependencies": {
-        "@types/node": "^25.2.1",
+        "@types/node": "^24.5.0",
         "@types/pg": "^8.16.0",
         "kysely-ctl": "^0.20.0",
         "pino-pretty": "^13.1.3",

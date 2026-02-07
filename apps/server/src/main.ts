@@ -1,10 +1,14 @@
 import Fastify from 'fastify';
-import { app } from './app';
-import { getConfig } from './config';
+import { app } from './app.ts';
+import { getConfig } from './config.ts';
 import pino from 'pino';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import fastifyStatic from '@fastify/static';
 import path from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const config = getConfig(process.env);
 const logger = pino();

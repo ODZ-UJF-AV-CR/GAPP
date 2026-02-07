@@ -1,13 +1,14 @@
-import { EventBus } from '../utils/event-bus';
-import { Events } from '../plugins/event-bus';
+import { EventBus } from '../utils/event-bus.ts';
+import type { Events } from '../plugins/event-bus.ts';
 import { setInterval } from 'timers';
-import { EventMessage } from 'fastify-sse-v2';
-import { PointType, TelemetryData, TelemetryRepository } from '../repository/telemetry.repository';
-import { TtnTelemetry } from '../schemas/telemetry.schema';
+import type { EventMessage } from 'fastify-sse-v2';
+import { TelemetryRepository, type TelemetryData } from '../repository/telemetry.repository.ts';
+import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
 import { Uploader } from '@gapp/sondehub';
-import { VehiclesRepository } from '../repository/vehicles.repository';
-import { TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet';
-import { Vehicle, VehicleType } from '../repository/postgres-database';
+import { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import { TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
+import type { Vehicle } from '../repository/postgres-database.ts';
+import { PointType, VehicleType } from '../types/enums.ts';
 
 export class TelemetryService {
     constructor(

@@ -2,7 +2,7 @@
 
 ## Preparations
 
-1. You need to use NodeJS version `v22.13.1` or newer or use `nvm use` to switch to the correct version.
+1. You need to use NodeJS version `v24.5.0` or newer or use `nvm use` to switch to the correct version.
 
 2. Since we are using [PNPM](https://pnpm.io/), you need to install corepack:
 

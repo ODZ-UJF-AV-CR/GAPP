@@ -1,2 +1,2 @@
-export * from './telemetry.controller';
-export * from './vehicle.controller';
+export * from './telemetry.controller.ts';
+export * from './vehicle.controller.ts';

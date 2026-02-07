@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { Plugins } from './plugins';
+import { Plugins } from './plugins.ts';
 
 declare module 'fastify' {
     export interface FastifyInstance {

@@ -1,5 +1,5 @@
-import { Static, Type as T } from '@sinclair/typebox';
-import { PointType } from '../repository/telemetry.repository';
+import { type Static, Type as T } from '@sinclair/typebox';
+import { PointType } from '../types/enums.ts';
 
 export const B_TtnTelemetry = T.Object({
     end_device_ids: T.Object({
@@ -86,6 +86,6 @@ export const R_Telemetry = T.Intersect([
     TelemetryBase,
     T.Object({
         _time: T.String(),
-        _measurement: T.Enum(PointType),
+        _measurement: T.Literal(PointType.LOCATION),
     }),
 ]);

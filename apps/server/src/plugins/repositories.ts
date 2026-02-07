@@ -1,8 +1,8 @@
-import { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { Plugins } from './plugins';
-import { VehiclesRepository } from '../repository/vehicles.repository';
-import { TelemetryRepository } from '../repository/telemetry.repository';
+import { Plugins } from './plugins.ts';
+import { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import { TelemetryRepository } from '../repository/telemetry.repository.ts';
 
 declare module 'fastify' {
     interface FastifyInstance {

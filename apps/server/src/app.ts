@@ -1,16 +1,16 @@
-import { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import Sensible from '@fastify/sensible';
-import influxDbPlugin from './plugins/influxdb';
+import influxDbPlugin from './plugins/influxdb.ts';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import sondehubPlugin from './plugins/sondehub';
-import postgresDbPlugin from './plugins/postgresdb';
-import repositoriesPlugin from './plugins/repositories';
-import servicesPlugin from './plugins/services';
-import eventBusPlugin from './plugins/event-bus';
-import abortControllerPlugin from './plugins/abort-controller';
+import sondehubPlugin from './plugins/sondehub.ts';
+import postgresDbPlugin from './plugins/postgresdb.ts';
+import repositoriesPlugin from './plugins/repositories.ts';
+import servicesPlugin from './plugins/services.ts';
+import eventBusPlugin from './plugins/event-bus.ts';
+import abortControllerPlugin from './plugins/abort-controller.ts';
 import cors from '@fastify/cors';
-import { telemetryController, vehicleController } from './controllers';
+import { telemetryController, vehicleController } from './controllers/index.ts';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;

@@ -1,10 +1,10 @@
-import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema.ts';
 import { Type } from '@sinclair/typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
-import { Q_OptionalCallsign } from '../schemas/vehicle.schema';
+import { Q_OptionalCallsign } from '../schemas/vehicle.schema.ts';
 
-export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
+export const telemetryController: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     fastify.post(
         '',
         {
@@ -14,12 +14,12 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 description: 'Received telemetry data are stored and forwarded to SondeHub.',
                 body: B_Telemetry,
             },
-        },
-        async (req, rep) => {
+        } as any,
+        async (req: any, rep: any) => {
             const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.callsign);
 
             if (!vehicle) {
-                return rep.unprocessableEntity(`Callsign ${req.body.callsign} does not exist`);
+                return rep.status(422).send(`Callsign ${req.body.callsign} does not exist`);
             }
 
             req.server.telemetryService.writeGeneralTelemetry(vehicle, req.body);
@@ -39,12 +39,12 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                     200: Type.String(),
                 },
             },
-        },
-        async (req, rep) => {
+        } as any,
+        async (req: any, rep: any) => {
             const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.end_device_ids.device_id);
 
             if (!vehicle) {
-                return rep.unprocessableEntity(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
+                return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
             }
 
             req.server.telemetryService.writeTtnTelemetry(vehicle, req.body);
@@ -64,8 +64,8 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                     200: Type.Array(R_Telemetry),
                 },
             },
-        },
-        async (req, rep) => {
+        } as any,
+        async (req: any, rep: any) => {
             const callsigns = req.query.callsign?.split(',');
             const telemetry = await req.server.telemetryService.getCallsignsTelemetry(callsigns);
             rep.code(200).send(telemetry);
@@ -83,11 +83,11 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 description: 'Stream live data updates from vessels and chase cars using servewr sent events',
                 querystring: Q_OptionalCallsign,
             },
-        },
-        async (req, rep) => {
-            const ac = req.server.getAbortController();
+        } as any,
+        async (req: any, rep: any) => {
+            const ac = (req.server as any).getAbortController();
             req.raw.on('close', () => ac.abort());
-            rep.sse(req.server.telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
+            rep.sse((req.server as any).telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
         }
     );
 };

@@ -1,10 +1,5 @@
 import { ColumnType, Generated, Insertable, type Kysely, Selectable, Updateable } from 'kysely';
-
-export enum VehicleType {
-    BALLOON = 'balloon',
-    DRONE = 'drone',
-    CAR = 'car',
-}
+import { VehicleType } from '../types/enums.ts';
 
 export interface Database {
     vehicles: VehicleTable;

@@ -1,6 +1,6 @@
-import { Vehicle } from '../repository/postgres-database';
-import { VehiclesRepository } from '../repository/vehicles.repository';
-import { CreateVehicle } from '../schemas/vehicle.schema';
+import type { Vehicle } from '../repository/postgres-database.ts';
+import { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import type { CreateVehicle } from '../schemas/vehicle.schema.ts';
 
 export class VehicleService {
     constructor(private readonly vehiclesRepository: VehiclesRepository) {}

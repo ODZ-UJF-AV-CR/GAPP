@@ -1,8 +1,8 @@
-import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
-import { B_CreateVehicle, R_Vehicle } from '../schemas/vehicle.schema';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import { B_CreateVehicle, R_Vehicle } from '../schemas/vehicle.schema.ts';
 import { Type } from '@sinclair/typebox';
 
-export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
+export const vehicleController: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     fastify.post(
         '',
         {
@@ -15,20 +15,20 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                     201: R_Vehicle,
                 },
             },
-        },
-        async (req, rep) => {
+        } as any,
+        async (req: any, rep: any) => {
             try {
                 const vehicle = await req.server.vehicleService.createVehicle(req.body);
                 rep.status(201).send(vehicle);
-            } catch (e) {
+            } catch (e: any) {
                 if (e.constraint === 'vehicles_callsign_key') {
-                    return rep.conflict(`Vehicle callsign ${req.body.callsign} already exists.`);
+                    return (rep as any).conflict(`Vehicle callsign ${req.body.callsign} already exists.`);
                 } else if (e.constraint === 'beacons_callsign_key') {
-                    return rep.conflict(`Beacon already exists.`);
+                    return (rep as any).conflict(`Beacon already exists.`);
                 }
 
                 req.server.log.error(e, 'Error creating vehicle');
-                return rep.internalServerError('Error creating vehicle');
+                return (rep as any).internalServerError('Error creating vehicle');
             }
         }
     );
@@ -44,14 +44,14 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                     200: Type.Array(R_Vehicle),
                 },
             },
-        },
-        async (req, rep) => {
+        } as any,
+        async (req: any, rep: any) => {
             try {
                 const vehicles = await req.server.vehicleService.getVehicles();
                 rep.status(200).send(vehicles);
-            } catch (e) {
+            } catch (e: any) {
                 req.server.log.error(e, 'Error getting vehicles');
-                return rep.internalServerError('Error getting vehicles');
+                return (rep as any).internalServerError('Error getting vehicles');
             }
         }
     );
@@ -70,14 +70,14 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                     204: Type.Null(),
                 },
             },
-        },
-        async (req, rep) => {
+        } as any,
+        async (req: any, rep: any) => {
             try {
                 await req.server.vehicleService.deleteVehicle(req.params.id);
                 rep.status(204).send();
-            } catch (e) {
+            } catch (e: any) {
                 req.server.log.error(e, 'Error deleting vehicle');
-                return rep.internalServerError('Error deleting vehicle');
+                return (rep as any).internalServerError('Error deleting vehicle');
             }
         }
     );

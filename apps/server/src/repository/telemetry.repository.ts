@@ -1,6 +1,7 @@
-import { InfluxDB, Point, QueryApi, WriteApi } from '@influxdata/influxdb-client';
-import { Bucket, BucketsAPI, Organization } from '@influxdata/influxdb-client-apis';
-import { arrayAsString } from '../utils/array-as-atring';
+import { InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
+import { BucketsAPI, type Bucket, type Organization } from '@influxdata/influxdb-client-apis';
+import { arrayAsString } from '../utils/array-as-atring.ts';
+import { PointType } from '../types/enums.ts';
 
 export type LocationData = {
     _time: string;
@@ -17,10 +18,6 @@ export interface TelemetryData extends Record<string, number | string | boolean 
     latitude: number;
     longitude: number;
     altitude: number;
-}
-
-export enum PointType {
-    LOCATION = 'location',
 }
 
 export class TelemetryRepository {

@@ -1,6 +1,6 @@
 import { sql } from 'kysely';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
-import { DatabaseInstance, NewBeacon, NewVehicle } from './postgres-database';
+import type { DatabaseInstance, NewBeacon, NewVehicle } from './postgres-database.ts';
 
 export class VehiclesRepository {
     /** @description Returns a query builder for the vehicles with beacons json */

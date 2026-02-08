@@ -11,6 +11,10 @@
         "./forms": {
             "default": "./dist/forms/package.json",
             "types": "./dist/forms/types/forms.d.ts"
+        },
+        "./utils": {
+            "default": "./dist/utils/package.json",
+            "types": "./dist/utils/types/utils.d.ts"
         }
     },
     "private": true,

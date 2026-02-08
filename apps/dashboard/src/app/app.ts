@@ -1,12 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from '@/components/navbar/navbar.component';
+import { ToastsComponent } from '@/components/toasts/toasts.component';
+import { MenuComponent } from '@/components/menu/menu.component';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet],
     templateUrl: './app.html',
-    styleUrl: './app.css',
+    imports: [RouterOutlet, NavbarComponent, ToastsComponent, MenuComponent],
 })
-export class App {
-    protected readonly title = signal('dashboard');
-}
+export class App {}

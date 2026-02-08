@@ -1,8 +1,7 @@
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { VehicleService } from '@/services/vehicle.service';
 import { Component, inject, OnInit } from '@angular/core';
-import { LoaderComponent } from '@gapp/ui/loader';
-import { ScrollableComponent } from '@gapp/ui/scrollable';
+import { LoaderComponent, ScrollableComponent } from '@gapp/ui-utils';
 import { CreateVehicleComponent } from './create-vehicle/create-vehicle.component';
 import { VehicleListItemComponent } from './vehicle-list-item/vehicle-list-item.component';
 

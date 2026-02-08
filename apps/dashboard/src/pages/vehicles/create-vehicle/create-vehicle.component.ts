@@ -3,8 +3,8 @@ import { VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.s
 import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { OptionDefinition, SelectInputComponent, TextInputComponent } from '@gapp/forms-ui';
-import { DialogButton, DialogComponent } from '@gapp/ui/dialog';
+import { OptionDefinition, SelectInputComponent, TextInputComponent } from '@gapp/ui-forms';
+import { DialogButton, DialogComponent } from '@gapp/ui-utils';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { distinctUntilChanged, filter } from 'rxjs';

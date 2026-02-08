@@ -1,7 +1,8 @@
 {
     "name": "@gapp/ui",
     "scripts": {
-        "ng": "ng"
+        "ng": "ng",
+        "build": "turbo build --filter=@gapp/ui-forms --filter=@gapp/ui-utils"
     },
     "private": true,
     "dependencies": {

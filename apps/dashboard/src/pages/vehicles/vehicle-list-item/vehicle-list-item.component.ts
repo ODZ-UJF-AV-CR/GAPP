@@ -2,8 +2,7 @@ import { VehicleIconComponent } from '@/components/vehicle-icon/vehicle-icon.com
 import { ToastService } from '@/services/toast.service';
 import { Vehicle, VehicleService } from '@/services/vehicle.service';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { DialogButton, DialogDirective } from '@gapp/ui/dialog';
-import { TextLimitDirective } from '@gapp/ui/utils';
+import { DialogButton, DialogDirective, TextLimitDirective } from '@gapp/ui-utils';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { filter } from 'rxjs';

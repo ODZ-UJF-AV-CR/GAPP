@@ -1,8 +1,10 @@
 {
     "name": "@gapp/ui-utils",
     "exports": {
-        "types": "./dist/types/gapp-ui-utils.d.ts",
-        "default": "./dist/fesm2022/gapp-ui-utils.mjs"
+        ".": {
+            "types": "./dist/types/gapp-ui-utils.d.ts",
+            "default": "./dist/fesm2022/gapp-ui-utils.mjs"
+        }
     },
     "scripts": {
         "dev": "cd ../.. && pnpm ng serve utils",

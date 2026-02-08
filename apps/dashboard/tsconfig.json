@@ -3,6 +3,7 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+        "moduleResolution": "bundler",
         "strict": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
@@ -13,7 +14,10 @@
         "experimentalDecorators": true,
         "importHelpers": true,
         "target": "ES2022",
-        "module": "preserve",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        }
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
@@ -22,6 +26,7 @@
         "strictTemplates": true,
     },
     "files": [],
+    "extends": "../../tsconfig.base.json",
     "references": [
         {
             "path": "./tsconfig.app.json",

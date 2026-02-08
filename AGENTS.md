@@ -23,8 +23,8 @@ This guide provides instructions for agentic coding tools operating in the GAPP 
   - Cross-package dependencies use `workspace:^` in `package.json`.
   - Shared logic should be placed in `packages/`.
   - UI components go into `packages/ui`.
-  - To add a dependency to a package: `pnpm --filter <pkg-name> add <dep-name>`.
-  - To run a script in a specific package: `pnpm --filter <pkg-name> run <script>`.
+  - To add a dependency to a package: `pnpm --filter @gapp/<pkg> add <dep-name>`.
+  - To run a script in a specific package: `pnpm --filter @gapp/<pkg> run <script>`.
 
 ## Legacy Packages (DO NOT MODIFY)
 The following directories contain legacy NX code that is being phased out:
@@ -46,9 +46,9 @@ Do not modify these unless explicitly requested. All new development should happ
 
 ### Running Tests
 The project uses **Vitest** for testing (even in Angular packages).
-- **Run all tests in package**: `pnpm --filter <pkg> run test`
-- **Run single test file**: `pnpm --filter <pkg> exec vitest run <path/to/file.spec.ts>`
-- **Watch mode**: `pnpm --filter <pkg> exec vitest`
+- **Run all tests in package**: `pnpm --filter @gapp/<pkg> run test`
+- **Run single test file**: `pnpm --filter @gapp/<pkg> exec vitest run <path/to/file.spec.ts>`
+- **Watch mode**: `pnpm --filter @gapp/<pkg> exec vitest`
 
 ## Code Style & Guidelines
 

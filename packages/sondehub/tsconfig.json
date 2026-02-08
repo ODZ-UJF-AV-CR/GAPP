@@ -12,9 +12,6 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "baseUrl": ".",
-        "paths": {
-            "@gapp/sondehub": ["src/index.ts"],
-        },
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist", "**/*.spec.ts"],

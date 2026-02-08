@@ -185,6 +185,9 @@ importers:
       '@angular/router':
         specifier: ^21.1.0
         version: 21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(@angular/platform-browser@21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)))(rxjs@7.8.2)
+      javascript-time-ago:
+        specifier: ^2.6.2
+        version: 2.6.2
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -222,11 +225,41 @@ importers:
       '@angular/core':
         specifier: ^21.1.0
         version: 21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)
+      '@angular/forms':
+        specifier: ^21.1.0
+        version: 21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(@angular/platform-browser@21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)))(rxjs@7.8.2)
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
+  packages/ui/dist/utils:
+    dependencies:
+      '@angular/common':
+        specifier: ^21.1.0
+        version: 21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core':
+        specifier: ^21.1.0
+        version: 21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
 
   packages/ui/libs/forms:
+    dependencies:
+      '@angular/common':
+        specifier: ^21.1.0
+        version: 21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core':
+        specifier: ^21.1.0
+        version: 21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)
+      '@angular/forms':
+        specifier: ^21.1.0
+        version: 21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(@angular/platform-browser@21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)))(rxjs@7.8.2)
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
+  packages/ui/libs/utils:
     dependencies:
       '@angular/common':
         specifier: ^21.1.0
@@ -2510,6 +2543,9 @@ packages:
   it-to-stream@1.0.0:
     resolution: {integrity: sha512-pLULMZMAB/+vbdvbZtebC0nWBTbG581lk6w8P7DfIIIKUfa8FbY7Oi0FxZcFPbxvISs7A9E+cMpLDBc1XhpAOA==}
 
+  javascript-time-ago@2.6.2:
+    resolution: {integrity: sha512-gagMB4fetS1M1ZHaxQ9kX2amORXa5Los5PGh8NZzWSKrytz43KnpJlaPFTXbg/R7iPMN7U/6MoevgxqJ0QQ5lA==}
+
   jiti@2.6.1:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
@@ -3192,6 +3228,9 @@ packages:
 
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+
+  relative-time-format@1.1.11:
+    resolution: {integrity: sha512-TH+oV/w77hjaB9xCzoFYJ/Icmr/12+02IAoCI/YGS2UBTbjCbBjHGEBxGnVy4EJvOR1qadGzyFRI6hGaJJG93Q==}
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -6082,6 +6121,10 @@ snapshots:
       p-fifo: 1.0.0
       readable-stream: 3.6.2
 
+  javascript-time-ago@2.6.2:
+    dependencies:
+      relative-time-format: 1.1.11
+
   jiti@2.6.1: {}
 
   jose@6.1.3: {}
@@ -6837,6 +6880,8 @@ snapshots:
   real-require@0.2.0: {}
 
   reflect-metadata@0.2.2: {}
+
+  relative-time-format@1.1.11: {}
 
   require-from-string@2.0.2: {}
 

@@ -32,9 +32,12 @@ importers:
       '@angular/router':
         specifier: ^21.1.0
         version: 21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(@angular/platform-browser@21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)))(rxjs@7.8.2)
-      '@gapp/ui':
+      '@gapp/ui-forms':
         specifier: workspace:^
-        version: link:../../packages/ui
+        version: link:../../packages/ui/libs/forms
+      '@gapp/ui-utils':
+        specifier: workspace:^
+        version: link:../../packages/ui/libs/utils
       daisyui:
         specifier: ^5.5.18
         version: 5.5.18
@@ -216,33 +219,6 @@ importers:
       vitest:
         specifier: ^4.0.8
         version: 4.0.18(@types/node@25.2.1)(jiti@2.6.1)(jsdom@27.4.0)(less@4.5.1)(lightningcss@1.30.2)(sass@1.97.1)(yaml@2.8.2)
-
-  packages/ui/dist/forms:
-    dependencies:
-      '@angular/common':
-        specifier: ^21.1.0
-        version: 21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2)
-      '@angular/core':
-        specifier: ^21.1.0
-        version: 21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)
-      '@angular/forms':
-        specifier: ^21.1.0
-        version: 21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(@angular/platform-browser@21.1.3(@angular/common@21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)))(rxjs@7.8.2)
-      tslib:
-        specifier: ^2.3.0
-        version: 2.8.1
-
-  packages/ui/dist/utils:
-    dependencies:
-      '@angular/common':
-        specifier: ^21.1.0
-        version: 21.1.3(@angular/core@21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2))(rxjs@7.8.2)
-      '@angular/core':
-        specifier: ^21.1.0
-        version: 21.1.3(@angular/compiler@21.1.3)(rxjs@7.8.2)
-      tslib:
-        specifier: ^2.3.0
-        version: 2.8.1
 
   packages/ui/libs/forms:
     dependencies:

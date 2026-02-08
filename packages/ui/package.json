@@ -1,21 +1,7 @@
 {
     "name": "@gapp/ui",
     "scripts": {
-        "ng": "ng",
-        "dev": "ng serve",
-        "build": "ng build",
-        "watch": "ng build --watch --configuration development",
-        "test": "ng test"
-    },
-    "exports": {
-        "./forms": {
-            "default": "./dist/forms/package.json",
-            "types": "./dist/forms/types/forms.d.ts"
-        },
-        "./utils": {
-            "default": "./dist/utils/package.json",
-            "types": "./dist/utils/types/utils.d.ts"
-        }
+        "ng": "ng"
     },
     "private": true,
     "dependencies": {

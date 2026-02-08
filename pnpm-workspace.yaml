@@ -1,6 +1,9 @@
 packages:
-  - apps/**
-  - packages/**
+    - 'apps/**'
+    - 'packages/sondehub'
+    - 'packages/ui'
+    - 'packages/ui/libs/forms'
+    - 'packages/ui/libs/utils'
 ignoredBuiltDependencies:
   - lmdb
   - msgpackr-extract

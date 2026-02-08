@@ -37,6 +37,7 @@ testem.log
 /typings
 .data
 .example-data
+.turbo
 
 
 # System Files

@@ -1,6 +1,13 @@
 {
-    "name": "utils",
-    "version": "0.0.1",
+    "name": "@gapp/ui-utils",
+    "exports": {
+        "types": "./dist/types/gapp-ui-utils.d.ts",
+        "default": "./dist/fesm2022/gapp-ui-utils.mjs"
+    },
+    "scripts": {
+        "dev": "cd ../.. && pnpm ng serve utils",
+        "build": "cd ../.. && pnpm ng build utils"
+    },
     "peerDependencies": {
         "@angular/common": "^21.1.0",
         "@angular/core": "^21.1.0"

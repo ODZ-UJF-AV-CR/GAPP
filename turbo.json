@@ -3,7 +3,11 @@
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
-            "outputs": ["dist/**"]
+            "outputs": ["dist/**", "!README.md"],
+        },
+        "dev": {
+            "cache": false,
+            "persistent": true
         }
     }
 }

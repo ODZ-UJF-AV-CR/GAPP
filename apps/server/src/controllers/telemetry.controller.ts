@@ -80,7 +80,7 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
             schema: {
                 tags: ['telemetry'],
                 summary: 'Get live data',
-                description: 'Stream live data updates from vessels and chase cars using servewr sent events',
+                description: 'Stream live data updates from vessels and chase cars using server sent events',
                 querystring: Q_OptionalCallsign,
             },
         } as any,

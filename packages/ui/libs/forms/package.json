@@ -1,14 +1,13 @@
 {
     "name": "@gapp/ui-forms",
     "exports": {
-        ".": {
-            "types": "./dist/types/gapp-ui-forms.d.ts",
-            "default": "./dist/fesm2022/gapp-ui-forms.mjs"
-        }
+        "types": "./dist/types/gapp-ui-forms.d.ts",
+        "default": "./dist/fesm2022/gapp-ui-forms.mjs"
     },
     "scripts": {
-        "dev": "cd ../.. && pnpm ng serve forms",
-        "build": "cd ../.. && pnpm ng build forms"
+        "dev": "cd ../.. && pnpm ng build forms --watch",
+        "build": "cd ../.. && pnpm ng build forms",
+        "clean": "rm -rf dist"
     },
     "peerDependencies": {
         "@angular/common": "^21.1.0",

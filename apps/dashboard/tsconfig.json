@@ -1,8 +1,12 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
     "compileOnSave": false,
     "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "module": "esnext",
+        "lib": ["es2022", "dom"],
+        "skipDefaultLibCheck": true,
         "moduleResolution": "bundler",
         "strict": true,
         "noImplicitOverride": true,
@@ -12,6 +16,7 @@
         "skipLibCheck": true,
         "isolatedModules": true,
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": false,
         "importHelpers": true,
         "target": "ES2022",
         "baseUrl": ".",
@@ -19,6 +24,7 @@
             "@/*": ["./src/*"]
         }
     },
+    "exclude": ["node_modules", "tmp"],
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
         "strictInjectionParameters": true,
@@ -26,7 +32,6 @@
         "strictTemplates": true
     },
     "files": [],
-    "extends": "../../tsconfig.base.json",
     "references": [
         {
             "path": "./tsconfig.app.json"

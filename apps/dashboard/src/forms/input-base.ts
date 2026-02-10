@@ -30,9 +30,9 @@ export abstract class InputBase implements OnInit {
         const errors = this.control.errors;
         if (!errors) return '';
 
-        if (errors.required) return 'This field is required.';
-        if (errors.minlength) return `Minimum length is ${errors.minlength.requiredLength} characters`;
-        if (errors.maxlength) return `Maximum length is ${errors.maxlength.requiredLength} characters`;
+        if (errors['required']) return 'This field is required.';
+        if (errors['minlength']) return `Minimum length is ${errors['minlength'].requiredLength} characters`;
+        if (errors['maxlength']) return `Maximum length is ${errors['maxlength'].requiredLength} characters`;
 
         const customMessages = this.errorMessages();
         for (const key in customMessages) {

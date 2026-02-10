@@ -1,13 +1,10 @@
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import fastifyStatic from '@fastify/static';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import Fastify from 'fastify';
 import pino from 'pino';
 import { app } from './app.ts';
 import { getConfig } from './config.ts';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const config = getConfig(process.env);
 const logger = pino();
@@ -23,7 +20,7 @@ server.register(app, {
 
 if (config.isProd) {
     server.register(fastifyStatic, {
-        root: path.join(__dirname, '../../../../gapp-dashboard/browser'),
+        root: path.join(import.meta.dirname, '../../../../gapp-dashboard/browser'),
     });
 
     server.setNotFoundHandler((_request, reply) => {

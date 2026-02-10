@@ -1,15 +1,11 @@
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
 import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
 import type { Database } from '../repository/postgres-database.ts';
 import { Plugins } from './plugins.ts';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface PostgresdbPluginConfig extends FastifyPluginOptions {
     uri: string;
@@ -27,7 +23,7 @@ export const migrateToLatest = async (db: Kysely<Database>, fastify: FastifyInst
         provider: new FileMigrationProvider({
             fs,
             path,
-            migrationFolder: path.join(__dirname, '../migrations'),
+            migrationFolder: path.join(import.meta.dirname, '../migrations'),
         }),
     });
 

@@ -1,5 +1,5 @@
-import { ColumnType, Generated, Insertable, type Kysely, Selectable, Updateable } from 'kysely';
-import { VehicleType } from '../types/enums.ts';
+import type { ColumnType, Generated, Insertable, Kysely, Selectable, Updateable } from 'kysely';
+import type { VehicleType } from '../types/enums.ts';
 
 export interface Database {
     vehicles: VehicleTable;

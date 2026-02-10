@@ -1,10 +1,10 @@
 import { ToastService } from '@/services/toast.service';
-import { VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.service';
+import { type VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.service';
 import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { OptionDefinition, SelectInputComponent, TextInputComponent } from '@/forms';
-import { DialogButton, DialogComponent } from '@/ui';
+import { type FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { type OptionDefinition, SelectInputComponent, TextInputComponent } from '@/forms';
+import { type DialogButton, DialogComponent } from '@/ui';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { distinctUntilChanged, filter } from 'rxjs';

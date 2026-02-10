@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { ApiResponse, ApiServiceBase } from './api.service.base';
+import { type ApiResponse, ApiServiceBase } from './api.service.base';
 import { tap } from 'rxjs';
 
 export enum VehicleType {

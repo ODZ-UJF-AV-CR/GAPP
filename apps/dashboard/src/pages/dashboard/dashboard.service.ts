@@ -1,8 +1,8 @@
 import { ApiServiceBase } from '@/services/api.service.base';
-import { TelemetryData, TelemetryService } from '@/services/telemetry.service';
-import { Beacon, Vehicle, VehicleService } from '@/services/vehicle.service';
+import { type TelemetryData, TelemetryService } from '@/services/telemetry.service';
+import { type Beacon, type Vehicle, VehicleService } from '@/services/vehicle.service';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Subscription } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 export type BeaconWithTelemetry = Beacon & { telemetry?: TelemetryData };
 

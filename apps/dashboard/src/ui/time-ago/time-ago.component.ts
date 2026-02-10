@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, type OnDestroy, signal } from '@angular/core';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 

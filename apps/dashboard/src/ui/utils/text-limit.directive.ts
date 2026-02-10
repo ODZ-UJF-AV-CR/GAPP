@@ -1,4 +1,4 @@
-import { Directive, ElementRef, inject, input, numberAttribute, OnInit, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, inject, input, numberAttribute, type OnInit, Renderer2 } from '@angular/core';
 
 @Directive({
     selector: '[textLimit]',

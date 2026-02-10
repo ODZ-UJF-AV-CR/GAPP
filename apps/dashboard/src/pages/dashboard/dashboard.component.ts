@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { DashboardService } from './dashboard.service';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
 import { ScrollableComponent } from '@/ui';

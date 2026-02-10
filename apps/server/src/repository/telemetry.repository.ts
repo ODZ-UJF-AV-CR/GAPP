@@ -1,7 +1,7 @@
-import { InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
+import { type InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
 import { BucketsAPI, type Bucket, type Organization } from '@influxdata/influxdb-client-apis';
 import { arrayAsString } from '../utils/array-as-atring.ts';
-import { PointType } from '../types/enums.ts';
+import type { PointType } from '../types/enums.ts';
 
 export type LocationData = {
     _time: string;

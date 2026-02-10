@@ -1,5 +1,5 @@
 import { VehicleService } from '@/services/vehicle.service';
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, type OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({

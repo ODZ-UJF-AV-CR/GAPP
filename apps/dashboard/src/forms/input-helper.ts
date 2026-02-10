@@ -1,5 +1,5 @@
 import { Directive, inject } from '@angular/core';
-import { ControlValueAccessor, FormControlDirective, FormControlName, NG_VALUE_ACCESSOR, NgControl, NgModel } from '@angular/forms';
+import { type ControlValueAccessor, FormControlDirective, FormControlName, NG_VALUE_ACCESSOR, NgControl, NgModel } from '@angular/forms';
 
 @Directive({
     standalone: true,

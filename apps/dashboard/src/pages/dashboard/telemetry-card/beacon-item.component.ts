@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { BeaconWithTelemetry } from '../dashboard.service';
-import { ClassRangeDirective, ClassRangeOptions, timeDifference, TimeAgoComponent } from '@/ui';
+import type { BeaconWithTelemetry } from '../dashboard.service';
+import { ClassRangeDirective, type ClassRangeOptions, timeDifference, TimeAgoComponent } from '@/ui';
 import { AsyncPipe } from '@angular/common';
 import { distinctUntilChanged, interval, map, merge } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -19,7 +19,7 @@ export class BeaconItemComponent {
         180: 'bg-success',
         360: 'bg-warning',
         3600: 'bg-error',
-        100_000: 'bg-base-200',
+        100000: 'bg-base-200',
     };
 
     public textClasses: ClassRangeOptions = {
@@ -27,7 +27,7 @@ export class BeaconItemComponent {
         180: 'text-success-content',
         360: 'text-warning-content',
         3600: 'text-error-content',
-        100_000: 'text-base-200-content',
+        100000: 'text-base-200-content',
     };
 
     public secondsAgo$ = merge(interval(1000), toObservable(this.beacon)).pipe(

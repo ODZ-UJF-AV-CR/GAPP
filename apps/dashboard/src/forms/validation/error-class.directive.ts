@@ -1,6 +1,6 @@
-import { DestroyRef, Directive, ElementRef, inject, input, OnInit, Renderer2 } from '@angular/core';
+import { DestroyRef, Directive, ElementRef, inject, input, type OnInit, Renderer2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AbstractControl } from '@angular/forms';
+import type { AbstractControl } from '@angular/forms';
 
 @Directive({
     selector: '[errorClass]',

@@ -1,5 +1,5 @@
-import { ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, inject, Injectable, TemplateRef, Type, ViewContainerRef } from '@angular/core';
-import { DialogButton, DialogComponent } from './dialog.component';
+import { ApplicationRef, type ComponentRef, createComponent, EnvironmentInjector, inject, Injectable, TemplateRef, Type, ViewContainerRef } from '@angular/core';
+import { type DialogButton, DialogComponent } from './dialog.component';
 import { DOCUMENT } from '@angular/common';
 
 export type DialogContent<C> = string | Type<C> | TemplateRef<unknown>;
@@ -41,7 +41,7 @@ export class DialogService {
         }
 
         let projectableNodes: Node[] = [];
-        let componentInstance: ComponentRef<C> | undefined = undefined;
+        let componentInstance: ComponentRef<C> | undefined ;
 
         if (typeof content === 'string') {
             projectableNodes = [this.document.createTextNode(content)];

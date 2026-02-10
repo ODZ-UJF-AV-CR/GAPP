@@ -1,6 +1,6 @@
-import { Directive, HostListener, inject, input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
-import { DialogButton } from './dialog.component';
-import { DialogRef, DialogService } from './dialog.service';
+import { Directive, HostListener, inject, input, type OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
+import type { DialogButton } from './dialog.component';
+import { type DialogRef, DialogService } from './dialog.service';
 
 @Directive({
     selector: '[dialog]',

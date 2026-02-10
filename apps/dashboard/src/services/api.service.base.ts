@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { environment } from '../environment/environment';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, startWith } from 'rxjs';
+import { catchError, map, type Observable, of, startWith } from 'rxjs';
 
 export interface ApiResponse<T> {
     loading: boolean;

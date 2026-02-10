@@ -1,5 +1,5 @@
 import type { Vehicle } from '../repository/postgres-database.ts';
-import { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
 import type { CreateVehicle } from '../schemas/vehicle.schema.ts';
 
 export class VehicleService {

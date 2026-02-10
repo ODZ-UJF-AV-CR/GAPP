@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService } from './dashboard.service';
 import { PageBlockComponent } from '@/components/page-block/page-block.component';
-import { ScrollableComponent } from '@gapp/ui-utils';
+import { ScrollableComponent } from '@/ui';
 import { VehicleService } from '@/services/vehicle.service';
 import { TelemetryCardComponent } from './telemetry-card/telemetry-card.component';
 

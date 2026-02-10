@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { BeaconWithTelemetry, VehicleWithTelemetry } from '../dashboard.service';
 import { VehicleIconComponent } from '@/components/vehicle-icon/vehicle-icon.component';
-import { TextLimitDirective, DialogButton, DialogDirective } from '@gapp/ui-utils';
+import { TextLimitDirective, DialogButton, DialogDirective } from '@/ui';
 import { VehicleType } from '@/services/vehicle.service';
 import { BeaconItemComponent } from './beacon-item.component';
 

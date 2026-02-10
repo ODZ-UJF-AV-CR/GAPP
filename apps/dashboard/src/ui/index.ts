@@ -1,7 +1,3 @@
-/*
- * Public API Surface of utils
- */
-
 export * from './dialog/dialog.component';
 export * from './dialog/dialog.directive';
 export * from './dialog/dialog.service';

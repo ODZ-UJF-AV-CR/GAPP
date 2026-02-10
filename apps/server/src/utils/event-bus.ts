@@ -1,4 +1,4 @@
-// biome-ignore lint/suspicious/noExplicitAny
+// biome-ignore-all lint/suspicious/noExplicitAny: ok for evetn bus
 import EventEmitter from 'node:events';
 
 export class EventBus<TEvents extends Record<string, any>> {

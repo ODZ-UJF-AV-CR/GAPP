@@ -1,4 +1,4 @@
-import { type Static, Type as T } from '@sinclair/typebox';
+import { type Static, Type as T } from '@fastify/type-provider-typebox';
 import { VehicleType } from '../types/enums.ts';
 
 const Vehicle = T.Object({

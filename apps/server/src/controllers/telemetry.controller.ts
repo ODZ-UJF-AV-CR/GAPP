@@ -1,10 +1,9 @@
-import { Type } from '@sinclair/typebox';
-import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema.ts';
 import { Q_OptionalCallsign } from '../schemas/vehicle.schema.ts';
 
-export const telemetryController: FastifyPluginAsync = async (fastify: FastifyInstance) => {
+export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
         '',
         {
@@ -14,8 +13,8 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
                 description: 'Received telemetry data are stored and forwarded to SondeHub.',
                 body: B_Telemetry,
             },
-        } as any,
-        async (req: any, rep: any) => {
+        },
+        async (req, rep) => {
             const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.callsign);
 
             if (!vehicle) {
@@ -37,10 +36,11 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
                 body: B_TtnTelemetry,
                 response: {
                     200: Type.String(),
+                    422: Type.String(),
                 },
             },
-        } as any,
-        async (req: any, rep: any) => {
+        },
+        async (req, rep) => {
             const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.end_device_ids.device_id);
 
             if (!vehicle) {
@@ -64,8 +64,8 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
                     200: Type.Array(R_Telemetry),
                 },
             },
-        } as any,
-        async (req: any, rep: any) => {
+        },
+        async (req, rep) => {
             const callsigns = req.query.callsign?.split(',');
             const telemetry = await req.server.telemetryService.getCallsignsTelemetry(callsigns);
             rep.code(200).send(telemetry);
@@ -83,11 +83,11 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
                 description: 'Stream live data updates from vessels and chase cars using server sent events',
                 querystring: Q_OptionalCallsign,
             },
-        } as any,
-        async (req: any, rep: any) => {
-            const ac = (req.server as any).getAbortController();
+        },
+        async (req, rep) => {
+            const ac = req.server.getAbortController();
             req.raw.on('close', () => ac.abort());
-            rep.sse((req.server as any).telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
+            rep.sse(req.server.telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
         },
     );
 };

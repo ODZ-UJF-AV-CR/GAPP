@@ -1,6 +1,6 @@
+import { setInterval } from 'node:timers';
 import type { Uploader } from '@gapp/sondehub';
 import type { EventMessage } from 'fastify-sse-v2';
-import { setInterval } from 'timers';
 import type { Events } from '../plugins/event-bus.ts';
 import type { Vehicle } from '../repository/postgres-database.ts';
 import type { TelemetryData, TelemetryRepository } from '../repository/telemetry.repository.ts';
@@ -13,7 +13,7 @@ import { type TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } 
 export class TelemetryService {
     constructor(
         private readonly telemetryRepository: TelemetryRepository,
-        private readonly vehiclesRepository: VehiclesRepository,
+        readonly _vehiclesRepository: VehiclesRepository,
         private readonly sondehub: Uploader,
         private readonly eventBus: EventBus<Events>,
     ) {}

@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: ok for kysely
 import type { Kysely } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {

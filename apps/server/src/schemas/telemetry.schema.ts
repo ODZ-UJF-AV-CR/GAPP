@@ -1,4 +1,4 @@
-import { type Static, Type as T } from '@sinclair/typebox';
+import { type Static, Type as T } from '@fastify/type-provider-typebox';
 import { PointType } from '../types/enums.ts';
 
 export const B_TtnTelemetry = T.Object({

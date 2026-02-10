@@ -1,10 +1,10 @@
+import { promises as fs } from 'node:fs';
+import * as path from 'node:path';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
-import { promises as fs } from 'fs';
 import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from 'kysely';
-import * as path from 'path';
 import { Pool } from 'pg';
 import type { Database } from '../repository/postgres-database.ts';
 import { Plugins } from './plugins.ts';

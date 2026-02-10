@@ -1,9 +1,8 @@
-import { dirname } from 'node:path';
+import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fastifyStatic from '@fastify/static';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import Fastify from 'fastify';
-import path from 'path';
 import pino from 'pino';
 import { app } from './app.ts';
 import { getConfig } from './config.ts';

@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: ok for kysely
 import { type Kysely, sql } from 'kysely';
 import { VehicleType } from '../types/enums.ts';
 

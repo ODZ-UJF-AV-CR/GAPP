@@ -1,7 +1,7 @@
-import { VehicleType } from '@/services/vehicle.service';
 import { Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerAirBalloon, tablerCar, tablerDrone } from '@ng-icons/tabler-icons';
+import { VehicleType } from '@/services/vehicle.service';
 
 @Component({
     selector: 'vehicle-icon',

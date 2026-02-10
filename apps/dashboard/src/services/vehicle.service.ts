@@ -1,6 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { type ApiResponse, ApiServiceBase } from './api.service.base';
 import { tap } from 'rxjs';
+import { type ApiResponse, ApiServiceBase } from './api.service.base';
 
 export enum VehicleType {
     BALLOON = 'balloon',
@@ -38,7 +38,7 @@ export class VehicleService extends ApiServiceBase {
                 if (data) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: [...(response.data || []), data] }));
                 }
-            })
+            }),
         );
     }
 
@@ -48,7 +48,7 @@ export class VehicleService extends ApiServiceBase {
                 if (data === null) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: response.data?.filter((v) => v.id !== id) }));
                 }
-            })
+            }),
         );
     }
 

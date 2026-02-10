@@ -1,21 +1,21 @@
-import type { EventBus } from '../utils/event-bus.ts';
-import type { Events } from '../plugins/event-bus.ts';
-import { setInterval } from 'timers';
-import type { EventMessage } from 'fastify-sse-v2';
-import type { TelemetryRepository, TelemetryData } from '../repository/telemetry.repository.ts';
-import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
 import type { Uploader } from '@gapp/sondehub';
-import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import { type TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
+import type { EventMessage } from 'fastify-sse-v2';
+import { setInterval } from 'timers';
+import type { Events } from '../plugins/event-bus.ts';
 import type { Vehicle } from '../repository/postgres-database.ts';
+import type { TelemetryData, TelemetryRepository } from '../repository/telemetry.repository.ts';
+import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
 import { PointType, VehicleType } from '../types/enums.ts';
+import type { EventBus } from '../utils/event-bus.ts';
+import { type TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
 
 export class TelemetryService {
     constructor(
         private readonly telemetryRepository: TelemetryRepository,
         private readonly vehiclesRepository: VehiclesRepository,
         private readonly sondehub: Uploader,
-        private readonly eventBus: EventBus<Events>
+        private readonly eventBus: EventBus<Events>,
     ) {}
 
     public writeTtnTelemetry(vehicle: Vehicle, telemetry: TtnTelemetry) {

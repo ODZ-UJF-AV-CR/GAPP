@@ -1,8 +1,8 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { NoopValueAccessorDirective } from '../input-helper';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InputBase } from '../input-base';
-import { NgClass } from '@angular/common';
+import { NoopValueAccessorDirective } from '../input-helper';
 
 export interface OptionDefinition {
     value: string;

@@ -35,7 +35,7 @@ export const B_TtnTelemetry = T.Object({
                 snr: T.Number(),
                 uplink_token: T.String(),
                 received_at: T.String(),
-            })
+            }),
         ),
         settings: T.Object({
             data_rate: T.Object({

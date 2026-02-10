@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ApiServiceBase } from './api.service.base';
 import { Observable } from 'rxjs';
+import { ApiServiceBase } from './api.service.base';
 
 export interface TelemetryData {
     _time: Date;
@@ -23,7 +23,7 @@ export class TelemetryService extends ApiServiceBase {
                         data.map((t) => ({
                             ...t,
                             _time: new Date(t._time),
-                        }))
+                        })),
                     );
                 }
             };

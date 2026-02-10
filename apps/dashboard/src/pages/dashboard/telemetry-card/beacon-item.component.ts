@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import type { BeaconWithTelemetry } from '../dashboard.service';
-import { ClassRangeDirective, type ClassRangeOptions, timeDifference, TimeAgoComponent } from '@/ui';
 import { AsyncPipe } from '@angular/common';
-import { distinctUntilChanged, interval, map, merge } from 'rxjs';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { distinctUntilChanged, interval, map, merge } from 'rxjs';
+import { ClassRangeDirective, type ClassRangeOptions, TimeAgoComponent, timeDifference } from '@/ui';
+import type { BeaconWithTelemetry } from '../dashboard.service';
 
 @Component({
     selector: 'beacon-item',
@@ -35,6 +35,6 @@ export class BeaconItemComponent {
             const telemetry = this.beacon().telemetry;
             return telemetry ? timeDifference(telemetry._time) : null;
         }),
-        distinctUntilChanged()
+        distinctUntilChanged(),
     );
 }

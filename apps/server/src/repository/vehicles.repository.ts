@@ -68,11 +68,7 @@ export class VehiclesRepository {
 
     // ======== UPDATE ===========
     public async softDeleteVehicle(vehicleId: number) {
-        await this.db
-            .updateTable('vehicles')
-            .set({ deleted_at: sql`now()` })
-            .where('id', '=', vehicleId)
-            .execute();
+        await this.db.updateTable('vehicles').set({ deleted_at: sql`now()` }).where('id', '=', vehicleId).execute();
     }
 
     public async restoreVehicle(vehicleId: number) {

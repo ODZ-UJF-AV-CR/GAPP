@@ -1,7 +1,7 @@
-import { inject } from '@angular/core';
-import { environment } from '../environment/environment';
 import { HttpClient } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { catchError, map, type Observable, of, startWith } from 'rxjs';
+import { environment } from '../environment/environment';
 
 export interface ApiResponse<T> {
     loading: boolean;
@@ -29,9 +29,9 @@ export abstract class ApiServiceBase {
                         type: error.error,
                         message: error.message,
                     },
-                })
+                }),
             ),
-            startWith({ loading: true })
+            startWith({ loading: true }),
         );
     }
 
@@ -45,9 +45,9 @@ export abstract class ApiServiceBase {
                         type: error.error,
                         message: error.message,
                     },
-                })
+                }),
             ),
-            startWith({ loading: true })
+            startWith({ loading: true }),
         );
     }
 
@@ -61,9 +61,9 @@ export abstract class ApiServiceBase {
                         type: error.error,
                         message: error.message,
                     },
-                })
+                }),
             ),
-            startWith({ loading: true })
+            startWith({ loading: true }),
         );
     }
 }

@@ -7,8 +7,7 @@ module.exports = [
     },
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-        rules: {
-        },
+        rules: {},
     },
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'],

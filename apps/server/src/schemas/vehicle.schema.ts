@@ -34,5 +34,5 @@ export const Q_OptionalCallsign = T.Object(
     {
         callsign: T.Optional(T.String()),
     },
-    { nullable: true }
+    { nullable: true },
 );

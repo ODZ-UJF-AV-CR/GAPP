@@ -1,8 +1,8 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
-import { NoopValueAccessorDirective } from '../input-helper';
 import { InputBase } from '../input-base';
+import { NoopValueAccessorDirective } from '../input-helper';
 
 export type TextInputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'textarea';
 

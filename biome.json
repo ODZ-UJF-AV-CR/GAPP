@@ -23,6 +23,9 @@
             "recommended": true,
             "suspicious": {
                 "useIterableCallbackReturn": "off"
+            },
+            "correctness": {
+                "noInvalidUseBeforeDeclaration": "off"
             }
         }
     },

@@ -1,4 +1,4 @@
-import { Directive, effect, ElementRef, inject, input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, effect, inject, input, Renderer2 } from '@angular/core';
 
 export type ClassRangeOptions = {
     [key: number]: string;

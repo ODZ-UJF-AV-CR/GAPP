@@ -1,7 +1,7 @@
-import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
-import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema.ts';
 import { Type } from '@sinclair/typebox';
+import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
+import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema.ts';
 import { Q_OptionalCallsign } from '../schemas/vehicle.schema.ts';
 
 export const telemetryController: FastifyPluginAsync = async (fastify: FastifyInstance) => {
@@ -24,7 +24,7 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
 
             req.server.telemetryService.writeGeneralTelemetry(vehicle, req.body);
             rep.code(201).send();
-        }
+        },
     );
 
     fastify.post(
@@ -49,7 +49,7 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
 
             req.server.telemetryService.writeTtnTelemetry(vehicle, req.body);
             rep.code(200).send('OK');
-        }
+        },
     );
 
     fastify.get(
@@ -69,7 +69,7 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
             const callsigns = req.query.callsign?.split(',');
             const telemetry = await req.server.telemetryService.getCallsignsTelemetry(callsigns);
             rep.code(200).send(telemetry);
-        }
+        },
     );
 
     fastify.register(FastifySSEPlugin);
@@ -88,6 +88,6 @@ export const telemetryController: FastifyPluginAsync = async (fastify: FastifyIn
             const ac = (req.server as any).getAbortController();
             req.raw.on('close', () => ac.abort());
             rep.sse((req.server as any).telemetryService.streamGenerator(ac, req.query.callsign?.split(',')));
-        }
+        },
     );
 };

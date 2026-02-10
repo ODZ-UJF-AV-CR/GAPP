@@ -1,13 +1,13 @@
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { FastifyInstance, FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
-import { Plugins } from './plugins.ts';
-import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from 'kysely';
-import type { Database } from '../repository/postgres-database.ts';
-import { Pool } from 'pg';
-import * as path from 'path';
 import { promises as fs } from 'fs';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import { FileMigrationProvider, Kysely, Migrator, PostgresDialect } from 'kysely';
+import * as path from 'path';
+import { Pool } from 'pg';
+import type { Database } from '../repository/postgres-database.ts';
+import { Plugins } from './plugins.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

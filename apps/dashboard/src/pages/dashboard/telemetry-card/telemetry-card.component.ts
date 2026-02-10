@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import type { BeaconWithTelemetry, VehicleWithTelemetry } from '../dashboard.service';
 import { VehicleIconComponent } from '@/components/vehicle-icon/vehicle-icon.component';
-import { TextLimitDirective, type DialogButton, DialogDirective } from '@/ui';
 import { VehicleType } from '@/services/vehicle.service';
+import { type DialogButton, DialogDirective, TextLimitDirective } from '@/ui';
+import type { BeaconWithTelemetry, VehicleWithTelemetry } from '../dashboard.service';
 import { BeaconItemComponent } from './beacon-item.component';
-
 
 @Component({
     selector: 'telemetry-card',
@@ -21,7 +20,7 @@ export class TelemetryCardComponent {
         () =>
             `https://amateur.sondehub.org/${this.vehicle()
                 .beacons.map((b) => b.callsign)
-                .join(',')}`
+                .join(',')}`,
     );
 
     public trackFn(beacon: BeaconWithTelemetry) {

@@ -1,7 +1,7 @@
+import { Uploader } from '@gapp/sondehub';
 import type { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
 import { Plugins } from './plugins.ts';
-import { Uploader } from '@gapp/sondehub';
 
 interface SondehubPluginOptions extends FastifyPluginOptions {
     dev: boolean;

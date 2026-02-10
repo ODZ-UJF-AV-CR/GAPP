@@ -3,14 +3,14 @@
 @plugin "daisyui";
 
 @plugin "daisyui/theme" {
-    name: 'dark';
+    name: "dark";
     --color-base-300: #000;
     --color-base-100: rgb(50, 60, 72);
     --depth: 0;
 }
 
 @plugin "daisyui/theme" {
-    name: 'light';
+    name: "light";
     --depth: 0;
 }
 

@@ -1,7 +1,7 @@
 import { type InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
-import { BucketsAPI, type Bucket, type Organization } from '@influxdata/influxdb-client-apis';
-import { arrayAsString } from '../utils/array-as-atring.ts';
+import { type Bucket, BucketsAPI, type Organization } from '@influxdata/influxdb-client-apis';
 import type { PointType } from '../types/enums.ts';
+import { arrayAsString } from '../utils/array-as-atring.ts';
 
 export type LocationData = {
     _time: string;
@@ -25,7 +25,10 @@ export class TelemetryRepository {
     private writeApi: WriteApi;
     private queryAPi: QueryApi;
 
-    constructor(private readonly client: InfluxDB, private readonly org: Organization) {}
+    constructor(
+        private readonly client: InfluxDB,
+        private readonly org: Organization,
+    ) {}
 
     private async ensureBucket(name: string): Promise<Bucket> {
         const bucketsApi = new BucketsAPI(this.client);

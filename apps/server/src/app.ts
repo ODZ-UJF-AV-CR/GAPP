@@ -1,16 +1,16 @@
-import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import cors from '@fastify/cors';
 import Sensible from '@fastify/sensible';
-import influxDbPlugin from './plugins/influxdb.ts';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import sondehubPlugin from './plugins/sondehub.ts';
+import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { telemetryController, vehicleController } from './controllers/index.ts';
+import abortControllerPlugin from './plugins/abort-controller.ts';
+import eventBusPlugin from './plugins/event-bus.ts';
+import influxDbPlugin from './plugins/influxdb.ts';
 import postgresDbPlugin from './plugins/postgresdb.ts';
 import repositoriesPlugin from './plugins/repositories.ts';
 import servicesPlugin from './plugins/services.ts';
-import eventBusPlugin from './plugins/event-bus.ts';
-import abortControllerPlugin from './plugins/abort-controller.ts';
-import cors from '@fastify/cors';
-import { telemetryController, vehicleController } from './controllers/index.ts';
+import sondehubPlugin from './plugins/sondehub.ts';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
@@ -68,7 +68,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
             fastify.register(telemetryController, { prefix: '/telemetry' });
             fastify.register(vehicleController, { prefix: '/vehicles' });
         },
-        { prefix: '/api' }
+        { prefix: '/api' },
     );
 
     fastify.get(
@@ -78,6 +78,6 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
                 hide: true,
             },
         },
-        () => `pong\n\n${new Date().toString()}`
+        () => `pong\n\n${new Date().toString()}`,
     );
 };

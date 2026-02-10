@@ -1,4 +1,4 @@
-import { sql, type Kysely } from 'kysely';
+import { type Kysely, sql } from 'kysely';
 import { VehicleType } from '../types/enums.ts';
 
 export async function up(db: Kysely<any>) {

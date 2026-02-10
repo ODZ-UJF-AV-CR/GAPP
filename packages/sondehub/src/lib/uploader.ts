@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { gzip } from 'node:zlib';
+import axios from 'axios';
 
 type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 

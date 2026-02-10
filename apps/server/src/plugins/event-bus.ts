@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { Plugins } from './plugins.ts';
 import { EventBus } from '../utils/event-bus.ts';
+import { Plugins } from './plugins.ts';
 
 export type Events = {
     'influx.write': [];

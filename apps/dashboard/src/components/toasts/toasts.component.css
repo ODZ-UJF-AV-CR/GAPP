@@ -1,5 +1,7 @@
 .leaving {
     opacity: 0;
     transform: translateX(80px);
-    transition: opacity 400ms ease-out, transform 400ms ease-out;
+    transition:
+        opacity 400ms ease-out,
+        transform 400ms ease-out;
 }

@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { booleanAttribute, Component, effect, type ElementRef, Input, input, output, type Signal, signal, viewChild } from '@angular/core';
+import { booleanAttribute, Component, type ElementRef, effect, Input, input, output, type Signal, signal, viewChild } from '@angular/core';
 import { TextLimitDirective } from '../utils/text-limit.directive';
 
 export interface DialogButton {

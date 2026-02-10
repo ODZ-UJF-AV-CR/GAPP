@@ -1,6 +1,6 @@
+import { Type } from '@sinclair/typebox';
 import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { B_CreateVehicle, R_Vehicle } from '../schemas/vehicle.schema.ts';
-import { Type } from '@sinclair/typebox';
 
 export const vehicleController: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     fastify.post(
@@ -30,7 +30,7 @@ export const vehicleController: FastifyPluginAsync = async (fastify: FastifyInst
                 req.server.log.error(e, 'Error creating vehicle');
                 return (rep as any).internalServerError('Error creating vehicle');
             }
-        }
+        },
     );
 
     fastify.get(
@@ -53,7 +53,7 @@ export const vehicleController: FastifyPluginAsync = async (fastify: FastifyInst
                 req.server.log.error(e, 'Error getting vehicles');
                 return (rep as any).internalServerError('Error getting vehicles');
             }
-        }
+        },
     );
 
     fastify.delete(
@@ -79,6 +79,6 @@ export const vehicleController: FastifyPluginAsync = async (fastify: FastifyInst
                 req.server.log.error(e, 'Error deleting vehicle');
                 return (rep as any).internalServerError('Error deleting vehicle');
             }
-        }
+        },
     );
 };

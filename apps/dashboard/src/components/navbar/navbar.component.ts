@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 import {
+    tablerAdjustments,
+    tablerBuildingBroadcastTower,
     tablerHome,
     tablerLayoutDashboard,
-    tablerAdjustments,
-    tablerRouter,
     tablerListDetails,
     tablerMapPins,
+    tablerRouter,
     tablerWifi,
-    tablerBuildingBroadcastTower,
 } from '@ng-icons/tabler-icons';
 
 @Component({

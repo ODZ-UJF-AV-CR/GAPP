@@ -1,13 +1,13 @@
-import { ToastService } from '@/services/toast.service';
-import { type VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.service';
 import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { type FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { type OptionDefinition, SelectInputComponent, TextInputComponent } from '@/forms';
-import { type DialogButton, DialogComponent } from '@/ui';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { distinctUntilChanged, filter } from 'rxjs';
+import { type OptionDefinition, SelectInputComponent, TextInputComponent } from '@/forms';
+import { ToastService } from '@/services/toast.service';
+import { type VehicleCreate, VehicleService, VehicleType } from '@/services/vehicle.service';
+import { type DialogButton, DialogComponent } from '@/ui';
 
 @Component({
     selector: 'create-vehicle',
@@ -41,7 +41,7 @@ export class CreateVehicleComponent {
         this.form.valueChanges
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                distinctUntilChanged((prev, curr) => prev.type === curr.type)
+                distinctUntilChanged((prev, curr) => prev.type === curr.type),
             )
             .subscribe(({ type }) => {
                 if (type === VehicleType.CAR) {
@@ -94,7 +94,7 @@ export class CreateVehicleComponent {
         this.beaconsInput.push(
             this.formBuilder.nonNullable.group({
                 callsign: ['', [Validators.required, Validators.maxLength(32)]],
-            })
+            }),
         );
     }
 

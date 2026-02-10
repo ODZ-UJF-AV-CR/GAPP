@@ -1,7 +1,7 @@
 import { Component, computed, DestroyRef, inject, input, type OnInit, signal } from '@angular/core';
-import { injectNgControl } from './input-helper';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
+import { injectNgControl } from './input-helper';
 
 export type InputSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ErrorMessageDefinition = Record<string, string>;

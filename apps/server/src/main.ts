@@ -1,12 +1,12 @@
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import fastifyStatic from '@fastify/static';
+import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import Fastify from 'fastify';
+import path from 'path';
+import pino from 'pino';
 import { app } from './app.ts';
 import { getConfig } from './config.ts';
-import pino from 'pino';
-import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-import fastifyStatic from '@fastify/static';
-import path from 'path';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

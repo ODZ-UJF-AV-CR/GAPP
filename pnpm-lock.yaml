@@ -117,9 +117,6 @@ importers:
       '@influxdata/influxdb-client-apis':
         specifier: ^1.35.0
         version: 1.35.0(@influxdata/influxdb-client@1.35.0)
-      '@sinclair/typebox':
-        specifier: ^0.34.48
-        version: 0.34.48
       envalid:
         specifier: ^8.1.1
         version: 8.1.1
@@ -1533,9 +1530,6 @@ packages:
   '@sigstore/verify@3.1.0':
     resolution: {integrity: sha512-mNe0Iigql08YupSOGv197YdHpPPr+EzDZmfCgMc7RPNaZTw5aLN01nBl6CHJOh3BGtnMIj83EeN4butBchc8Ag==}
     engines: {node: ^20.17.0 || >=22.9.0}
-
-  '@sinclair/typebox@0.34.48':
-    resolution: {integrity: sha512-kKJTNuK3AQOrgjjotVxMrCn1sUJwM76wMszfq1kdU4uYVJjvEWuFQ6HgvLt4Xz3fSmZlTOxJ/Ie13KnIcWQXFA==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -5148,8 +5142,6 @@ snapshots:
       '@sigstore/bundle': 4.0.0
       '@sigstore/core': 3.1.0
       '@sigstore/protobuf-specs': 0.5.0
-
-  '@sinclair/typebox@0.34.48': {}
 
   '@standard-schema/spec@1.1.0': {}
 

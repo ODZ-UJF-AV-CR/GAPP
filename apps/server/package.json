@@ -19,7 +19,6 @@
         "@gapp/sondehub": "workspace:^",
         "@influxdata/influxdb-client": "^1.35.0",
         "@influxdata/influxdb-client-apis": "^1.35.0",
-        "@sinclair/typebox": "^0.34.48",
         "envalid": "^8.1.1",
         "fastify": "^5.7.4",
         "fastify-plugin": "^5.1.0",

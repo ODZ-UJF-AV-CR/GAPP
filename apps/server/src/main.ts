@@ -6,8 +6,8 @@ import pino from 'pino';
 import { app } from './app.ts';
 import { getConfig } from './config.ts';
 
-const config = getConfig(process.env);
 const logger = pino();
+const config = getConfig(process.env);
 const server = Fastify({ loggerInstance: logger, disableRequestLogging: true }).withTypeProvider<TypeBoxTypeProvider>();
 
 server.register(app, {

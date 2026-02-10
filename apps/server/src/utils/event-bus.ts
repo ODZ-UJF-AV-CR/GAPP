@@ -1,6 +1,6 @@
+// biome-ignore lint/suspicious/noExplicitAny
 import EventEmitter from 'node:events';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class EventBus<TEvents extends Record<string, any>> {
     private _emitter = new EventEmitter().setMaxListeners(100);
 

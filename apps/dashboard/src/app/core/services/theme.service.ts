@@ -28,7 +28,7 @@ export class ThemeService {
             return existingTheme as Theme;
         }
 
-        if (window?.matchMedia('(prefer-color-scheme: dark)')?.matches) {
+        if (window?.matchMedia?.('(prefer-color-scheme: dark)')?.matches) {
             return 'dark';
         }
 

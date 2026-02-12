@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
+import { type Theme, ThemeService } from '@core/services/theme.service';
 import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 import { tablerSettings } from '@ng-icons/tabler-icons';
-import { type Theme, ThemeService } from './theme.service';
 
 @Component({
     selector: 'gapp-menu',

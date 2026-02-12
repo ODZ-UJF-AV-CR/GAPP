@@ -1,6 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs';
-import { type ApiResponse, ApiServiceBase } from './api.service.base';
+import { type ApiResponse, ApiServiceBase } from '../../core/services/api.service.base';
 
 export enum VehicleType {
     BALLOON = 'balloon',
@@ -33,7 +33,7 @@ export class VehicleService extends ApiServiceBase {
     });
 
     public createVehicle$(vehicle: VehicleCreate) {
-        return this.post$<Vehicle>(this.apiUrl('/vehicles'), vehicle).pipe(
+        return this.post$<Vehicle>('/vehicles', vehicle).pipe(
             tap(({ data }) => {
                 if (data) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: [...(response.data || []), data] }));
@@ -43,7 +43,7 @@ export class VehicleService extends ApiServiceBase {
     }
 
     public deleteVehicle$(id: number) {
-        return this.delete$(this.apiUrl(`/vehicles/${id}`)).pipe(
+        return this.delete$(`/vehicles/${id}`).pipe(
             tap(({ data }) => {
                 if (data === null) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: response.data?.filter((v) => v.id !== id) }));
@@ -53,6 +53,6 @@ export class VehicleService extends ApiServiceBase {
     }
 
     public loadVehicles() {
-        this.get$<Vehicle[]>(this.apiUrl('/vehicles')).subscribe((data) => this.vehiclesResponse.set(data));
+        this.get$<Vehicle[]>('/vehicles').subscribe((data) => this.vehiclesResponse.set(data));
     }
 }

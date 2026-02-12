@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, map, type Observable, of, startWith } from 'rxjs';
-import { environment } from '../environment/environment';
+import { environment } from '@env/environment';
+import { catchError, map, Observable, of, startWith } from 'rxjs';
 
 export interface ApiResponse<T> {
     loading: boolean;
@@ -19,8 +19,35 @@ export abstract class ApiServiceBase {
         return `${environment.apiBaseUrl}${path}`;
     }
 
+    protected sse$<T>(url: string): Observable<T> {
+        const source = new EventSource(this.apiUrl(url));
+
+        return new Observable((observer) => {
+            source.onmessage = (message) => {
+                try {
+                    const data = JSON.parse(message.data);
+                    if (data?.data !== 'ping') {
+                        observer.next(data);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    observer.error(error);
+                }
+            };
+
+            source.onerror = (error) => {
+                console.error(error);
+                observer.error(error);
+            };
+
+            return () => {
+                source.close();
+            };
+        });
+    }
+
     protected post$<T>(url: string, body: unknown | null): Observable<ApiResponse<T>> {
-        return this.http.post<T>(url, body).pipe(
+        return this.http.post<T>(this.apiUrl(url), body).pipe(
             map((data) => ({ loading: false, data })),
             catchError(({ error }) =>
                 of({
@@ -36,7 +63,7 @@ export abstract class ApiServiceBase {
     }
 
     protected get$<T>(url: string): Observable<ApiResponse<T>> {
-        return this.http.get<T>(url).pipe(
+        return this.http.get<T>(this.apiUrl(url)).pipe(
             map((data) => ({ loading: false, data })),
             catchError(({ error }) =>
                 of({
@@ -52,7 +79,7 @@ export abstract class ApiServiceBase {
     }
 
     protected delete$<T>(url: string): Observable<ApiResponse<T>> {
-        return this.http.delete<T>(url).pipe(
+        return this.http.delete<T>(this.apiUrl(url)).pipe(
             map((data) => ({ loading: false, data })),
             catchError(({ error }) =>
                 of({

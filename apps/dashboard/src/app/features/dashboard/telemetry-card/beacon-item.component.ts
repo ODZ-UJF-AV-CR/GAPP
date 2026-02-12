@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { ClassRangeDirective, type ClassRangeOptions, TimeAgoComponent, timeDifference } from '@shared/ui';
 import { distinctUntilChanged, interval, map, merge } from 'rxjs';
-import { ClassRangeDirective, type ClassRangeOptions, TimeAgoComponent, timeDifference } from '@/ui';
 import type { BeaconWithTelemetry } from '../dashboard.service';
 
 @Component({

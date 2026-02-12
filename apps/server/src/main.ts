@@ -20,7 +20,7 @@ server.register(app, {
 
 if (config.isProd) {
     server.register(fastifyStatic, {
-        root: path.join(import.meta.dirname, '../../../../gapp-dashboard/browser'),
+        root: path.join(import.meta.dirname, config.DASHBOARD_STATIC_FILES),
     });
 
     server.setNotFoundHandler((_request, reply) => {

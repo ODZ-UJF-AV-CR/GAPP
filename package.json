@@ -9,16 +9,16 @@
         "dev": "turbo run dev",
         "lint": "biome lint",
         "lint:fix": "biome check --write",
-        "prepare": "husky"
+        "prepare": "test -d .git && husky || echo \".git not found, skipping husky\""
     },
     "lint-staged": {
         "*.{js,ts,json,css,html}": ["biome check --write --no-errors-on-unmatched"]
     },
-    "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
+    "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc",
     "devDependencies": {
         "@biomejs/biome": "^2.3.14",
         "husky": "^9.1.7",
         "lint-staged": "^16.2.7",
-        "turbo": "^2.8.4"
+        "turbo": "^2.8.6"
     }
 }

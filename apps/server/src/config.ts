@@ -4,6 +4,8 @@ const envSchema = {
     NODE_ENV: str({ choices: ['development', 'production'] }),
     PORT: num({ default: 3000 }),
 
+    DASHBOARD_STATIC_FILES: str({ desc: 'Path to static dashboard build (relative to main.ts)', default: '../../dashboard/' }),
+
     INFLUXDB_TOKEN: str({ desc: 'Influx db token', devDefault: 'development-influx-token' }),
     INFLUXDB_HOST: url({
         desc: 'Influx db host with port',

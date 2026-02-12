@@ -1,0 +1,43 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "module": "esnext",
+        "lib": ["es2022", "dom"],
+        "skipDefaultLibCheck": true,
+        "moduleResolution": "bundler",
+        "strict": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "isolatedModules": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": false,
+        "importHelpers": true,
+        "target": "ES2022",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "exclude": ["node_modules", "tmp"],
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "strictTemplates": true
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "./tsconfig.spec.json"
+        }
+    ]
+}

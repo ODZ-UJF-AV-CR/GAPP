@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+    logs: false;
+}
+
+@plugin "daisyui/theme" {
+    name: "dark";
+    --color-base-300: #000;
+    --color-base-100: rgb(50, 60, 72);
+    --depth: 0;
+}
+
+@plugin "daisyui/theme" {
+    name: "light";
+    --depth: 0;
+}
+
+body {
+    background-color: var(--color-base-300);
+}

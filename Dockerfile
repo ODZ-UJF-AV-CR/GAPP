@@ -1,34 +1,43 @@
-FROM node:22.13.1-alpine AS build
+# Image to obtain dumb-initi binary
+FROM alpine AS init
+RUN apk update && apk add --no-cache libc6-compat dumb-init
 
-WORKDIR /app
-RUN apk update && apk add --no-cache dumb-init
-
-COPY . .
-RUN npm install -g corepack@0.32.0
+# Initialize node environment with pnpm
+FROM node:24.5.0-alpine AS pnpm-base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+COPY package.json ./
 RUN corepack enable
-RUN pnpm i --frozen-lockfile
+RUN pnpm config set inject-workspace-packages=true
 
-RUN NX_DAEMON=false pnpm run server:build
-RUN NX_DAEMON=false pnpm run dashboard:build
+# Build the app and export server
+FROM pnpm-base AS builder
+WORKDIR /gapp
 
-## RUNTIME IMAGE ###
-FROM node:22.13.1-alpine
-LABEL org.opencontainers.image.source=https://github.com/ODZ-UJF-AV-CR/GAPP
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps/dashboard/package.json ./apps/dashboard/package.json
+COPY apps/server/package.json ./apps/server/package.json
+COPY packages/sondehub/package.json ./packages/sondehub/package.json
+RUN pnpm install --frozen-lockfile
 
-WORKDIR /app
+COPY apps ./apps
+COPY packages ./packages
 
-COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
-COPY --from=build /app/dist/apps ./
+RUN pnpm run build
+RUN pnpm --filter @gapp/server deploy --prod server
 
-RUN npm install -g corepack@0.32.0
-RUN corepack enable
+# Runtime image
+FROM node:24.5.0-alpine AS runner
+WORKDIR /gapp
 
-WORKDIR /app/gapp-server
-
-RUN pnpm i --frozen-lockfile
-
-EXPOSE 3000
+COPY --from=init /usr/bin/dumb-init /usr/bin/dumb-init
+COPY --from=builder /gapp/apps/dashboard/dist/dashboard/browser ./dashboard
+COPY --from=builder /gapp/server/dist ./server/dist
+COPY --from=builder /gapp/server/node_modules ./server/node_modules
 
 ENV NODE_ENV=production
 
-CMD ["dumb-init", "node", "main.js"]
+EXPOSE 3000
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server/dist/main.js"]

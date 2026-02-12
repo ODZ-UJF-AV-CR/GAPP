@@ -4,6 +4,7 @@
 dist
 tmp
 out-tsc
+server-dist
 
 # dependencies
 node_modules
@@ -37,6 +38,7 @@ testem.log
 /typings
 .data
 .example-data
+.turbo
 
 
 # System Files

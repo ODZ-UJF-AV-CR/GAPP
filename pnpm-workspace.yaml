@@ -1,3 +1,13 @@
 packages:
-  - 'apps/**'
-  - 'libs/**'
+  - apps/**
+  - packages/sondehub
+  - packages/ui
+  - packages/ui/libs/forms
+  - packages/ui/libs/utils
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - less
+  - lmdb
+  - msgpackr-extract
+onlyBuiltDependencies:
+  - esbuild

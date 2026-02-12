@@ -76,8 +76,8 @@ services:
         environment:
             - INFLUXDB_ORG=flight
             - INFLUXDB_TOKEN=some-long-secret-like-string
-            - INFLUXDB_HOST=http://influxdb:8086
-            - POSTGRESDB_URI=postgresql://postgres:password@postgresdb:5432/gapp
+            - INFLUXDB_URL=http://influxdb:8086
+            - POSTGRES_URL=postgresql://postgres:password@postgresdb:5432/gapp
 ```
 
 Or you can check out [compose.example.yml](./compose.example.yml)
@@ -86,4 +86,4 @@ Or you can check out [compose.example.yml](./compose.example.yml)
 
 ## Local development
 
-If you want to develop GAPP locally, check out [DEVELOPMENT.md](./DEVELOPMENT.md).
+If you want to develop GAPP locally, check out [CONTRIBUTING.md](./CONTRIBUTING.md).

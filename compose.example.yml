@@ -58,5 +58,5 @@ services:
         environment:
             - INFLUXDB_ORG=flight
             - INFLUXDB_TOKEN=some-long-secret-like-string
-            - INFLUXDB_HOST=http://influxdb:8086
-            - POSTGRESDB_URI=postgresql://postgres:password@postgresdb:5432/gapp
+            - INFLUXDB_URL=http://influxdb:8086
+            - POSTGRES_URL=postgresql://postgres:password@postgresdb:5432/gapp

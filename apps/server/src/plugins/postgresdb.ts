@@ -8,7 +8,7 @@ import type { Database } from '../repository/postgres-database.ts';
 import { Plugins } from './plugins.ts';
 
 interface PostgresdbPluginConfig extends FastifyPluginOptions {
-    uri: string;
+    url: string;
 }
 
 declare module 'fastify' {
@@ -44,7 +44,7 @@ export const migrateToLatest = async (db: Kysely<Database>, fastify: FastifyInst
 };
 
 const postgresdbPlugin: FastifyPluginAsync<PostgresdbPluginConfig> = async (fastify, options) => {
-    const pool = new Pool({ connectionString: options.uri });
+    const pool = new Pool({ connectionString: options.url });
     const dialect = new PostgresDialect({ pool });
     const db = new Kysely<Database>({ dialect });
 

@@ -13,64 +13,67 @@ This guide provides instructions for agentic coding tools operating in the GAPP 
   - `src/schemas`: TypeBox validation schemas.
   - `src/plugins`: Fastify plugin registrations (DI, DB, etc.).
 - **packages/sondehub**: Library for SondeHub integration.
-- **packages/ui**: Shared Angular component library.
-- **apps/gapp-dashboard & libs/**: Legacy NX packages (DO NOT modify unless requested). These are being phased out in favor of the new structure.
 
 ## Monorepo Architecture
-- **Turborepo**: Manages the build pipeline and caching. All scripts should ideally be run through `turbo` to benefit from caching, e.g., `pnpm turbo build`.
-- **PNPM Workspaces**: Handles local package dependencies. The workspace configuration is defined in `pnpm-workspace.yaml`.
-- **Dependency Management**: 
+- **Turborepo**: Manages the build pipeline and caching. All scripts should ideally be run through `turbo` to benefit from caching.
+- **PNPM Workspaces**: Handles local package dependencies.
+- **Dependency Management**:
   - Cross-package dependencies use `workspace:^` in `package.json`.
   - Shared logic should be placed in `packages/`.
-  - UI components go into `packages/ui`.
   - To add a dependency to a package: `pnpm --filter @gapp/<pkg> add <dep-name>`.
   - To run a script in a specific package: `pnpm --filter @gapp/<pkg> run <script>`.
 
-## Legacy Packages (DO NOT MODIFY)
-The following directories contain legacy NX code that is being phased out:
-- `apps/gapp-dashboard`
-- `libs/forms-ui`
-- `libs/ui`
-Do not modify these unless explicitly requested. All new development should happen in the new `apps/` and `packages/` structure.
+## Development Commands
 
 ### General
 - **Build All**: `pnpm turbo build`
-- **Lint All**: `pnpm turbo lint`
+- **Lint All**: `pnpm run lint` (uses Biome)
+- **Fix Lint/Format**: `pnpm run lint:fix` (uses Biome)
 - **Test All**: `pnpm turbo test`
-- **Install Dependency**: `pnpm --filter @gapp/<pkg> add <name>`
 
 ### Apps & Packages
 - **Server Dev**: `pnpm --filter @gapp/server run dev` (Uses native Node.js TS support)
 - **Dashboard Dev**: `pnpm --filter @gapp/dashboard run dev`
 - **Migrations**: `pnpm run create-migration <name>` (Creates a Kysely migration)
 
-### Running Tests
+### Running Tests (Vitest)
 The project uses **Vitest** for testing (even in Angular packages).
-- **Run all tests in package**: `pnpm --filter @gapp/<pkg> run test`
-- **Run single test file**: `pnpm --filter @gapp/<pkg> exec vitest run <path/to/file.spec.ts>`
-- **Watch mode**: `pnpm --filter @gapp/<pkg> exec vitest`
+
+- **Run all tests in a package**:
+  ```bash
+  pnpm --filter @gapp/<pkg> run test
+  ```
+- **Run a single test file**:
+  ```bash
+  pnpm --filter @gapp/<pkg> exec vitest run <path/to/file.spec.ts>
+  ```
+- **Watch mode**:
+  ```bash
+  pnpm --filter @gapp/<pkg> exec vitest
+  ```
 
 ## Code Style & Guidelines
 
-### TypeScript & General
-- **Formatting**: Adhere to Prettier config. Run `pnpm turbo lint` to check.
-- **Imports**: Use ES Modules. In `@gapp/server`, use `.ts` extensions in imports.
-- **Naming**: 
+### General & TypeScript
+- **Linter/Formatter**: The project uses **Biome**. Run `pnpm run lint:fix` to auto-format.
+- **Imports**: Use ES Modules.
+  - In `@gapp/server`, use `.ts` extensions in imports (e.g., `import { app } from './app.ts'`).
+- **Naming**:
   - `PascalCase` for Classes, Components, and Types.
-  - `camelCase` for variables, methods, and file names (except components).
+  - `camelCase` for variables, methods, and file names (except Angular components).
   - `B_Prefix` for Body schemas, `R_Prefix` for Response schemas (e.g., `B_CreateVehicle`).
-- **Types**: Avoid `any` where possible. Use TypeBox for API schemas.
+- **Types**: Avoid `any`. Use **TypeBox** for API schemas.
 
 ### Frontend (Angular 21+)
-- **Standalone**: All components must be `standalone: true` (default in v19+).
-- **Signals**: Use Signals for state management (`signal`, `computed`, `effect`). Avoid `BehaviorSubject` unless necessary for legacy interop.
-- **Tailwind CSS 4**: The project uses Tailwind 4. Use utility classes directly in templates.
+- **Standalone**: All components must be `standalone: true`.
+- **Signals**: Use Signals for state management (`signal`, `computed`, `effect`). Avoid `BehaviorSubject` unless necessary.
+- **Tailwind CSS 4**: Use utility classes directly in templates.
 - **Templates**: Prefer separate `.html` and `.css` files. Use `protected readonly` for properties accessed in templates.
 - **Component Structure**:
   ```typescript
   @Component({
     selector: 'app-feature',
-    imports: [CommonModule, SharedComponent],
+    imports: [CommonModule],
     templateUrl: './feature.html',
     styleUrl: './feature.css',
   })
@@ -81,13 +84,13 @@ The project uses **Vitest** for testing (even in Angular packages).
 
 ### Backend (Fastify 5)
 - **Architecture**: Controller (Plugin) -> Service (Class) -> Repository (Class).
-- **Dependency Injection**: Services and Repositories are decorated onto the Fastify instance. See `apps/server/src/plugins/services.ts` and `repositories.ts`.
+- **Dependency Injection**: Services and Repositories are decorated onto the Fastify instance via plugins.
 - **Validation**: Define schemas using `@sinclair/typebox`.
 - **Database**: Use `Kysely` for type-safe SQL. Follow existing patterns in `repositories/`.
 - **Database Models**: Models are defined in `postgres-database.ts` using `Selectable`, `Insertable`, etc.
-- **Error Handling**: Use `fastify-sensible` methods via `(rep as any).notFound()`, `internalServerError()`, etc. Wrap controller logic in `try-catch`.
+- **Error Handling**: Use `fastify-sensible` methods (e.g., `(rep as any).notFound()`). Wrap controller logic in `try-catch`.
 
-### Example Controller Pattern
+#### Example Controller Pattern
 ```typescript
 fastify.post('', { schema: { body: B_Schema, response: { 201: R_Schema } } }, async (req, rep) => {
   try {
@@ -112,5 +115,5 @@ fastify.post('', { schema: { body: B_Schema, response: { 201: R_Schema } } }, as
   2. Update the Kysely interface in `apps/server/src/repository/postgres-database.ts`.
   3. Update TypeBox schemas in `apps/server/src/schemas/`.
   4. Run `pnpm turbo build` to verify type consistency.
-- **Verification**: After any change, run `pnpm turbo lint` and relevant tests.
+- **Verification**: After any change, run `pnpm run lint` and relevant tests.
 - **Communication**: Be concise. Focus on technical accuracy and following project patterns.

@@ -5,7 +5,7 @@ import fp from 'fastify-plugin';
 import { Plugins } from './plugins.ts';
 
 interface InfluxdbPluginOptions extends FastifyPluginOptions {
-    host: string;
+    url: string;
     token: string;
     org: string;
 }
@@ -20,7 +20,7 @@ declare module 'fastify' {
 const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify, options) => {
     const influxClient = new InfluxDB({
         token: options.token,
-        url: options.host,
+        url: options.url,
         writeOptions: {
             batchSize: 100,
             flushInterval: 1_000,

@@ -16,9 +16,7 @@ corepack enable
 
 4. Run dependencies by `docker compose up -d`.
 
-5. To develop dashboard, run `pnpm run dashboard:dev`
-
-6. To develop server, run `pnpm run server:dev`
+5. Start local development `pnpm dev`
 
 ## API Documentation
 

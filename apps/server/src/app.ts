@@ -14,10 +14,10 @@ import sondehubPlugin from './plugins/sondehub.ts';
 
 interface AppOptions extends FastifyPluginOptions {
     influxDbToken: string;
-    influxDbHost: string;
+    influxDbUrl: string;
     influxDbOrg: string;
 
-    postgresDbUri: string;
+    postgresDbUrl: string;
 
     isDevelopment: boolean;
 }
@@ -32,11 +32,11 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
 
     // PLUGINS
     await fastify.register(influxDbPlugin, {
-        host: opts.influxDbHost,
+        url: opts.influxDbUrl,
         token: opts.influxDbToken,
         org: opts.influxDbOrg,
     });
-    await fastify.register(postgresDbPlugin, { uri: opts.postgresDbUri });
+    await fastify.register(postgresDbPlugin, { url: opts.postgresDbUrl });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(abortControllerPlugin);
     await fastify.register(repositoriesPlugin);

@@ -12,10 +12,10 @@ const server = Fastify({ loggerInstance: logger, disableRequestLogging: true }).
 
 server.register(app, {
     influxDbToken: config.INFLUXDB_TOKEN,
-    influxDbHost: config.INFLUXDB_HOST,
+    influxDbUrl: config.INFLUXDB_URL,
     influxDbOrg: config.INFLUXDB_ORG,
     isDevelopment: config.isDevelopment,
-    postgresDbUri: config.POSTGRESDB_URI,
+    postgresDbUrl: config.POSTGRES_URL,
 });
 
 if (config.isProd) {

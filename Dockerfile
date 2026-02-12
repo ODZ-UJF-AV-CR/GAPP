@@ -15,11 +15,14 @@ FROM pnpm-base AS builder
 WORKDIR /gapp
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY .turbo ./.turbo
+COPY apps/dashboard/package.json ./apps/dashboard/package.json
+COPY apps/server/package.json ./apps/server/package.json
+COPY packages/sondehub/package.json ./packages/sondehub/package.json
+RUN pnpm install --frozen-lockfile
+
 COPY apps ./apps
 COPY packages ./packages
 
-RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 RUN pnpm --filter @gapp/server deploy --prod server
 

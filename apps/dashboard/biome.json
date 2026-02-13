@@ -1,8 +1,15 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+    "$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
     "root": false,
     "extends": ["../../biome.json"],
     "files": {
         "includes": ["src/**", "./*.json", "!dist", "!.turbo", "!.angular"]
+    },
+    "linter": {
+        "rules": {
+            "complexity": {
+                "useLiteralKeys": "off"
+            }
+        }
     }
 }

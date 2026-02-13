@@ -1,13 +1,7 @@
 <li [classRange]="backgroundClasses" [value]="secondsAgo$ | async" class="rounded-box flex flex-row justify-between p-3">
-    <div textLimit="1" class="font-semibold flex items-center" [classRange]="textClasses" [value]="secondsAgo$ | async">
-        {{ beacon().callsign }}
-    </div>
+    <div textLimit="1" class="font-semibold flex items-center" [classRange]="textClasses" [value]="secondsAgo$ | async">{{ beacon().callsign }}</div>
 
-    <div>
-        <span class="badge badge-ghost">
-            @if(beacon().telemetry?._time; as date) {
-            <time-ago [date]="date"></time-ago>
-            } @else { No data }
-        </span>
-    </div>
+    <div><span class="badge badge-ghost">
+        @if(beacon().telemetry?._time; as date) {<time-ago [date]="date"></time-ago>} @else { No data }
+    </span></div>
 </li>

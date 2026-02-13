@@ -3,9 +3,7 @@
         <select-input formControlName="type" label="Type" help="Vehicle type." [options]="vehicleTypes"></select-input>
         <text-input formControlName="callsign" label="Callsign" help="Unique identification of vehicle."></text-input>
         <text-input formControlName="description" label="Description" help="Optional description of vehicle." type="textarea"></text-input>
-
-        @if(showBeacons()) {
-        <div class="divider divider-start">Transmitters</div>
+        @if(showBeacons()) {<div class="divider divider-start">Transmitters</div>
 
         <ng-container formArrayName="beacons">
             @for(beacon of beaconsInput.controls; track beacon; let index = $index) {
@@ -19,7 +17,6 @@
             }
         </ng-container>
 
-        <button (click)="addBeacon()" class="btn btn-primary btn-sm">Add transmitter</button>
-        }
+        <button (click)="addBeacon()" class="btn btn-primary btn-sm">Add transmitter</button>}
     </form>
 </gapp-dialog>

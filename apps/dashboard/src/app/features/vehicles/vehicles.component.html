@@ -4,16 +4,11 @@
     </ng-container>
 
     <ng-container blockBody>
-        @if(loading()) {
-        <loader></loader>
-        } @else {
+        @if(loading()) {<loader></loader>} @else {
         <scrollable>
             <ul class="list bg-base-100 rounded-box">
-                @for(vehicle of vehicles(); track vehicle.id) {
-                <vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>
-                } @empty {
-                <li class="list-row">No vehicles yet.</li>
-                }
+                @for(vehicle of vehicles(); track vehicle.id) {<vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>} @empty {
+                <li class="list-row">No vehicles yet.</li>}
             </ul>
         </scrollable>
         }

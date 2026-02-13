@@ -1,9 +1,7 @@
 <dialog #modal class="modal" (close)="closed.emit()">
     <div class="modal-box" [ngClass]="modalClass()">
-        @if(title(); as title) {
-        <h3 [textLimit]="1" class="text-lg font-bold mb-2 pr-4">{{ title }}</h3>
-        <div class="divider"></div>
-        }
+        @if(title(); as title) {<h3 [textLimit]="1" class="text-lg font-bold mb-2 pr-4">{{ title }}</h3>
+        <div class="divider"></div>}
 
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -17,9 +15,7 @@
                 <form method="dialog">
                     <button class="btn" [ngClass]="button.style">{{ button.label }}</button>
                 </form>
-                } @else {
-                <button class="btn" [ngClass]="button.style" (click)="button?.action($event)">{{ button.label }}</button>
-                } }
+                } @else {<button class="btn" [ngClass]="button.style" (click)="button?.action($event)">{{ button.label }}</button>} }
             </div>
         </ng-content>
     </div>

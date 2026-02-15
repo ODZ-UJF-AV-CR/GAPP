@@ -1,6 +1,6 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
-import { type ApiResponse, ApiServiceBase } from '../../core/services/api.service.base';
+import { type ApiResponse, ApiService } from '../../core/services/api.service';
 
 export enum VehicleType {
     BALLOON = 'balloon',
@@ -23,7 +23,9 @@ export interface Vehicle {
 export type VehicleCreate = Omit<Vehicle, 'id'>;
 
 @Injectable({ providedIn: 'root' })
-export class VehicleService extends ApiServiceBase {
+export class VehicleService {
+    private apiService = inject(ApiService);
+
     private vehiclesResponse = signal<ApiResponse<Vehicle[]>>({ loading: true });
 
     public vehiclesLoading = computed(() => this.vehiclesResponse().loading);
@@ -33,7 +35,7 @@ export class VehicleService extends ApiServiceBase {
     });
 
     public createVehicle$(vehicle: VehicleCreate) {
-        return this.post$<Vehicle>('/vehicles', vehicle).pipe(
+        return this.apiService.post$<Vehicle>('/vehicles', vehicle).pipe(
             tap(({ data }) => {
                 if (data) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: [...(response.data || []), data] }));
@@ -43,7 +45,7 @@ export class VehicleService extends ApiServiceBase {
     }
 
     public deleteVehicle$(id: number) {
-        return this.delete$(`/vehicles/${id}`).pipe(
+        return this.apiService.delete$(`/vehicles/${id}`).pipe(
             tap(({ data }) => {
                 if (data === null) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: response.data?.filter((v) => v.id !== id) }));
@@ -53,6 +55,6 @@ export class VehicleService extends ApiServiceBase {
     }
 
     public loadVehicles() {
-        this.get$<Vehicle[]>('/vehicles').subscribe((data) => this.vehiclesResponse.set(data));
+        this.apiService.get$<Vehicle[]>('/vehicles').subscribe((data) => this.vehiclesResponse.set(data));
     }
 }

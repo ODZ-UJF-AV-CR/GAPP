@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '@env/environment';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
 
@@ -12,14 +12,15 @@ export interface ApiResponse<T> {
     };
 }
 
-export abstract class ApiServiceBase {
+@Injectable({ providedIn: 'root' })
+export class ApiService {
     private http = inject(HttpClient);
 
-    protected apiUrl(path: string) {
+    private apiUrl(path: string) {
         return `${environment.apiBaseUrl}${path}`;
     }
 
-    protected sse$<T>(url: string): Observable<T> {
+    public sse$<T>(url: string): Observable<T> {
         const source = new EventSource(this.apiUrl(url));
 
         return new Observable((observer) => {
@@ -46,7 +47,7 @@ export abstract class ApiServiceBase {
         });
     }
 
-    protected post$<T>(url: string, body: unknown | null): Observable<ApiResponse<T>> {
+    public post$<T>(url: string, body: unknown | null): Observable<ApiResponse<T>> {
         return this.http.post<T>(this.apiUrl(url), body).pipe(
             map((data) => ({ loading: false, data })),
             catchError(({ error }) =>
@@ -62,7 +63,7 @@ export abstract class ApiServiceBase {
         );
     }
 
-    protected get$<T>(url: string): Observable<ApiResponse<T>> {
+    public get$<T>(url: string): Observable<ApiResponse<T>> {
         return this.http.get<T>(this.apiUrl(url)).pipe(
             map((data) => ({ loading: false, data })),
             catchError(({ error }) =>
@@ -78,7 +79,7 @@ export abstract class ApiServiceBase {
         );
     }
 
-    protected delete$<T>(url: string): Observable<ApiResponse<T>> {
+    public delete$<T>(url: string): Observable<ApiResponse<T>> {
         return this.http.delete<T>(this.apiUrl(url)).pipe(
             map((data) => ({ loading: false, data })),
             catchError(({ error }) =>

@@ -1,7 +1,7 @@
 import { computed, DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ApiService } from '@app/core/services/api.service';
 import { type Beacon, type Vehicle, VehicleService } from '@app/features/vehicles/vehicle.service';
-import { ApiServiceBase } from '@core/services/api.service.base';
 import type { Subscription } from 'rxjs';
 
 export interface TelemetryData {
@@ -19,8 +19,9 @@ export interface VehicleWithTelemetry extends Vehicle {
 }
 
 @Injectable({ providedIn: 'root' })
-export class DashboardService extends ApiServiceBase {
+export class DashboardService {
     private vehicleService = inject(VehicleService);
+    private apiService = inject(ApiService);
     private destroyRef = inject(DestroyRef);
 
     private telemetrySubscription?: Subscription;
@@ -44,9 +45,10 @@ export class DashboardService extends ApiServiceBase {
             throw 'DashboardService already initialized';
         }
 
-        this.telemetrySubscription = this.sse$<TelemetryData[]>('/telemetry/stream')
+        this.telemetrySubscription = this.apiService
+            .sse$<TelemetryData[]>('/telemetry/stream')
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((telemetry) => this.telemetry.set(telemetry));
+            .subscribe((telemetry) => this.telemetry.set(telemetry.map((t) => ({ ...t, _time: new Date(t._time) }))));
     }
 
     public deinit() {

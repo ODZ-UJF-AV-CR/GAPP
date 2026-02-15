@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { JsonPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { GappRoute, type GappRoutes } from '@app/app.routes';
 import { NgIcon, provideIcons, provideNgIconsConfig } from '@ng-icons/core';
 import {
     tablerAdjustments,
@@ -30,4 +32,14 @@ import {
         provideNgIconsConfig({ size: '1.5rem' }),
     ],
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+    private router = inject(Router);
+    private routes = this.router.config as GappRoutes;
+
+    public navbarItems = this.routes
+        .filter((route) => !!route.data)
+        .map((route) => ({
+            path: route.path,
+            icon: route.data?.icon,
+        }));
+}

@@ -1,6 +1,6 @@
 import { Component, computed, inject, type OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { VehicleService } from '@app/features/vehicles/vehicle.service';
+import { VehicleService } from '@shared/services';
 
 @Component({
     selector: 'sondehub',

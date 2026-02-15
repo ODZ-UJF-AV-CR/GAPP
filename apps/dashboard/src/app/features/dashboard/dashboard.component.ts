@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, type OnDestroy, type OnInit } from '@angular/core';
-import { VehicleService } from '@app/features/vehicles/vehicle.service';
 import { PageBlockComponent } from '@shared/components/page-block/page-block.component';
-import { ScrollableComponent } from '@shared/ui';
+import { VehicleService } from '@shared/services';
+import { ScrollableComponent } from '@shared/utils';
 import { DashboardService } from './dashboard.service';
 import { TelemetryCardComponent } from './telemetry-card/telemetry-card.component';
 
 @Component({
-    selector: 'dapp-dashboard',
+    selector: 'dashboard',
     templateUrl: './dashboard.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PageBlockComponent, ScrollableComponent, TelemetryCardComponent],

@@ -1,15 +1,17 @@
 <ng-container>
-    <div class="p-2 h-screen pb-16 grid place-content-center">
-        <router-outlet></router-outlet>
-    </div>
-
-    <div class="fixed bottom-0 w-full">
-        <gapp-navbar></gapp-navbar>
-    </div>
-
     <gapp-toasts></gapp-toasts>
 
     <div class="fixed top-3 right-3">
         <gapp-menu></gapp-menu>
+    </div>
+
+    <div class="flex flex-col h-screen gap-2 p-2">
+        <div class="grow">
+            <router-outlet></router-outlet>
+        </div>
+
+        <div class="w-full">
+            <gapp-navbar></gapp-navbar>
+        </div>
     </div>
 </ng-container>

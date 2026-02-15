@@ -1,7 +1,7 @@
-<nav class="flex flex-row justify-center gap-1 p-2">
-    @for(item of navbarItems; track item.path) {
-    <a class="btn btn-lg btn-soft" routerLinkActive="btn-primary btn-active" [routerLink]="item.path"
-        ><ng-icon [svg]="item.icon"></ng-icon></a
+<nav class="flex flex-row justify-center gap-1">
+    @for (item of navbarItems; track item.path) {
+    <a class="btn btn-lg btn-soft" routerLinkActive="btn-primary btn-active" [routerLink]="item.path">
+        <ng-icon [svg]="item.icon"></ng-icon></a
     >
     }
 </nav>

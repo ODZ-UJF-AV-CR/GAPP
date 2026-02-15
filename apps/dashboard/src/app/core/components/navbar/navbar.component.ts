@@ -37,7 +37,7 @@ export class NavbarComponent {
     private routes = this.router.config as GappRoutes;
 
     public navbarItems = this.routes
-        .filter((route) => !!route.data)
+        .filter(({ data }) => data?.showInNavbar)
         .map((route) => ({
             path: route.path,
             icon: route.data?.icon,

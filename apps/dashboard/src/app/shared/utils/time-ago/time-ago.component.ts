@@ -11,7 +11,7 @@ const timeAgo = new TimeAgo('en-GB');
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeAgoComponent implements OnDestroy {
-    private intervalId?: number;
+    private intervalId?: ReturnType<typeof setInterval>;
 
     public date = input.required<Date>();
     public time = signal('');
@@ -25,7 +25,7 @@ export class TimeAgoComponent implements OnDestroy {
             const time = this.date().getTime();
 
             const updateTime = () => this.time.set(timeAgo.format(time, 'round', { now: Date.now() }));
-            this.intervalId = setInterval(updateTime, 1_000) as unknown as number;
+            this.intervalId = setInterval(updateTime, 1_000);
             updateTime();
         });
     }

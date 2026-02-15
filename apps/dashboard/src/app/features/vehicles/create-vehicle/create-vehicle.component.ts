@@ -1,12 +1,12 @@
 import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { type FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { type VehicleCreate, VehicleService, VehicleType } from '@app/features/vehicles/vehicle.service';
-import { ToastService } from '@core/services/toast.service';
+import { ToastService } from '@app/core/toasts';
+import { type DialogButton, DialogComponent } from '@app/shared/dialog';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { type OptionDefinition, SelectInputComponent, TextInputComponent } from '@shared/forms';
-import { type DialogButton, DialogComponent } from '@shared/ui';
+import { type VehicleCreate, VehicleService, VehicleType } from '@shared/services';
 import { distinctUntilChanged, filter } from 'rxjs';
 
 @Component({

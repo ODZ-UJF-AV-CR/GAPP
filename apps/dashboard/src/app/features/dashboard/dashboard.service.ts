@@ -1,7 +1,7 @@
 import { computed, DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ApiService } from '@app/core/services/api.service';
-import { type Beacon, type Vehicle, VehicleService } from '@app/features/vehicles/vehicle.service';
+import { ApiService } from '@core/services/api.service';
+import { type Beacon, type Vehicle, VehicleService } from '@shared/services';
 import type { Subscription } from 'rxjs';
 
 export interface TelemetryData {

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { type Vehicle, VehicleService } from '@app/features/vehicles/vehicle.service';
-import { ToastService } from '@core/services/toast.service';
+import { ToastService } from '@app/core/toasts';
+import { type DialogButton, DialogDirective } from '@app/shared/dialog';
+import { TextLimitDirective } from '@app/shared/utils';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { VehicleIconComponent } from '@shared/components/vehicle-icon/vehicle-icon.component';
-import { type DialogButton, DialogDirective, TextLimitDirective } from '@shared/ui';
+import { type Vehicle, VehicleService } from '@shared/services';
 import { filter } from 'rxjs';
 
 @Component({

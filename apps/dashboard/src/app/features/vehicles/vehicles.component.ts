@@ -1,7 +1,7 @@
 import { Component, inject, type OnInit } from '@angular/core';
-import { VehicleService } from '@app/features/vehicles/vehicle.service';
 import { PageBlockComponent } from '@shared/components/page-block/page-block.component';
-import { LoaderComponent, ScrollableComponent } from '@shared/ui';
+import { VehicleService } from '@shared/services';
+import { LoaderComponent, ScrollableComponent } from '@shared/utils';
 import { CreateVehicleComponent } from './create-vehicle/create-vehicle.component';
 import { VehicleListItemComponent } from './vehicle-list-item/vehicle-list-item.component';
 

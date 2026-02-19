@@ -1,15 +1,19 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import type { GappData } from '@app/app.routes';
 import { filter, map, startWith } from 'rxjs';
+import { HeaderService } from './header.service';
 
 @Component({
     selector: 'gapp-header',
     templateUrl: './header.component.html',
+    imports: [NgTemplateOutlet],
 })
 export class HeaderComponent {
     private router = inject(Router);
+    protected readonly headerService = inject(HeaderService);
 
     private routeData = toSignal(
         this.router.events.pipe(

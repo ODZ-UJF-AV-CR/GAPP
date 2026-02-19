@@ -6,6 +6,8 @@
     </div>
     }
 
-    <div class="grow"></div>
+    <div class="grow">
+        <ng-container *ngTemplateOutlet="headerService.content()" />
+    </div>
 </div>
 }

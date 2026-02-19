@@ -7,7 +7,7 @@ export const TELEMETRY_ROUTES: GappRoutes = [
         loadComponent: () => import('./telemetry-dashboard.component').then((c) => c.TelemetryDashboardComponent),
         title: 'GAPP | Telemetry',
         data: {
-            ...useHeader('Test'),
+            ...useHeader(),
         },
     },
     {

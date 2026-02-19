@@ -1,35 +1,34 @@
 import type { Route } from '@angular/router';
+import { type HeaderData, useHeader } from '@core/components/header/header-builder';
 import { type NavbarData, useNavbar } from '@core/components/navbar/navbar-builder';
-import { tablerBuildingBroadcastTower, tablerHome, tablerListDetails, tablerMapPins } from '@ng-icons/tabler-icons';
+import { tablerBuildingBroadcastTower, tablerListDetails, tablerMapPins } from '@ng-icons/tabler-icons';
+
+export interface GappData {
+    navbar?: NavbarData;
+    header?: HeaderData;
+}
 
 export interface GappRoute extends Route {
-    data?: NavbarData;
+    data?: GappData;
 }
 
 export type GappRoutes = Array<GappRoute>;
 
 export const ROUTES: GappRoutes = [
     {
-        path: 'home',
-        loadComponent: () => import('@features/home/homepage.component').then((c) => c.HomepageComponent),
-        data: {
-            ...useNavbar(tablerHome),
-        },
-    },
-    {
         path: 'vehicles',
         loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
         title: 'GAPP | Vehicles',
         data: {
-            ...useNavbar(tablerListDetails),
+            navbar: useNavbar(tablerListDetails),
+            header: useHeader('Vehicles'),
         },
     },
     {
-        path: 'dashboard',
-        loadComponent: () => import('@features/dashboard/dashboard.component').then((c) => c.DashboardComponent),
-        title: 'GAPP | Dashboard',
+        path: 'telemetry',
+        loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
         data: {
-            ...useNavbar(tablerBuildingBroadcastTower),
+            navbar: useNavbar(tablerBuildingBroadcastTower),
         },
     },
     {
@@ -37,7 +36,7 @@ export const ROUTES: GappRoutes = [
         loadComponent: () => import('@features/sondehub/sondehub.component').then((c) => c.SondehubComponent),
         title: 'GAPP | Sondehub',
         data: {
-            ...useNavbar(tablerMapPins),
+            navbar: useNavbar(tablerMapPins),
         },
     },
     {

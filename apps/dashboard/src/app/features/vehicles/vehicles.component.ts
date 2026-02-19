@@ -1,5 +1,5 @@
 import { Component, inject, type OnInit } from '@angular/core';
-import { PageBlockComponent } from '@shared/components/page-block/page-block.component';
+import { CenterLayoutComponent, SimpleSectionComponent } from '@shared/layout';
 import { VehicleService } from '@shared/services';
 import { LoaderComponent, ScrollableComponent } from '@shared/utils';
 import { CreateVehicleComponent } from './create-vehicle/create-vehicle.component';
@@ -8,7 +8,7 @@ import { VehicleListItemComponent } from './vehicle-list-item/vehicle-list-item.
 @Component({
     selector: 'app-vehicles',
     templateUrl: './vehicles.component.html',
-    imports: [PageBlockComponent, ScrollableComponent, LoaderComponent, CreateVehicleComponent, VehicleListItemComponent],
+    imports: [SimpleSectionComponent, ScrollableComponent, LoaderComponent, CreateVehicleComponent, VehicleListItemComponent, CenterLayoutComponent],
 })
 export class VehiclesComponent implements OnInit {
     private vehiclesService = inject(VehicleService);

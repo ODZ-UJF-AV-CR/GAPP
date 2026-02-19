@@ -1,0 +1,11 @@
+@if(showHeader()) {
+<div class="bg-base-100 rounded-b-box md:rounded-box p-4 flex flex-row gap-4">
+    @if(title()) {
+    <div class="flex items-center">
+        <h1 class="text-3xl font-bold">{{ title() }}</h1>
+    </div>
+    }
+
+    <div class="grow"></div>
+</div>
+}

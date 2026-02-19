@@ -20,15 +20,15 @@ export const ROUTES: GappRoutes = [
         loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
         title: 'GAPP | Vehicles',
         data: {
-            navbar: useNavbar(tablerListDetails),
-            header: useHeader('Vehicles'),
+            ...useNavbar(tablerListDetails),
+            ...useHeader('Vehicles'),
         },
     },
     {
         path: 'telemetry',
         loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
         data: {
-            navbar: useNavbar(tablerBuildingBroadcastTower),
+            ...useNavbar(tablerBuildingBroadcastTower),
         },
     },
     {
@@ -36,7 +36,7 @@ export const ROUTES: GappRoutes = [
         loadComponent: () => import('@features/sondehub/sondehub.component').then((c) => c.SondehubComponent),
         title: 'GAPP | Sondehub',
         data: {
-            navbar: useNavbar(tablerMapPins),
+            ...useNavbar(tablerMapPins),
         },
     },
     {

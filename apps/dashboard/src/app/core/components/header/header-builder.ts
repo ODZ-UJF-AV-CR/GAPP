@@ -3,7 +3,9 @@ export interface HeaderData {
     title: string;
 }
 
-export const useHeader = (title: string): HeaderData => ({
-    showHeader: true,
-    title,
+export const useHeader = (title: string): { header: HeaderData } => ({
+    header: {
+        showHeader: true,
+        title,
+    },
 });

@@ -20,6 +20,10 @@
     .gapp-card {
         @apply bg-base-100 p-4 rounded-box;
     }
+
+    .gapp-container {
+        @apply w-full sm:w-[70vw] md:w-[55vw] 2xl:w-[40vw];
+    }
 }
 
 body {

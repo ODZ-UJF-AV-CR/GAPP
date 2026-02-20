@@ -1,19 +1,13 @@
-<!--<center-layout>-->
-<simple-section>
-    <div *headerContent class="grow flex flex-row justify-end">
-        <button class="btn btn-primary" (click)="createVehicle.open()">Add</button>
-        <create-vehicle #createVehicle></create-vehicle>
-    </div>
+<div *headerContent class="grow flex flex-row justify-end">
+    <button class="btn btn-primary" (click)="createVehicle.open()">Add</button>
+    <create-vehicle #createVehicle></create-vehicle>
+</div>
 
-    <ng-container blockBody>
-        @if(loading()) {<loader></loader>} @else {
-        <scrollable>
-            <ul class="list bg-base-100 rounded-box">
-                @for(vehicle of vehicles(); track vehicle.id) {<vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>} @empty {
-                <li class="list-row">No vehicles yet.</li>}
-            </ul>
-        </scrollable>
-        }
-    </ng-container>
-</simple-section>
-<!--</center-layout>-->
+<div class="gapp-card gapp-container max-h-[75vh] overflow-y-auto">
+    @if(loading()) {<loader></loader>} @else {
+    <ul class="list rounded-box">
+        @for(vehicle of vehicles(); track vehicle.id) {<vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>} @empty {
+        <li class="list-row">No vehicles yet.</li>}
+    </ul>
+    }
+</div>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ThemeService, type ThemeSetting } from './theme.service';
+import { ThemeService, type ThemeSetting } from '@core/services/theme.service';
 
 @Component({
     selector: 'theme-switch',

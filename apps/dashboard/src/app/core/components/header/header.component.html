@@ -1,5 +1,4 @@
-@if(showHeader()) {
-<div class="bg-base-100 rounded-b-box md:rounded-box p-4 flex flex-row gap-4">
+<div class="bg-base-100 rounded-b-box md:rounded-box p-4 flex flex-row gap-4 h-20 items-center">
     @if(title()) {
     <div class="flex items-center">
         <h1 class="text-3xl font-bold">{{ title() }}</h1>
@@ -7,7 +6,7 @@
     }
 
     <div class="grow">
-        <ng-container *ngTemplateOutlet="headerService.content()" />
+        @if(content()) {
+        <ng-container *ngTemplateOutlet="content()" />}
     </div>
 </div>
-}

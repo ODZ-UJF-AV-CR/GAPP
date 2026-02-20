@@ -1,10 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
-import type { GappData } from '@app/app.routes';
-import { filter, map, startWith } from 'rxjs';
-import { HeaderService } from './header.service';
+import { Component, input } from '@angular/core';
+import type { HeaderContent } from './header.service';
 
 @Component({
     selector: 'gapp-header',
@@ -12,23 +8,6 @@ import { HeaderService } from './header.service';
     imports: [NgTemplateOutlet],
 })
 export class HeaderComponent {
-    private router = inject(Router);
-    protected readonly headerService = inject(HeaderService);
-
-    private routeData = toSignal(
-        this.router.events.pipe(
-            filter((event) => event instanceof NavigationEnd),
-            startWith(null),
-            map(() => {
-                let route = this.router.routerState.root;
-                while (route.firstChild) {
-                    route = route.firstChild;
-                }
-                return route.snapshot.data as GappData;
-            }),
-        ),
-    );
-
-    public title = computed(() => this.routeData()?.header?.title);
-    public showHeader = computed(() => this.routeData()?.header?.showHeader ?? false);
+    public readonly title = input<string | undefined>(undefined);
+    public readonly content = input<HeaderContent | undefined>(undefined);
 }

@@ -5,6 +5,11 @@ import { VehicleService } from '@shared/services';
 @Component({
     selector: 'sondehub',
     templateUrl: './sondehub.component.html',
+    styles: `
+        :host {
+            @apply w-full h-full;
+        }
+    `,
 })
 export class SondehubComponent implements OnInit {
     private vehicleService = inject(VehicleService);

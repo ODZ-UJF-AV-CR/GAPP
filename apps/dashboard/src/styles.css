@@ -16,6 +16,12 @@
     --depth: 0;
 }
 
+@layer components {
+    .gapp-card {
+        @apply bg-base-100 p-4 rounded-box;
+    }
+}
+
 body {
     background-color: var(--color-base-300);
 }

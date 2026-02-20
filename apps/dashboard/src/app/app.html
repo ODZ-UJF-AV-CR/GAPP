@@ -3,7 +3,7 @@
 <div class="flex flex-col h-screen gap-3 p-3">
     @if(showHeader()) {<gapp-header [title]="headerTitle()" [content]="headerContent()"></gapp-header>}
 
-    <div class="grow w-full flex justify-center items-center">
+    <div class="grow w-full flex justify-center items-center overflow-hidden">
         <router-outlet></router-outlet>
     </div>
 

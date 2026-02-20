@@ -3,11 +3,13 @@
     <create-vehicle #createVehicle></create-vehicle>
 </div>
 
-<div class="gapp-card gapp-container max-h-[75vh] overflow-y-auto">
-    @if(loading()) {<loader></loader>} @else {
-    <ul class="list rounded-box">
-        @for(vehicle of vehicles(); track vehicle.id) {<vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>} @empty {
-        <li class="list-row">No vehicles yet.</li>}
-    </ul>
-    }
+<div class="gapp-card gapp-container h-full">
+    <div class="h-full overflow-y-auto">
+        @if(loading()) {<loader></loader>} @else {
+        <ul class="list rounded-box">
+            @for(vehicle of vehicles(); track vehicle.id) {<vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>} @empty {
+            <li class="list-row">No vehicles yet.</li>}
+        </ul>
+        }
+    </div>
 </div>

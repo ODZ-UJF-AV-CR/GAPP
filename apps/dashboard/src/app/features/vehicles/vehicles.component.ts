@@ -1,23 +1,15 @@
 import { Component, inject, type OnInit } from '@angular/core';
 import { HeaderContentDirective } from '@core/components/header/header-content.directive';
-import { CenterLayoutComponent, SimpleSectionComponent } from '@shared/layout';
 import { VehicleService } from '@shared/services';
-import { LoaderComponent, ScrollableComponent } from '@shared/utils';
+import { LoaderComponent } from '@shared/utils';
 import { CreateVehicleComponent } from './create-vehicle/create-vehicle.component';
 import { VehicleListItemComponent } from './vehicle-list-item/vehicle-list-item.component';
 
 @Component({
     selector: 'app-vehicles',
     templateUrl: './vehicles.component.html',
-    imports: [
-        SimpleSectionComponent,
-        ScrollableComponent,
-        LoaderComponent,
-        CreateVehicleComponent,
-        VehicleListItemComponent,
-        CenterLayoutComponent,
-        HeaderContentDirective,
-    ],
+    host: { class: 'block h-full' },
+    imports: [LoaderComponent, CreateVehicleComponent, VehicleListItemComponent, HeaderContentDirective],
 })
 export class VehiclesComponent implements OnInit {
     private vehiclesService = inject(VehicleService);

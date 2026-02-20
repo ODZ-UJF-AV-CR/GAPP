@@ -1,7 +1,7 @@
 import type { Route } from '@angular/router';
 import { type HeaderData, useHeader } from '@core/components/header/header-builder';
 import { type NavbarData, useNavbar } from '@core/components/navbar/navbar-builder';
-import { tablerBuildingBroadcastTower, tablerListDetails, tablerMap2, tablerSettings2 } from '@ng-icons/tabler-icons';
+import { tablerLayoutDashboard, tablerList, tablerMap2, tablerSettings2 } from '@ng-icons/tabler-icons';
 
 export interface GappData {
     navbar?: NavbarData;
@@ -20,7 +20,7 @@ export const ROUTES: GappRoutes = [
         loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
         title: 'GAPP | Vehicles',
         data: {
-            ...useNavbar(tablerListDetails),
+            ...useNavbar(tablerList),
             ...useHeader('Vehicles'),
         },
     },
@@ -28,7 +28,7 @@ export const ROUTES: GappRoutes = [
         path: 'telemetry',
         loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
         data: {
-            ...useNavbar(tablerBuildingBroadcastTower),
+            ...useNavbar(tablerLayoutDashboard),
         },
     },
     {

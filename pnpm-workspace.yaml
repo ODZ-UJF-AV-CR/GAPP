@@ -1,6 +1,7 @@
 packages:
   - apps/**
   - packages/sondehub
+  - packages/shared
   - packages/ui
   - packages/ui/libs/forms
   - packages/ui/libs/utils

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent, HeaderService } from '@core/components/header';
 import { NavbarComponent } from '@core/components/navbar/navbar.component';
+import { ThemeService } from '@core/services/theme.service';
 import { ToastsComponent } from '@core/toasts';
 
 @Component({
@@ -11,6 +12,7 @@ import { ToastsComponent } from '@core/toasts';
     imports: [RouterOutlet, NavbarComponent, ToastsComponent, HeaderComponent],
 })
 export class App {
+    private _themeService = inject(ThemeService);
     private headerService = inject(HeaderService);
 
     public readonly headerTitle = this.headerService.title;

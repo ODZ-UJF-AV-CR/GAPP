@@ -16,6 +16,7 @@
         "@fastify/swagger": "^9.7.0",
         "@fastify/swagger-ui": "^5.2.5",
         "@fastify/type-provider-typebox": "^6.1.0",
+        "@gapp/shared": "workspace:*",
         "@gapp/sondehub": "workspace:*",
         "@influxdata/influxdb-client": "^1.35.0",
         "@influxdata/influxdb-client-apis": "^1.35.0",
@@ -28,7 +29,7 @@
         "pino": "^10.3.1"
     },
     "devDependencies": {
-        "@types/node": "^25.2.3",
+        "@types/node": "^25.3.0",
         "@types/pg": "^8.16.0",
         "kysely-ctl": "^0.20.0",
         "pino-pretty": "^13.1.3",

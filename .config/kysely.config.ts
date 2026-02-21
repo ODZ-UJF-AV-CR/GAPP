@@ -7,7 +7,7 @@ export default defineConfig({
         pool: new Pool({ connectionString: process.env.POSTGRES_URL || 'postgresql://postgres:password@localhost:5434/gapp' }),
     },
     migrations: {
-        migrationFolder: 'apps/server/src/migrations',
+        migrationFolder: '../apps/server/src/migrations',
     },
     plugins: [],
 });

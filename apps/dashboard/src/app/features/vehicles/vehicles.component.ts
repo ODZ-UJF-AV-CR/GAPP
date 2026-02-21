@@ -1,4 +1,4 @@
-import { Component, inject, type OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, type OnInit } from '@angular/core';
 import { HeaderContentDirective } from '@core/components/header/header-content.directive';
 import { VehicleService } from '@shared/services';
 import { LoaderComponent } from '@shared/utils';
@@ -8,7 +8,8 @@ import { VehicleListItemComponent } from './vehicle-list-item/vehicle-list-item.
 @Component({
     selector: 'app-vehicles',
     templateUrl: './vehicles.component.html',
-    host: { class: 'block h-full' },
+    host: { class: 'flex flex-col items-center max-h-full w-full' },
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [LoaderComponent, CreateVehicleComponent, VehicleListItemComponent, HeaderContentDirective],
 })
 export class VehiclesComponent implements OnInit {

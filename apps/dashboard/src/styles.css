@@ -18,7 +18,7 @@
 
 @layer components {
     .gapp-card {
-        @apply bg-base-100 p-4 rounded-box;
+        @apply bg-base-100 p-4 max-sm:px-1.5 rounded-box;
     }
 
     .gapp-container {

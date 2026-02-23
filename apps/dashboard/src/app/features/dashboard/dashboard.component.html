@@ -1,8 +1,0 @@
-<simple-section title="Connection status">
-    <scrollable blockBody>
-        <ul class="list bg-base-100 rounded-box">
-            @for (vehicle of telemetry(); track vehicle.id) {<telemetry-card [vehicle]="vehicle"></telemetry-card>} @empty {
-            <li class="list-row">No data available</li>}
-        </ul>
-    </scrollable>
-</simple-section>

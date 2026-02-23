@@ -8,8 +8,13 @@ export class VehiclesRepository {
         return this.db
             .selectFrom('vehicles')
             .selectAll()
-            .select((eb) => [
-                jsonArrayFrom(eb.selectFrom('beacons').select(['beacons.callsign']).whereRef('beacons.vehicle_id', '=', 'vehicles.id')).as('beacons'),
+            .select((db) => [
+                jsonArrayFrom(db.selectFrom('beacons').select(['beacons.callsign']).whereRef('beacons.vehicle_id', '=', 'vehicles.id')).as('beacons'),
+                db
+                    .selectFrom('vehicle_types')
+                    .select(['vehicle_types.is_station'])
+                    .whereRef('vehicle_types.id', '=', 'vehicles.vehicle_type_id')
+                    .as('is_station'),
             ])
             .$if(!includeDeleted, (qb) => qb.where('vehicles.deleted_at', 'is', null));
     }
@@ -44,7 +49,8 @@ export class VehiclesRepository {
         return await this.db
             .selectFrom('beacons')
             .innerJoin('vehicles', 'beacons.vehicle_id', 'vehicles.id')
-            .selectAll()
+            .innerJoin('vehicle_types', 'vehicles.vehicle_type_id', 'vehicle_types.id')
+            .select(['vehicles.id', 'vehicles.name', 'vehicles.description', 'vehicle_types.is_station', 'vehicle_types.type_name'])
             .where('beacons.callsign', '=', callsign)
             .$if(!includeDeleted, (qb) => qb.where('vehicles.deleted_at', 'is', null))
             .executeTakeFirst();
@@ -64,6 +70,10 @@ export class VehiclesRepository {
 
     public async getBeaconsByVehicleId(vehicleId: number) {
         return await this.db.selectFrom('beacons').select(['id', 'callsign']).where('vehicle_id', '=', vehicleId).execute();
+    }
+
+    public async getVehicleTypes() {
+        return await this.db.selectFrom('vehicle_types').selectAll().execute();
     }
 
     // ======== UPDATE ===========

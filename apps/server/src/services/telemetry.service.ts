@@ -2,30 +2,33 @@ import { setInterval } from 'node:timers';
 import type { Uploader } from '@gapp/sondehub';
 import type { EventMessage } from 'fastify-sse-v2';
 import type { Events } from '../plugins/event-bus.ts';
-import type { Vehicle } from '../repository/postgres-database.ts';
-import type { TelemetryData, TelemetryRepository } from '../repository/telemetry.repository.ts';
+import { PointType, type TelemetryRepository } from '../repository/telemetry.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
-import { PointType, VehicleType } from '../types/enums.ts';
 import type { EventBus } from '../utils/event-bus.ts';
-import { type TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
+import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
 
 export class TelemetryService {
     constructor(
         private readonly telemetryRepository: TelemetryRepository,
-        readonly _vehiclesRepository: VehiclesRepository,
+        private readonly vehiclesRepository: VehiclesRepository,
         private readonly sondehub: Uploader,
         private readonly eventBus: EventBus<Events>,
     ) {}
 
-    public writeTtnTelemetry(vehicle: Vehicle, telemetry: TtnTelemetry) {
-        const packet = new TelemetryPacketFromTtn(telemetry);
-        this.writeTelemetry(vehicle.type, packet);
-    }
+    public async writeTelemetry(packet: TelemetryPacket, callsign: string) {
+        const vehicle = await this.vehiclesRepository.getVehicleByBeaconCallsign(callsign);
 
-    public writeGeneralTelemetry(vehicle: Vehicle, telemetry: TelemetryData) {
-        const packet = new TelemetryPacketGeneral(telemetry);
-        this.writeTelemetry(vehicle.type, packet);
+        if (!vehicle) {
+            throw new Error(`Callsign ${callsign} does not exist`);
+        }
+
+        if (vehicle.is_station) {
+            this.sondehub.uploadStationPosition(packet.sondehubStationPosition);
+        } else {
+            this.sondehub.addTelemetry(packet.sondehubPacket);
+        }
+
+        this.telemetryRepository.writeTelemetry(PointType.LOCATION, packet.data);
     }
 
     public async getCallsignsTelemetry(callsigns?: string[]) {
@@ -60,15 +63,5 @@ export class TelemetryService {
 
             this.eventBus.off('influx.write', eventHandler);
         }
-    }
-
-    private writeTelemetry(vehicleType: VehicleType, packet: TelemetryPacket) {
-        if (vehicleType === VehicleType.CAR) {
-            this.sondehub.uploadStationPosition(packet.sondehubStationPosition);
-        } else {
-            this.sondehub.addTelemetry(packet.sondehubPacket);
-        }
-
-        this.telemetryRepository.writeTelemetry(PointType.LOCATION, packet.data);
     }
 }

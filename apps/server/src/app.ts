@@ -5,6 +5,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { telemetryController, vehicleController } from './controllers/index.ts';
 import abortControllerPlugin from './plugins/abort-controller.ts';
+import cachePlugin from './plugins/cache.ts';
 import eventBusPlugin from './plugins/event-bus.ts';
 import influxDbPlugin from './plugins/influxdb.ts';
 import postgresDbPlugin from './plugins/postgresdb.ts';
@@ -39,6 +40,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     await fastify.register(postgresDbPlugin, { url: opts.postgresDbUrl });
     await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
     await fastify.register(abortControllerPlugin);
+    await fastify.register(cachePlugin);
     await fastify.register(repositoriesPlugin);
     await fastify.register(servicesPlugin);
 
@@ -67,17 +69,8 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         async (fastify) => {
             fastify.register(telemetryController, { prefix: '/telemetry' });
             fastify.register(vehicleController, { prefix: '/vehicles' });
+            fastify.get('/ping', () => 'pong');
         },
         { prefix: '/api' },
-    );
-
-    fastify.get(
-        '/ping',
-        {
-            schema: {
-                hide: true,
-            },
-        },
-        () => `pong\n\n${new Date().toString()}`,
     );
 };

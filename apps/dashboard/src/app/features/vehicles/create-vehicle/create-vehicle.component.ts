@@ -1,13 +1,14 @@
-import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { type FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '@app/core/toasts';
 import { type DialogButton, DialogComponent } from '@app/shared/dialog';
+import type { VehicleCreate, VehicleTypeGet } from '@gapp/shared';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { type OptionDefinition, SelectInputComponent, TextInputComponent } from '@shared/forms';
-import { type VehicleCreate, VehicleService, VehicleType } from '@shared/services';
-import { distinctUntilChanged, filter } from 'rxjs';
+import { VehicleService } from '@shared/services';
+import { distinctUntilChanged, filter, map, tap } from 'rxjs';
 
 @Component({
     selector: 'create-vehicle',
@@ -18,15 +19,18 @@ import { distinctUntilChanged, filter } from 'rxjs';
 export class CreateVehicleComponent {
     private vehiclesService = inject(VehicleService);
     private formBuilder = inject(FormBuilder);
-    private destroyRef = inject(DestroyRef);
     private toastService = inject(ToastService);
 
+    private selectedType: VehicleTypeGet | undefined;
+
     public dialogRef = viewChild.required<DialogComponent>('dialog');
-    public vehicleTypes: OptionDefinition[] = Object.values(VehicleType).map((type) => ({ label: type, value: type }));
+    public vehicleTypes = computed<OptionDefinition[]>(() =>
+        this.vehiclesService.vehicleTypesList().map((type) => ({ label: type.type_name, value: type.id })),
+    );
     public form = this.formBuilder.nonNullable.group({
-        callsign: ['', [Validators.required, Validators.maxLength(32)]],
+        name: ['', [Validators.required, Validators.maxLength(32)]],
         description: [],
-        type: ['', Validators.required],
+        vehicle_type_id: [0, Validators.required],
         beacons: this.formBuilder.nonNullable.array([
             this.formBuilder.nonNullable.group({
                 callsign: ['', [Validators.required, Validators.maxLength(32)]],
@@ -40,18 +44,20 @@ export class CreateVehicleComponent {
     constructor() {
         this.form.valueChanges
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                distinctUntilChanged((prev, curr) => prev.type === curr.type),
+                map((value) => this.vehiclesService.vehicleTypesList().find((type) => type.id === value.vehicle_type_id)),
+                tap((type) => (this.selectedType = type)),
+                distinctUntilChanged((prev, curr) => prev === curr),
+                takeUntilDestroyed(),
             )
-            .subscribe(({ type }) => {
-                if (type === VehicleType.CAR) {
+            .subscribe((type) => {
+                if (type?.is_station) {
                     this.beaconsInput.clear();
                     this.showBeacons.set(false);
                 } else {
                     this.showBeacons.set(true);
                 }
 
-                if (this.beaconsInput.controls.length === 0 && type !== VehicleType.CAR) {
+                if (this.beaconsInput.controls.length === 0 && type?.is_station === false) {
                     this.showBeacons.set(true);
                     this.addBeacon();
                 }
@@ -59,7 +65,7 @@ export class CreateVehicleComponent {
     }
 
     public getTransmitterPlaceholder(index: number) {
-        return `${this.form.get('callsign')?.value || 'CALLSIGN'}_${index + 1}`;
+        return `${this.form.get('name')?.value || 'CALLSIGN'}_${index + 1}`;
     }
 
     public createVehicle() {
@@ -70,10 +76,10 @@ export class CreateVehicleComponent {
 
         const vehicle = this.form.value as unknown as VehicleCreate;
 
-        if (vehicle.type === VehicleType.CAR) {
+        if (this.selectedType?.is_station) {
             vehicle.beacons = [
                 {
-                    callsign: vehicle.callsign,
+                    callsign: vehicle.name,
                 },
             ];
         }

@@ -1,7 +1,7 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
+import { OptionalCallsignQuery, TelemetryCreateSchema, TelemetryGetSchema, TtnTelemetrySchema } from '@gapp/shared';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
-import { B_Telemetry, B_TtnTelemetry, R_Telemetry } from '../schemas/telemetry.schema.ts';
-import { Q_OptionalCallsign } from '../schemas/vehicle.schema.ts';
+import { TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -11,18 +11,16 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'Endpoint for storing telemetry data',
                 description: 'Received telemetry data are stored and forwarded to SondeHub.',
-                body: B_Telemetry,
+                body: TelemetryCreateSchema,
             },
         },
         async (req, rep) => {
-            const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.callsign);
-
-            if (!vehicle) {
+            try {
+                await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body), req.body.callsign);
+                rep.code(201).send();
+            } catch (e) {
                 return rep.status(422).send(`Callsign ${req.body.callsign} does not exist`);
             }
-
-            req.server.telemetryService.writeGeneralTelemetry(vehicle, req.body);
-            rep.code(201).send();
         },
     );
 
@@ -33,7 +31,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'TTN webhook',
                 description: 'Endpoint for receiving telemetry data from TheThingsNetwork. Data are stored in InfluxDB and forwarded to Sondehub.',
-                body: B_TtnTelemetry,
+                body: TtnTelemetrySchema,
                 response: {
                     200: Type.String(),
                     422: Type.String(),
@@ -41,14 +39,12 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            const vehicle = await req.server.vehicleService.getVehicleByBeaconCallsign(req.body.end_device_ids.device_id);
-
-            if (!vehicle) {
+            try {
+                await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body), req.body.end_device_ids.device_id);
+                rep.code(200).send('OK');
+            } catch (e) {
                 return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
             }
-
-            req.server.telemetryService.writeTtnTelemetry(vehicle, req.body);
-            rep.code(200).send('OK');
         },
     );
 
@@ -59,9 +55,9 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'Get telemetry data',
                 description: 'Retrieve telemetry data for a specific vehicle.',
-                querystring: Q_OptionalCallsign,
+                querystring: OptionalCallsignQuery,
                 response: {
-                    200: Type.Array(R_Telemetry),
+                    200: Type.Array(TelemetryGetSchema),
                 },
             },
         },
@@ -81,7 +77,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'Get live data',
                 description: 'Stream live data updates from vessels and chase cars using server sent events',
-                querystring: Q_OptionalCallsign,
+                querystring: OptionalCallsignQuery,
             },
         },
         async (req, rep) => {

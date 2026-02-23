@@ -1,29 +1,25 @@
-import { Component, computed, input } from '@angular/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { tablerAirBalloon, tablerCar, tablerDrone } from '@ng-icons/tabler-icons';
-import { VehicleType } from '@shared/services';
+import { Component, computed, inject, input } from '@angular/core';
+import { NgIcon } from '@ng-icons/core';
+import { VEHICLE_ICONS } from './vehicle-icon.provider';
 
 @Component({
     selector: 'vehicle-icon',
-    template: `<ng-icon [name]="icon()" [size]="size()"></ng-icon>`,
+    template: `<ng-icon [svg]="icon()" [size]="size()"></ng-icon>`,
     imports: [NgIcon],
-    providers: [provideIcons({ tablerCar, tablerDrone, tablerAirBalloon })],
 })
 export class VehicleIconComponent {
-    public type = input.required<VehicleType>();
+    private iconsConfig = inject(VEHICLE_ICONS);
+
+    public typeId = input.required<number>();
     public size = input.required<string>();
 
     public icon = computed(() => {
-        const type = this.type();
+        const type = this.typeId();
 
-        if (type === VehicleType.CAR) {
-            return 'tablerCar';
-        } else if (type === VehicleType.BALLOON) {
-            return 'tablerAirBalloon';
-        } else if (type === VehicleType.DRONE) {
-            return 'tablerDrone';
+        if (this.iconsConfig.icons.has(type)) {
+            return this.iconsConfig.icons.get(type);
         }
 
-        return 'tablerBalloon';
+        return this.iconsConfig.defaultIcon;
     });
 }

@@ -5,7 +5,7 @@ import { InputBase } from '../input-base';
 import { NoopValueAccessorDirective } from '../input-helper';
 
 export interface OptionDefinition {
-    value: string;
+    value: string | number;
     label: string;
 }
 

@@ -1,5 +1,5 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { B_CreateVehicle, R_Vehicle } from '../schemas/vehicle.schema.ts';
+import { VehicleCreateSchema, VehicleGetSchema, VehicleTypeGetSchema } from '@gapp/shared';
 
 export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -9,9 +9,9 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 tags: ['vehicle'],
                 summary: 'Create a new vehicle',
                 description: 'Creates new vehicle with associated beacons.',
-                body: B_CreateVehicle,
+                body: VehicleCreateSchema,
                 response: {
-                    201: R_Vehicle,
+                    201: VehicleGetSchema,
                 },
             },
         },
@@ -21,7 +21,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 rep.status(201).send(vehicle);
             } catch (e) {
                 if (e.constraint === 'vehicles_callsign_key') {
-                    return rep.conflict(`Vehicle callsign ${req.body.callsign} already exists.`);
+                    return rep.conflict(`Vehicle callsign ${req.body.name} already exists.`);
                 } else if (e.constraint === 'beacons_callsign_key') {
                     return rep.conflict(`Beacon already exists.`);
                 }
@@ -40,7 +40,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
                 summary: 'Get all vehicles',
                 description: 'Returns all vehicles with list of its beacons.',
                 response: {
-                    200: Type.Array(R_Vehicle),
+                    200: Type.Array(VehicleGetSchema),
                 },
             },
         },
@@ -51,6 +51,29 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
             } catch (e) {
                 req.server.log.error(e, 'Error getting vehicles');
                 return rep.internalServerError('Error getting vehicles');
+            }
+        },
+    );
+
+    fastify.get(
+        '/types',
+        {
+            schema: {
+                tags: ['vehicle'],
+                summary: 'Get vehicle types',
+                description: 'Returns all vehicle types.',
+                response: {
+                    200: Type.Array(VehicleTypeGetSchema),
+                },
+            },
+        },
+        async (req, rep) => {
+            try {
+                const types = await req.server.vehicleService.getVehicleTypes();
+                rep.status(200).send(types);
+            } catch (e) {
+                req.server.log.error(e, 'Error getting vehicle types');
+                return rep.internalServerError('Error getting vehicle types');
             }
         },
     );

@@ -10,7 +10,7 @@ export type DatabaseInstance = Kysely<Database>;
 
 export interface VehicleTable {
     id: Generated<number>;
-    callsign: ColumnType<string, string, never>;
+    name: ColumnType<string, string, never>;
     description: ColumnType<string | undefined>;
     created_at: ColumnType<Date, string, never>;
     deleted_at: ColumnType<Date | null, never, Date>;
@@ -31,7 +31,7 @@ export type BeaconUpdate = Updateable<BeaconTable>;
 
 export interface VehicleTypeTable {
     id: Generated<number>;
-    name: ColumnType<string>;
+    type_name: ColumnType<string>;
     is_station: ColumnType<boolean>;
 }
 export type VehicleType = Selectable<VehicleTypeTable>;

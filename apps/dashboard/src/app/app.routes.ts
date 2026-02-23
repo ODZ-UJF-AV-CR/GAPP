@@ -50,7 +50,7 @@ export const ROUTES: GappRoutes = [
     },
     {
         path: '**',
-        redirectTo: 'home',
+        redirectTo: 'telemetry',
         pathMatch: 'full',
     },
 ];

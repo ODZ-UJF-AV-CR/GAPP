@@ -1,41 +1,23 @@
 import { computed, Injectable, inject, signal } from '@angular/core';
+import type { VehicleCreate, VehicleGet, VehicleTypeGet } from '@gapp/shared';
 import { tap } from 'rxjs';
 import { type ApiResponse, ApiService } from '../../core/services/api.service';
-
-export enum VehicleType {
-    BALLOON = 'balloon',
-    DRONE = 'drone',
-    CAR = 'car',
-}
-
-export interface Beacon {
-    callsign: string;
-}
-
-export interface Vehicle {
-    id: number;
-    type: VehicleType;
-    callsign: string;
-    description: string;
-    beacons: Beacon[];
-}
-
-export type VehicleCreate = Omit<Vehicle, 'id'>;
 
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
     private apiService = inject(ApiService);
 
-    private vehiclesResponse = signal<ApiResponse<Vehicle[]>>({ loading: true });
+    private vehiclesResponse = signal<ApiResponse<VehicleGet[]>>({ loading: true });
+    private vehicleTypesResponse = signal<ApiResponse<VehicleTypeGet[]>>({ loading: true });
 
     public vehiclesLoading = computed(() => this.vehiclesResponse().loading);
-    public vehiclesList = computed(() => {
-        const vehicles = this.vehiclesResponse().data ?? [];
-        return vehicles.sort((a, b) => a.type.localeCompare(b.type));
-    });
+    public vehiclesList = computed(() => this.vehiclesResponse().data ?? []);
+
+    public vehicleTypesLoading = computed(() => this.vehicleTypesResponse().loading);
+    public vehicleTypesList = computed(() => this.vehicleTypesResponse().data ?? []);
 
     public createVehicle$(vehicle: VehicleCreate) {
-        return this.apiService.post$<Vehicle>('/vehicles', vehicle).pipe(
+        return this.apiService.post$<VehicleGet>('/vehicles', vehicle).pipe(
             tap(({ data }) => {
                 if (data) {
                     this.vehiclesResponse.update((response) => ({ ...response, data: [...(response.data || []), data] }));
@@ -55,6 +37,10 @@ export class VehicleService {
     }
 
     public loadVehicles() {
-        this.apiService.get$<Vehicle[]>('/vehicles').subscribe((data) => this.vehiclesResponse.set(data));
+        this.apiService.get$<VehicleGet[]>('/vehicles').subscribe((data) => this.vehiclesResponse.set(data));
+    }
+
+    public loadVehicleTypes() {
+        this.apiService.get$<VehicleTypeGet[]>('/vehicles/types').subscribe((data) => this.vehicleTypesResponse.set(data));
     }
 }

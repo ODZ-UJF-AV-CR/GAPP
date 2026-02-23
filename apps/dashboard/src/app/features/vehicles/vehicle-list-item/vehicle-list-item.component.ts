@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { ToastService } from '@app/core/toasts';
 import { type DialogButton, DialogDirective } from '@app/shared/dialog';
 import { TextLimitDirective } from '@app/shared/utils';
+import type { VehicleGet } from '@gapp/shared';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerTrash } from '@ng-icons/tabler-icons';
 import { VehicleIconComponent } from '@shared/components/vehicle-icon/vehicle-icon.component';
-import { type Vehicle, VehicleService } from '@shared/services';
+import { VehicleService } from '@shared/services';
 import { filter } from 'rxjs';
 
 @Component({
@@ -19,7 +20,7 @@ export class VehicleListItemComponent {
     private vehicleServce = inject(VehicleService);
     private toastService = inject(ToastService);
 
-    public vehicle = input.required<Vehicle>();
+    public vehicle = input.required<VehicleGet>();
 
     public buttons: DialogButton[] = [
         {
@@ -39,7 +40,7 @@ export class VehicleListItemComponent {
             .deleteVehicle$(this.vehicle().id)
             .pipe(filter((response) => !response.loading))
             .subscribe(() => {
-                this.toastService.toast('alert-warning', `Vehicle ${this.vehicle().callsign} deleted.`);
+                this.toastService.toast('alert-warning', `Vehicle ${this.vehicle().name} deleted.`);
             });
     }
 }

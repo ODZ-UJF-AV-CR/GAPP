@@ -20,5 +20,6 @@ export class VehiclesComponent implements OnInit {
 
     public ngOnInit() {
         this.vehiclesService.loadVehicles();
+        this.vehiclesService.loadVehicleTypes();
     }
 }

@@ -1,7 +1,6 @@
 import { type Static, Type as T } from '@fastify/type-provider-typebox';
-import { PointType } from '../types/enums.ts';
 
-export const B_TtnTelemetry = T.Object({
+export const TtnTelemetrySchema = T.Object({
     end_device_ids: T.Object({
         device_id: T.String(),
     }),
@@ -66,26 +65,21 @@ export const B_TtnTelemetry = T.Object({
         }),
     }),
 });
-export type TtnTelemetry = Static<typeof B_TtnTelemetry>;
+export type TtnTelemetry = Static<typeof TtnTelemetrySchema>;
 
-const TelemetryBase = T.Object({
+export const TelemetryCreateSchema = T.Object({
     callsign: T.String(),
     latitude: T.Number(),
     longitude: T.Number(),
     altitude: T.Number(),
+    timestamp: T.String({ format: 'date-time' }),
 });
+export type TelemetryCreate = Static<typeof TelemetryCreateSchema>;
 
-export const B_Telemetry = T.Intersect([
-    TelemetryBase,
+export const TelemetryGetSchema = T.Intersect([
+    T.Omit(TelemetryCreateSchema, ['timestamp']),
     T.Object({
-        timestamp: T.String(),
+        _time: T.String({ format: 'date-time' }),
     }),
 ]);
-
-export const R_Telemetry = T.Intersect([
-    TelemetryBase,
-    T.Object({
-        _time: T.String(),
-        _measurement: T.Literal(PointType.LOCATION),
-    }),
-]);
+export type TelemetryGet = Static<typeof TelemetryGetSchema>;

@@ -9,6 +9,9 @@
         "rules": {
             "complexity": {
                 "useLiteralKeys": "off"
+            },
+            "a11y": {
+                "useButtonType": "off"
             }
         }
     }

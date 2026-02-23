@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HeaderContentDirective } from '@core/components/header/header-content.directive';
+import { LatencyService } from '@core/services/latency.service';
+import { map } from 'rxjs';
 
 @Component({
     selector: 'telemetry-dashboard',
@@ -9,5 +12,7 @@ import { HeaderContentDirective } from '@core/components/header/header-content.d
     imports: [HeaderContentDirective],
 })
 export class TelemetryDashboardComponent {
-    public text = 'asdasdadsdsa';
+    private latencyService = inject(LatencyService);
+
+    public latency = toSignal(this.latencyService.latency$(1_500).pipe(map((latency) => (latency ? `${latency} ms` : `no internet`))));
 }

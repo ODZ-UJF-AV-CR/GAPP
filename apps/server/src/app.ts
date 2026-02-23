@@ -69,7 +69,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         async (fastify) => {
             fastify.register(telemetryController, { prefix: '/telemetry' });
             fastify.register(vehicleController, { prefix: '/vehicles' });
-            fastify.get('/ping', () => 'pong');
+            fastify.get('/ping', async () => new Promise((resolve) => setTimeout(() => resolve('pong'), 15000)));
         },
         { prefix: '/api' },
     );

@@ -1,6 +1,5 @@
+import type { TelemetryCreate, TtnTelemetry } from '@gapp/shared';
 import type { TelemetryPacket as SondehubTelemetryPacket, StationPositionPacket } from '@gapp/sondehub';
-import type { TelemetryData } from '../repository/telemetry.repository.ts';
-import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
 
 export interface TelemetryPacketOptions {
     modulation?: SondehubTelemetryPacket['modulation'];
@@ -9,11 +8,11 @@ export interface TelemetryPacketOptions {
 
 export abstract class TelemetryPacket {
     constructor(
-        private readonly telemetry: TelemetryData,
+        private readonly telemetry: TelemetryCreate,
         private readonly options: TelemetryPacketOptions = {},
     ) {}
 
-    public get data(): TelemetryData {
+    public get data() {
         return this.telemetry;
     }
 
@@ -45,7 +44,7 @@ export abstract class TelemetryPacket {
 }
 
 export class TelemetryPacketGeneral extends TelemetryPacket {
-    constructor(telemetry: TelemetryData, options: TelemetryPacketOptions = {}) {
+    constructor(telemetry: TelemetryCreate, options: TelemetryPacketOptions = {}) {
         super(telemetry, options);
     }
 }

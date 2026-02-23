@@ -67,14 +67,19 @@ export const TtnTelemetrySchema = T.Object({
 });
 export type TtnTelemetry = Static<typeof TtnTelemetrySchema>;
 
-export const TelemetryCreateSchema = T.Object({
-    callsign: T.String(),
-    latitude: T.Number(),
-    longitude: T.Number(),
-    altitude: T.Number(),
-    timestamp: T.String({ format: 'date-time' }),
-});
-export type TelemetryCreate = Static<typeof TelemetryCreateSchema>;
+export const TelemetryCreateSchema = T.Object(
+    {
+        callsign: T.String(),
+        latitude: T.Number(),
+        longitude: T.Number(),
+        altitude: T.Number(),
+        timestamp: T.String({ format: 'date-time' }),
+    },
+    {
+        additionalProperties: true,
+    },
+);
+export type TelemetryCreate = Static<typeof TelemetryCreateSchema> & Record<string, number | string | boolean | undefined>;
 
 export const TelemetryGetSchema = T.Intersect([
     T.Omit(TelemetryCreateSchema, ['timestamp']),

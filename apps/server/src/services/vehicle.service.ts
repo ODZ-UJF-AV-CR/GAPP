@@ -1,5 +1,4 @@
 import type { VehicleCreate } from '@gapp/shared';
-import type { Vehicle } from '../repository/postgres-database.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
 
 export class VehicleService {
@@ -27,7 +26,7 @@ export class VehicleService {
         }
     }
 
-    public getVehicleByBeaconCallsign(callsign: string): Promise<Vehicle | undefined> {
+    public getVehicleByBeaconCallsign(callsign: string) {
         return this.vehiclesRepository.getVehicleByBeaconCallsign(callsign);
     }
 

@@ -23,10 +23,9 @@ const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify
         url: options.url,
         writeOptions: {
             batchSize: 100,
-            flushInterval: 1_000,
+            flushInterval: 10_000,
             writeSuccess: (lines: string[]) => {
-                fastify.eventBus.emit('influx.write');
-                fastify.log.info(lines, 'Influx data written');
+                fastify.log.debug(lines, 'Influx data written');
             },
             writeFailed(error, lines) {
                 fastify.log.error(error, 'Error while writing data to influxdb');

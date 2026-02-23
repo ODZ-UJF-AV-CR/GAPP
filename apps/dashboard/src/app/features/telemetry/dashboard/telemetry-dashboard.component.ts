@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, type OnInit } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { HeaderContentDirective } from '@core/components/header/header-content.directive';
 import { LatencyService } from '@core/services/latency.service';
 import { map } from 'rxjs';
+import { TelemetryService } from '../telemetry.service';
 
 @Component({
     selector: 'telemetry-dashboard',
@@ -11,8 +12,17 @@ import { map } from 'rxjs';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [HeaderContentDirective],
 })
-export class TelemetryDashboardComponent {
+export class TelemetryDashboardComponent implements OnInit {
     private latencyService = inject(LatencyService);
+    private telemetryService = inject(TelemetryService);
+    private destroyRef = inject(DestroyRef);
 
     public latency = toSignal(this.latencyService.latency$(1_500).pipe(map((latency) => (latency ? `${latency} ms` : `no internet`))));
+
+    public ngOnInit() {
+        this.telemetryService
+            .streamTelemetry$(['test_1'])
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((telemetry) => console.log('Telemetry: ', telemetry));
+    }
 }

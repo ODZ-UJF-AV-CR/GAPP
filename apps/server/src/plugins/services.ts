@@ -12,11 +12,11 @@ declare module 'fastify' {
 }
 
 const services: FastifyPluginAsync = async (fastify) => {
-    const telemetryService = new TelemetryService(fastify.telemetryRepository, fastify.vehiclesRepository, fastify.sondehub, fastify.eventBus);
+    const telemetryService = new TelemetryService(fastify.telemetryRepository, fastify.vehiclesRepository, fastify.sondehub, fastify.eventBus, fastify.cache);
     const vehicleService = new VehicleService(fastify.vehiclesRepository);
 
     fastify.decorate('telemetryService', telemetryService);
     fastify.decorate('vehicleService', vehicleService);
 };
 
-export default fp(services, { name: Plugins.SERVICES, dependencies: [Plugins.REPOSITORIES, Plugins.SONDEHUB, Plugins.EVENT_BUS] });
+export default fp(services, { name: Plugins.SERVICES, dependencies: [Plugins.REPOSITORIES, Plugins.SONDEHUB, Plugins.EVENT_BUS, Plugins.CACHE] });

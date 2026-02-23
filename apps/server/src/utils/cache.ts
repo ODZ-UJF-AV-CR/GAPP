@@ -1,4 +1,11 @@
-export class InMemoryCache {
+export interface Cache {
+    get: <T>(key: string) => Promise<T | undefined>;
+    set: (key: string, value: unknown, ttl?: number) => Promise<void>;
+    del: (key: string) => Promise<void>;
+    clear: () => Promise<void>;
+}
+
+export class InMemoryCache implements Cache {
     private store = new Map<string, { value: unknown; expiresAt: number | null }>();
 
     async get<T>(key: string): Promise<T | undefined> {

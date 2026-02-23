@@ -76,7 +76,8 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             schema: {
                 tags: ['telemetry'],
                 summary: 'Get live data',
-                description: 'Stream live data updates from vessels and chase cars using server sent events',
+                description:
+                    'Stream live data updates from vessels and chase cars using server sent events. callsign query parameter can contain multiple callsigns separated by ",".',
                 querystring: OptionalCallsignQuery,
             },
         },

@@ -1,10 +1,10 @@
 import fp from 'fastify-plugin';
-import { InMemoryCache } from '../utils/cache.ts';
+import { type Cache, InMemoryCache } from '../utils/cache.ts';
 import { Plugins } from './plugins.ts';
 
 declare module 'fastify' {
     interface FastifyInstance {
-        cache: InMemoryCache;
+        cache: Cache;
     }
 }
 

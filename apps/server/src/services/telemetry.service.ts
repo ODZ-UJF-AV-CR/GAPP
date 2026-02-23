@@ -1,11 +1,15 @@
 import { setInterval } from 'node:timers';
+import type { TelemetryGet } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
 import type { EventMessage } from 'fastify-sse-v2';
 import type { Events } from '../plugins/event-bus.ts';
 import { PointType, type TelemetryRepository } from '../repository/telemetry.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import type { Cache } from '../utils/cache.ts';
 import type { EventBus } from '../utils/event-bus.ts';
 import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
+
+const callsignKey = (callsign: string) => `callsign.${callsign}`;
 
 export class TelemetryService {
     constructor(
@@ -13,6 +17,7 @@ export class TelemetryService {
         private readonly vehiclesRepository: VehiclesRepository,
         private readonly sondehub: Uploader,
         private readonly eventBus: EventBus<Events>,
+        private readonly cache: Cache,
     ) {}
 
     public async writeTelemetry(packet: TelemetryPacket, callsign: string) {
@@ -29,6 +34,18 @@ export class TelemetryService {
         }
 
         this.telemetryRepository.writeTelemetry(PointType.LOCATION, packet.data);
+
+        const previousTime = await this.cache.get<string>(callsignKey(callsign));
+
+        if (!previousTime || packet.data.timestamp > previousTime) {
+            const _time = packet.data.timestamp;
+            delete packet.data.timestamp;
+            this.eventBus.emit('telemetry.new', {
+                ...packet.data,
+                _time,
+            });
+            this.cache.set(callsignKey(callsign), packet.data.timestamp);
+        }
     }
 
     public async getCallsignsTelemetry(callsigns?: string[]) {
@@ -38,15 +55,18 @@ export class TelemetryService {
     public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
         const abortSignal = abortCotroller.signal;
         const queue: EventMessage[] = [];
-        const interval = setInterval(() => queue.push({ data: JSON.stringify({ data: 'ping' }) }), 5_000);
+        const interval = setInterval(() => queue.push({ data: '{"data":"ping"}' }), 5_000);
 
-        const eventHandler = async () => {
-            const data = await this.telemetryRepository.getCallsignsLastLocation(callsigns);
-            queue.push({ data: JSON.stringify(data) });
+        const data = await this.telemetryRepository.getCallsignsLastLocation(callsigns);
+        queue.push({ data: JSON.stringify(data) });
+
+        const newDataHandler = (data: TelemetryGet) => {
+            if (!callsigns || callsigns.includes(data.callsign)) {
+                queue.push({ data: JSON.stringify(data) });
+            }
         };
 
-        eventHandler();
-        this.eventBus.on('influx.write', eventHandler);
+        this.eventBus.on('telemetry.new', newDataHandler);
 
         try {
             while (!abortSignal.aborted) {
@@ -61,7 +81,7 @@ export class TelemetryService {
                 clearInterval(interval);
             }
 
-            this.eventBus.off('influx.write', eventHandler);
+            this.eventBus.off('telemetry.new', newDataHandler);
         }
     }
 }

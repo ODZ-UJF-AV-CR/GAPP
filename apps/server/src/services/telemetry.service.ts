@@ -1,5 +1,5 @@
 import { setInterval } from 'node:timers';
-import type { TelemetryGet } from '@gapp/shared';
+import type { GenericTelemetry } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
 import type { EventMessage } from 'fastify-sse-v2';
 import type { Events } from '../plugins/event-bus.ts';
@@ -38,12 +38,7 @@ export class TelemetryService {
         const previousTime = await this.cache.get<string>(callsignKey(callsign));
 
         if (!previousTime || packet.data.timestamp > previousTime) {
-            const _time = packet.data.timestamp;
-            delete packet.data.timestamp;
-            this.eventBus.emit('telemetry.new', {
-                ...packet.data,
-                _time,
-            });
+            this.eventBus.emit('telemetry.new', packet.data);
             this.cache.set(callsignKey(callsign), packet.data.timestamp);
         }
     }
@@ -60,7 +55,7 @@ export class TelemetryService {
         const data = await this.telemetryRepository.getCallsignsLastLocation(callsigns);
         queue.push({ data: JSON.stringify(data) });
 
-        const newDataHandler = (data: TelemetryGet) => {
+        const newDataHandler = (data: GenericTelemetry) => {
             if (!callsigns || callsigns.includes(data.callsign)) {
                 queue.push({ data: JSON.stringify(data) });
             }

@@ -1,5 +1,5 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { OptionalCallsignQuery, TelemetryCreateSchema, TelemetryGetSchema, TtnTelemetrySchema } from '@gapp/shared';
+import { GenericTelemetrySchema, OptionalCallsignQuery, TtnTelemetrySchema } from '@gapp/shared';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 import { TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
 
@@ -11,7 +11,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 tags: ['telemetry'],
                 summary: 'Endpoint for storing telemetry data',
                 description: 'Received telemetry data are stored and forwarded to SondeHub.',
-                body: TelemetryCreateSchema,
+                body: GenericTelemetrySchema,
             },
         },
         async (req, rep) => {
@@ -57,7 +57,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 description: 'Retrieve telemetry data for a specific vehicle.',
                 querystring: OptionalCallsignQuery,
                 response: {
-                    200: Type.Array(TelemetryGetSchema),
+                    200: Type.Array(GenericTelemetrySchema),
                 },
             },
         },

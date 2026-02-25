@@ -18,6 +18,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/dashboard/package.json ./apps/dashboard/package.json
 COPY apps/server/package.json ./apps/server/package.json
 COPY packages/sondehub/package.json ./packages/sondehub/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 
 COPY apps ./apps

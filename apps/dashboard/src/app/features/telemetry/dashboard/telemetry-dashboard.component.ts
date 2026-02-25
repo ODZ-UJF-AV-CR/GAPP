@@ -8,13 +8,14 @@ import { VehicleIconComponent } from '@shared/components/vehicle-icon/vehicle-ic
 import { VehicleService } from '@shared/services';
 import { concat, filter, map, skip, switchMap, tap } from 'rxjs';
 import { TelemetryService } from '../telemetry.service';
+import { TelemetryDataComponent } from './telemetry-data.component';
 
 interface BeaconWithTelemetry {
     beacon: VehicleGet['beacons'][number];
     telemetry: WritableSignal<GenericTelemetry | undefined>;
 }
 
-interface VehicleWithTelemetry extends Omit<VehicleGet, 'beacons'> {
+export interface VehicleWithTelemetry extends Omit<VehicleGet, 'beacons'> {
     beacons: BeaconWithTelemetry[];
 }
 
@@ -25,7 +26,7 @@ const telemetryCompare = (prev: GenericTelemetry | undefined, next: GenericTelem
     templateUrl: './telemetry-dashboard.component.html',
     host: { class: 'flex flex-col items-center max-h-full w-full' },
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [HeaderContentDirective, VehicleIconComponent, NgTemplateOutlet],
+    imports: [HeaderContentDirective, VehicleIconComponent, NgTemplateOutlet, TelemetryDataComponent],
 })
 export class TelemetryDashboardComponent implements OnInit {
     private vehiclesService = inject(VehicleService);
@@ -45,6 +46,7 @@ export class TelemetryDashboardComponent implements OnInit {
     });
 
     public latency = toSignal(this.latencyService.latency$(5_000).pipe(map((latency) => (latency ? `${latency} ms` : `no internet`))));
+    public connectedStatus = computed(() => `${this.beaconsWithTelemetry().filter((b) => !!b.telemetry()).length}/${this.beaconsWithTelemetry().length}`);
     public stationTypes = computed(() => this.vehiclesByVehicleType().filter((entry) => entry.type.is_station));
     public mobileTypes = computed(() => this.vehiclesByVehicleType().filter((entry) => !entry.type.is_station));
 

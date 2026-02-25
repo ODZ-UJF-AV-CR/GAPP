@@ -14,6 +14,7 @@ export class LatencyService {
                     filter((res) => !res.loading),
                     take(1),
                     map(() => performance.now() - start),
+                    map((latency) => Math.round(latency)),
                     timeout({ first: timeoutMs, with: () => of(null) }),
                 );
             }),

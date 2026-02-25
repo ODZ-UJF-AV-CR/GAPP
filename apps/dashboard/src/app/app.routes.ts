@@ -45,7 +45,6 @@ export const ROUTES: GappRoutes = [
         title: 'GAPP | Settings',
         data: {
             ...useNavbar(tablerSettings2),
-            ...useHeader('Settings'),
         },
     },
     {

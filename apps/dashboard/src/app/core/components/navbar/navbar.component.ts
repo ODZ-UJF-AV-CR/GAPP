@@ -7,7 +7,7 @@ import { NgIcon, provideNgIconsConfig } from '@ng-icons/core';
     selector: 'gapp-navbar',
     templateUrl: './navbar.component.html',
     imports: [RouterLink, NgIcon, RouterLinkActive],
-    providers: [provideNgIconsConfig({ size: '1.5rem' })],
+    providers: [provideNgIconsConfig({ size: '1.5rem', strokeWidth: 2 })],
 })
 export class NavbarComponent {
     private router = inject(Router);

@@ -1,6 +1,5 @@
+import type { GenericTelemetry, TtnTelemetry } from '@gapp/shared';
 import type { TelemetryPacket as SondehubTelemetryPacket, StationPositionPacket } from '@gapp/sondehub';
-import type { TelemetryData } from '../repository/telemetry.repository.ts';
-import type { TtnTelemetry } from '../schemas/telemetry.schema.ts';
 
 export interface TelemetryPacketOptions {
     modulation?: SondehubTelemetryPacket['modulation'];
@@ -9,17 +8,17 @@ export interface TelemetryPacketOptions {
 
 export abstract class TelemetryPacket {
     constructor(
-        private readonly telemetry: TelemetryData,
+        private readonly telemetry: GenericTelemetry,
         private readonly options: TelemetryPacketOptions = {},
     ) {}
 
-    public get data(): TelemetryData {
+    public get data() {
         return this.telemetry;
     }
 
     public get sondehubPacket(): SondehubTelemetryPacket {
         return {
-            time_received: this.telemetry.timestamp,
+            time_received: this.telemetry._time,
             payload_callsign: this.telemetry.callsign,
             datetime: new Date().toISOString(),
             lat: this.telemetry.latitude,
@@ -45,7 +44,7 @@ export abstract class TelemetryPacket {
 }
 
 export class TelemetryPacketGeneral extends TelemetryPacket {
-    constructor(telemetry: TelemetryData, options: TelemetryPacketOptions = {}) {
+    constructor(telemetry: GenericTelemetry, options: TelemetryPacketOptions = {}) {
         super(telemetry, options);
     }
 }
@@ -54,7 +53,7 @@ export class TelemetryPacketFromTtn extends TelemetryPacket {
     constructor(ttnPayload: TtnTelemetry, options: TelemetryPacketOptions = {}) {
         super(
             {
-                timestamp: ttnPayload.uplink_message.received_at,
+                _time: ttnPayload.uplink_message.received_at,
                 callsign: ttnPayload.end_device_ids.device_id,
                 latitude: ttnPayload.uplink_message.decoded_payload.lat,
                 longitude: ttnPayload.uplink_message.decoded_payload.lon,

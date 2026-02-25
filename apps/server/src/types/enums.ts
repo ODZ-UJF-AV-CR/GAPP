@@ -4,11 +4,8 @@ export enum VehicleType {
     CAR = 'car',
 }
 
-export enum PointType {
-    LOCATION = 'location',
-}
-
 export enum Plugins {
+    CACHE = 'cache',
     INFLUXDB = 'influxdb',
     POSTGRESDB = 'postgresdb',
     SONDEHUB = 'sondehub',

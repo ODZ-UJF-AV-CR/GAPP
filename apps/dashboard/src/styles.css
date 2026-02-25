@@ -16,6 +16,19 @@
     --depth: 0;
 }
 
+@layer components {
+    .gapp-card {
+        @apply bg-base-100 p-4 max-sm:px-1.5 rounded-box;
+    }
+
+    .gapp-container {
+        @apply w-full sm:w-[70vw] md:w-[55vw] 2xl:w-[40vw];
+    }
+
+    .gapp-container-xl {
+    }
+}
+
 body {
     background-color: var(--color-base-300);
 }

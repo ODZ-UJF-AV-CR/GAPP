@@ -1,24 +1,19 @@
+import type { GenericTelemetry } from '@gapp/shared';
 import { type InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
 import { type Bucket, BucketsAPI, type Organization } from '@influxdata/influxdb-client-apis';
-import type { PointType } from '../types/enums.ts';
 import { arrayAsString } from '../utils/array-as-atring.ts';
+
+export enum PointType {
+    LOCATION = 'location',
+}
 
 export type LocationData = {
     _time: string;
-    _measurement: PointType;
     altitude: number;
     callsign: string;
     latitude: number;
     longitude: number;
 };
-
-export interface TelemetryData extends Record<string, number | string | boolean | undefined> {
-    timestamp: string;
-    callsign: string;
-    latitude: number;
-    longitude: number;
-    altitude: number;
-}
 
 export class TelemetryRepository {
     private readonly bucketName = 'telemetry';
@@ -58,13 +53,13 @@ export class TelemetryRepository {
         await this.writeApi.close();
     }
 
-    public writeTelemetry(pointType: PointType, data: TelemetryData) {
+    public writeTelemetry(pointType: PointType, data: GenericTelemetry) {
         const dataPoint = new Point(pointType);
 
         for (const [key, value] of Object.entries(data)) {
             if (key === 'callsign') {
                 dataPoint.tag(key, value as string);
-            } else if (key === 'timestamp') {
+            } else if (key === '_time') {
                 dataPoint.timestamp(new Date(value as string));
             } else if (typeof value === 'string') {
                 dataPoint.stringField(key, value);
@@ -83,7 +78,7 @@ export class TelemetryRepository {
             |> range(start: -24h)
             |> last()
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "_measurement"])`;
+            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
 
         if (callsigns?.length) {
             query = `from(bucket: "${this.bucketName}")
@@ -91,7 +86,7 @@ export class TelemetryRepository {
                 |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
                 |> last()
                 |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-                |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "_measurement"])`;
+                |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
         }
 
         return await this.queryAPi.collectRows(query);

@@ -23,7 +23,7 @@ const eventBus: FastifyPluginAsync = async (fastify) => {
         return ac;
     });
 
-    fastify.addHook('onClose', () => {
+    fastify.addHook('preClose', () => {
         abortControllers.forEach((ac) => ac.abort());
     });
 };

@@ -2,7 +2,7 @@
 import EventEmitter from 'node:events';
 
 export class EventBus<TEvents extends Record<string, any>> {
-    private _emitter = new EventEmitter().setMaxListeners(100);
+    private _emitter = new EventEmitter().setMaxListeners(1000);
 
     public get emitter() {
         return this._emitter;

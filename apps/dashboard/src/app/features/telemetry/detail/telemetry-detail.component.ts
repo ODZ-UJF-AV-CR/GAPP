@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs';
 @Component({
     selector: 'telemetry-detail',
     templateUrl: './telemetry-detail.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [],
 })
 export class TelemetryDetailComponent {

@@ -13,7 +13,7 @@ export interface Toast {
 export class ToastService {
     public readonly toasts = signal<Toast[]>([]);
 
-    public toast(type: ToastType, message: string, expiration = 2_000) {
+    public toast(type: ToastType, message: string, expiration = 3_500) {
         this.toasts.update((toasts) => {
             const toast: Toast = { type, message, id: uuid() };
             this.setToastExpiration(toast.id, expiration);

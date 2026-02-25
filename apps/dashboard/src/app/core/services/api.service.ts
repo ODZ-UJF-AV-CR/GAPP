@@ -94,4 +94,8 @@ export class ApiService {
             startWith({ loading: true }),
         );
     }
+
+    public ping$(): Observable<ApiResponse<unknown>> {
+        return this.get$('/ping');
+    }
 }

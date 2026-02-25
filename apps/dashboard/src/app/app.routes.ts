@@ -1,7 +1,7 @@
 import type { Route } from '@angular/router';
 import { type HeaderData, useHeader } from '@core/components/header/header-builder';
 import { type NavbarData, useNavbar } from '@core/components/navbar/navbar-builder';
-import { tablerBuildingBroadcastTower, tablerListDetails, tablerMapPins } from '@ng-icons/tabler-icons';
+import { tablerLayoutDashboard, tablerList, tablerMap2, tablerSettings2 } from '@ng-icons/tabler-icons';
 
 export interface GappData {
     navbar?: NavbarData;
@@ -20,15 +20,15 @@ export const ROUTES: GappRoutes = [
         loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
         title: 'GAPP | Vehicles',
         data: {
-            navbar: useNavbar(tablerListDetails),
-            header: useHeader('Vehicles'),
+            ...useNavbar(tablerList),
+            ...useHeader('Vehicles'),
         },
     },
     {
         path: 'telemetry',
         loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
         data: {
-            navbar: useNavbar(tablerBuildingBroadcastTower),
+            ...useNavbar(tablerLayoutDashboard),
         },
     },
     {
@@ -36,12 +36,21 @@ export const ROUTES: GappRoutes = [
         loadComponent: () => import('@features/sondehub/sondehub.component').then((c) => c.SondehubComponent),
         title: 'GAPP | Sondehub',
         data: {
-            navbar: useNavbar(tablerMapPins),
+            ...useNavbar(tablerMap2),
+        },
+    },
+    {
+        path: 'settings',
+        loadComponent: () => import('@features/settings/settings.component').then((c) => c.SettingsComponent),
+        title: 'GAPP | Settings',
+        data: {
+            ...useNavbar(tablerSettings2),
+            ...useHeader('Settings'),
         },
     },
     {
         path: '**',
-        redirectTo: 'home',
+        redirectTo: 'telemetry',
         pathMatch: 'full',
     },
 ];

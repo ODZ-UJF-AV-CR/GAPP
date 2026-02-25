@@ -1,0 +1,26 @@
+<div *headerContent class="flex justify-end text-sm">
+    <div class="flex-col gap-1">
+        <div>Latency: {{ latency() }}</div>
+        <div>Connected: {{ connectedStatus() }}</div>
+    </div>
+</div>
+
+<ng-template #vehicleList let-items="items">
+    @for(item of items; track item.type.id) {
+    <div class="gapp-card flex flex-col gap-3">
+        <vehicle-icon [typeId]="item.type.id" size="1.6rem" />
+
+        <ul class="flex flex-col gap-2">
+            @for(vehicle of item.vehicles; track vehicle.id) {
+            <li><telemetry-data [vehicle]="vehicle" [type]="item.type" /></li>
+            }
+        </ul>
+    </div>
+    }
+</ng-template>
+
+<div class="max-h-full flex flex-col lg:flex-row gap-3 overflow-y-auto rounded-box w-[inherit]">
+    <div class="flex flex-col gap-3 flex-5"><ng-container *ngTemplateOutlet="vehicleList; context: { items: mobileTypes() }"></ng-container></div>
+
+    <div class="flex flex-col gap-3 flex-4 h-fit"><ng-container *ngTemplateOutlet="vehicleList; context: { items: stationTypes() }"></ng-container></div>
+</div>

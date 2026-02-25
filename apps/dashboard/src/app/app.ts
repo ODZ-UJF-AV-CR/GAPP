@@ -1,13 +1,21 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ToastsComponent } from '@app/core/toasts/toasts.component';
-import { HeaderComponent } from '@core/components/header/header.component';
-import { MenuComponent } from '@core/components/menu/menu.component';
+import { HeaderComponent, HeaderService } from '@core/components/header';
 import { NavbarComponent } from '@core/components/navbar/navbar.component';
+import { ThemeService } from '@core/services/theme.service';
+import { ToastsComponent } from '@core/toasts';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.html',
-    imports: [RouterOutlet, NavbarComponent, ToastsComponent, MenuComponent, HeaderComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RouterOutlet, NavbarComponent, ToastsComponent, HeaderComponent],
 })
-export class App {}
+export class App {
+    private _themeService = inject(ThemeService);
+    private headerService = inject(HeaderService);
+
+    public readonly headerTitle = this.headerService.title;
+    public readonly showHeader = this.headerService.showHeader;
+    public readonly headerContent = this.headerService.content;
+}

@@ -3,27 +3,21 @@
         [checked]="isChecked('light')"
         (change)="selectTheme('light')"
         type="radio"
-        name="theme-buttons"
         class="btn btn-xs theme-controller join-item cursor-pointer"
         aria-label="Light"
-        value="light"
     />
     <input
         [checked]="isChecked('system')"
         (change)="selectTheme('system')"
         type="radio"
-        name="theme-buttons"
         class="btn btn-xs theme-controller join-item cursor-pointer"
         aria-label="System"
-        [value]="systemThemeValue()"
     />
     <input
         [checked]="isChecked('dark')"
         (change)="selectTheme('dark')"
         type="radio"
-        name="theme-buttons"
         class="btn btn-xs theme-controller join-item cursor-pointer"
         aria-label="Dark"
-        value="dark"
     />
 </div>

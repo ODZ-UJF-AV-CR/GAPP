@@ -4,15 +4,18 @@ import { useHeader } from '@core/components/header/header-builder';
 export const TELEMETRY_ROUTES: GappRoutes = [
     {
         path: '',
-        loadComponent: () => import('./telemetry-dashboard.component').then((c) => c.TelemetryDashboardComponent),
+        loadComponent: () => import('./dashboard/telemetry-dashboard.component').then((c) => c.TelemetryDashboardComponent),
         title: 'GAPP | Telemetry',
         data: {
-            header: useHeader('Test'),
+            ...useHeader('Telemetry'),
         },
     },
     {
         path: ':vehicleId',
-        loadComponent: () => import('./telemetry-detail.component').then((c) => c.TelemetryDetailComponent),
-        title: 'GAPP | Telemetry detail',
+        loadComponent: () => import('./detail/telemetry-detail.component').then((c) => c.TelemetryDetailComponent),
+        title: 'GAPP | Vehicle detail',
+        data: {
+            ...useHeader('Vehicle detail'),
+        },
     },
 ];

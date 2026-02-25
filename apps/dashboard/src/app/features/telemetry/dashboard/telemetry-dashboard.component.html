@@ -1,39 +1,20 @@
 <div *headerContent class="flex justify-end text-sm">Latency: {{ latency() }}</div>
 
-<div class="max-h-full flex flex-col lg:flex-row gap-3 overflow-y-auto rounded-box">
-    <div class="flex flex-col gap-3 flex-1">
-        <div class="gapp-card">
-            Ballons
-            <ul>
-                <li>asdsaasd</li>
-                <li>asdsaasd</li>
-                <li>asdsaasd</li>
-            </ul>
-        </div>
-
-        <div class="gapp-card">
-            Drones
-            <ul>
-                <li>asdsaasd</li>
-                <li>asdsaasd</li>
-                <li>asdsaasd</li>
-                <li>asdsaasd</li>
-                <li>asdsaasd</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="gapp-card flex-1 h-fit">
-        Cars cars
+<ng-template #vehicleList let-items="items">
+    @for(item of items; track item.type.id) {
+    <div class="gapp-card">
+        <vehicle-icon [typeId]="item.type.id" size="1.6rem" />
         <ul>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
-            <li>asdsaasd</li>
+            @for(vehicle of item.vehicles; track vehicle.id) {
+            <li>{{ vehicle.name }}</li>
+            }
         </ul>
     </div>
+    }
+</ng-template>
+
+<div class="max-h-full flex flex-col lg:flex-row gap-3 overflow-y-auto rounded-box">
+    <div class="flex flex-col gap-3 flex-1"><ng-container *ngTemplateOutlet="vehicleList; context: { items: mobileTypes() }"></ng-container></div>
+
+    <div class="flex flex-col gap-3 flex-1 h-fit"><ng-container *ngTemplateOutlet="vehicleList; context: { items: stationTypes() }"></ng-container></div>
 </div>

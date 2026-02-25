@@ -1,4 +1,5 @@
 import { computed, Injectable, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import type { VehicleCreate, VehicleGet, VehicleTypeGet } from '@gapp/shared';
 import { tap } from 'rxjs';
 import { type ApiResponse, ApiService } from '../../core/services/api.service';
@@ -12,9 +13,11 @@ export class VehicleService {
 
     public vehiclesLoading = computed(() => this.vehiclesResponse().loading);
     public vehiclesList = computed(() => this.vehiclesResponse().data ?? []);
+    public vehiclesList$ = toObservable(this.vehiclesList);
 
     public vehicleTypesLoading = computed(() => this.vehicleTypesResponse().loading);
     public vehicleTypesList = computed(() => this.vehicleTypesResponse().data ?? []);
+    public vehicleTypesList$ = toObservable(this.vehicleTypesList);
 
     public createVehicle$(vehicle: VehicleCreate) {
         return this.apiService.post$<VehicleGet>('/vehicles', vehicle).pipe(

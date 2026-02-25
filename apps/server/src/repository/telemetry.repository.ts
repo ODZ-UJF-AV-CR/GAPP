@@ -1,4 +1,4 @@
-import type { TelemetryCreate } from '@gapp/shared';
+import type { GenericTelemetry } from '@gapp/shared';
 import { type InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
 import { type Bucket, BucketsAPI, type Organization } from '@influxdata/influxdb-client-apis';
 import { arrayAsString } from '../utils/array-as-atring.ts';
@@ -53,13 +53,13 @@ export class TelemetryRepository {
         await this.writeApi.close();
     }
 
-    public writeTelemetry(pointType: PointType, data: TelemetryCreate) {
+    public writeTelemetry(pointType: PointType, data: GenericTelemetry) {
         const dataPoint = new Point(pointType);
 
         for (const [key, value] of Object.entries(data)) {
             if (key === 'callsign') {
                 dataPoint.tag(key, value as string);
-            } else if (key === 'timestamp') {
+            } else if (key === '_time') {
                 dataPoint.timestamp(new Date(value as string));
             } else if (typeof value === 'string') {
                 dataPoint.stringField(key, value);

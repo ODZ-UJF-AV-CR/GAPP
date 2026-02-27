@@ -8,9 +8,9 @@ import { VehicleIconComponent } from '@shared/components/vehicle-icon/vehicle-ic
 import { VehicleService } from '@shared/services';
 import { concat, filter, map, skip, switchMap, tap } from 'rxjs';
 import { TelemetryService } from '../telemetry.service';
-import { TelemetryDataComponent } from './telemetry-data.component';
+import { VehicleRowComponent } from './vehicle-row.component';
 
-interface BeaconWithTelemetry {
+export interface BeaconWithTelemetry {
     beacon: VehicleGet['beacons'][number];
     telemetry: WritableSignal<GenericTelemetry | undefined>;
 }
@@ -26,7 +26,7 @@ const telemetryCompare = (prev: GenericTelemetry | undefined, next: GenericTelem
     templateUrl: './telemetry-dashboard.component.html',
     host: { class: 'flex flex-col items-center max-h-full w-full' },
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [HeaderContentDirective, VehicleIconComponent, NgTemplateOutlet, TelemetryDataComponent],
+    imports: [HeaderContentDirective, VehicleIconComponent, NgTemplateOutlet, VehicleRowComponent],
 })
 export class TelemetryDashboardComponent implements OnInit {
     private vehiclesService = inject(VehicleService);

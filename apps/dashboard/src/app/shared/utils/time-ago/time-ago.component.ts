@@ -6,14 +6,14 @@ TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-GB');
 
 @Component({
-    selector: 'time-ago',
+    selector: '[time-ago]',
     template: `<ng-container>{{ time() }}</ng-container>`,
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeAgoComponent implements OnDestroy {
     private intervalId?: ReturnType<typeof setInterval>;
 
-    public date = input.required<Date>();
+    public date = input.required<Date | string>({ alias: 'time-ago' });
     public time = signal('');
 
     constructor() {
@@ -22,7 +22,8 @@ export class TimeAgoComponent implements OnDestroy {
                 clearInterval(this.intervalId);
             }
 
-            const time = this.date().getTime();
+            const dateValue = this.date();
+            const time = typeof dateValue === 'string' ? new Date(dateValue).getTime() : dateValue.getTime();
 
             const updateTime = () => this.time.set(timeAgo.format(time, 'round', { now: Date.now() }));
             this.intervalId = setInterval(updateTime, 1_000);

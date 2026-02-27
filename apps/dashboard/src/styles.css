@@ -25,7 +25,8 @@
         @apply w-full sm:w-[70vw] md:w-[55vw] 2xl:w-[40vw];
     }
 
-    .gapp-container-xl {
+    .content-width {
+        @apply max-md:w-full max-2xl:w-[80%] w-[65%];
     }
 }
 

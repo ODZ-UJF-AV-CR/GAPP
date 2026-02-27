@@ -1,0 +1,13 @@
+<div class="flex flex-row justify-between w-full p-2 bg-base-200 rounded-2xl">
+    <div>{{ beacon().beacon.callsign }}</div>
+
+    <div class="flex flex-row gap-2">
+        @if(altitude(); as alt) {
+        <div>{{ alt }} m</div>
+        } @if(lastTimestamp(); as timestamp) {
+        <div class="badge badge-outline" [classRange]="badgeClasses" [value]="secondsAgo$ | async" [time-ago]="timestamp"></div>
+        } @else {
+        <div class="badge badge-neutral">No contact yet</div>
+        }
+    </div>
+</div>

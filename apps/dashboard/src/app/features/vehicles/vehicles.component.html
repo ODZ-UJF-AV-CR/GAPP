@@ -7,7 +7,8 @@
     @if(loading()) {<loader></loader>} @else {
     <ul class="list rounded-box">
         @for(vehicle of vehicles(); track vehicle.id) {<vehicle-list-item [vehicle]="vehicle"></vehicle-list-item>} @empty {
-        <li class="list-row">No vehicles yet.</li>}
+        <li class="list-row">No vehicles yet.</li>
+        }
     </ul>
     }
 </div>

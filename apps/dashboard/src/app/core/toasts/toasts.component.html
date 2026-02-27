@@ -1,3 +1,5 @@
 <div class="toast toast-end toast-bottom">
-    @for(toast of toasts(); track toast.id) {<div [ngClass]="['alert', toast.type]" animate.leave="leaving"><span>{{ toast.message }}</span></div>}
+    @for(toast of toasts(); track toast.id) {
+    <div [ngClass]="['alert', toast.type]" animate.leave="leaving"><span>{{ toast.message }}</span></div>
+    }
 </div>

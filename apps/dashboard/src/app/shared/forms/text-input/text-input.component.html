@@ -27,5 +27,9 @@
 
         <ng-content select="[rightPart]"></ng-content>
     </div>
-    @if(showError()) {<p class="fieldset-label text-error">{{ errorMessage() }}</p>} @else if (help()) {<p class="fieldset-label">{{ help() }}</p>}
+    @if(showError()) {
+    <p class="fieldset-label text-error">{{ errorMessage() }}</p>
+    } @else if (help()) {
+    <p class="fieldset-label">{{ help() }}</p>
+    }
 </fieldset>

@@ -3,7 +3,7 @@
 
     <div class="flex flex-row gap-2">
         @if(altitude(); as alt) {
-        <div>{{ alt }} m</div>
+        <div>{{ alt | unit:'distance' }}</div>
         } @if(lastTimestamp(); as timestamp) {
         <div class="badge badge-outline" [classRange]="badgeClasses" [value]="secondsAgo$ | async" [time-ago]="timestamp"></div>
         } @else {

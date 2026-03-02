@@ -16,19 +16,19 @@ export type GappRoutes = Array<GappRoute>;
 
 export const ROUTES: GappRoutes = [
     {
+        path: 'telemetry',
+        loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
+        data: {
+            ...useNavbar(tablerLayoutDashboard),
+        },
+    },
+    {
         path: 'vehicles',
         loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
         title: 'GAPP | Vehicles',
         data: {
             ...useNavbar(tablerList),
             ...useHeader('Vehicles'),
-        },
-    },
-    {
-        path: 'telemetry',
-        loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
-        data: {
-            ...useNavbar(tablerLayoutDashboard),
         },
     },
     {

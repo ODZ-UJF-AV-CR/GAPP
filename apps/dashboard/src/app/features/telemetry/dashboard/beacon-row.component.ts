@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { ClassRangeDirective, secondsFromDate, TimeAgoComponent } from '@shared/utils';
+import { ClassRangeDirective, secondsFromDate, TimeAgoComponent, UnitPipe } from '@shared/utils';
 import { distinctUntilChanged, filter, interval, map, merge } from 'rxjs';
 import type { BeaconWithTelemetry } from './telemetry-dashboard.component';
 
@@ -9,7 +9,7 @@ import type { BeaconWithTelemetry } from './telemetry-dashboard.component';
     selector: 'beacon-row',
     templateUrl: './beacon-row.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TimeAgoComponent, ClassRangeDirective, AsyncPipe],
+    imports: [TimeAgoComponent, ClassRangeDirective, AsyncPipe, UnitPipe],
 })
 export class BeaconRowComponent {
     public beacon = input.required<BeaconWithTelemetry>();

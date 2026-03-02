@@ -31,7 +31,7 @@ export class ThemeService {
     }
 
     private getSystemPreference(): Theme {
-        if (window?.matchMedia('(prefers-color-scheme: dark)')?.matches) {
+        if (typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)')?.matches) {
             return 'dark';
         }
 

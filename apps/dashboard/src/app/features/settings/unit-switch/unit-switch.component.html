@@ -1,0 +1,12 @@
+<div class="join">
+    @for(system of availableSystems; track system) {
+    <input
+        [checked]="isChecked(system)"
+        (change)="selectSystem(system)"
+        type="radio"
+        class="btn btn-xs join-item cursor-pointer capitalize"
+        [attr.aria-label]="system"
+        name="unit-system"
+    />
+    }
+</div>

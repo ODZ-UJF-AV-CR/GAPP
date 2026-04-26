@@ -6,8 +6,9 @@
         }
 
         <form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button></form>
-
+        @if(isOpened()) {
         <ng-content>{{ content() }}</ng-content>
+        }
 
         <ng-content select="[footer]">
             <div class="modal-action">

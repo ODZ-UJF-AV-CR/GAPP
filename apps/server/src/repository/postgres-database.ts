@@ -12,8 +12,8 @@ export interface VehicleTable {
     id: Generated<number>;
     name: ColumnType<string, string, never>;
     description: ColumnType<string | undefined>;
-    created_at: ColumnType<Date, string, never>;
-    deleted_at: ColumnType<Date | null, never, Date>;
+    created_at: ColumnType<Date, never, never>;
+    deleted_at: ColumnType<Date | null, never, Date | null>;
     vehicle_type_id: ColumnType<number>;
 }
 export type Vehicle = Selectable<VehicleTable>;

@@ -19,7 +19,8 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
             try {
                 const vehicle = await req.server.vehicleService.createVehicle(req.body);
                 rep.status(201).send(vehicle);
-            } catch (e) {
+            } catch (err) {
+                const e = err as Error & { constraint?: string };
                 if (e.constraint === 'vehicles_callsign_key') {
                     return rep.conflict(`Vehicle callsign ${req.body.name} already exists.`);
                 } else if (e.constraint === 'beacons_callsign_key') {
@@ -96,7 +97,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
         async (req, rep) => {
             try {
                 await req.server.vehicleService.deleteVehicle(req.params.id);
-                rep.status(204).send();
+                rep.status(204).send(null);
             } catch (e) {
                 req.server.log.error(e, 'Error deleting vehicle');
                 return rep.internalServerError('Error deleting vehicle');

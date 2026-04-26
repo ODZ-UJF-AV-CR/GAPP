@@ -1,119 +1,92 @@
-# GAPP Development Guide for Agents
+# GAPP — Agent Guide
 
-This guide provides instructions for agentic coding tools operating in the GAPP repository. GAPP is a ground application for managing stratospheric balloon flights, built with Angular and Fastify in a Turborepo monorepo.
+GAPP is a ground app for high-altitude balloon flights (ODZ-UJF-AV-CR). Turborepo + pnpm monorepo. In production, a single Docker image runs the Fastify server which also serves the built Angular dashboard as static files.
 
-## Project Structure
-- **apps/dashboard**: Main frontend (Angular 21+, Signals, Standalone). Uses Tailwind CSS 4.
-  - `src/app`: Core application logic and components.
-  - `src/styles.css`: Global styles including Tailwind imports.
-- **apps/server**: Backend API (Fastify 5, Kysely, TypeBox). Connects to PostgreSQL and InfluxDB.
-  - `src/controllers`: API route definitions.
-  - `src/services`: Business logic layer.
-  - `src/repository`: Database access layer (Kysely).
-  - `src/schemas`: TypeBox validation schemas.
-  - `src/plugins`: Fastify plugin registrations (DI, DB, etc.).
-- **packages/sondehub**: Library for SondeHub integration.
+## Layout (verified)
 
-## Monorepo Architecture
-- **Turborepo**: Manages the build pipeline and caching. All scripts should ideally be run through `turbo` to benefit from caching.
-- **PNPM Workspaces**: Handles local package dependencies.
-- **Dependency Management**:
-  - Cross-package dependencies use `workspace:^` in `package.json`.
-  - Shared logic should be placed in `packages/`.
-  - To add a dependency to a package: `pnpm --filter @gapp/<pkg> add <dep-name>`.
-  - To run a script in a specific package: `pnpm --filter @gapp/<pkg> run <script>`.
+- `apps/server` — Fastify 5 + Kysely (Postgres) + Influx 2 client + TypeBox via `@fastify/type-provider-typebox`. Entry `src/main.ts` → `src/app.ts`. Wiring is Controllers (Fastify plugins) → Services (classes) → Repositories (classes); DI happens in `src/plugins/{repositories,services}.ts`, which decorate the Fastify instance.
+- `apps/dashboard` — Angular 21, standalone components, Signals, Tailwind 4 + DaisyUI 5. Tests use `ng test` (`@angular/build:unit-test`, Vitest globals from `tsconfig.spec.json`).
+- `packages/shared` — Cross-app TypeBox schemas exported as `*Schema` (e.g. `VehicleCreateSchema`, `VehicleGetSchema`). **All API schemas live here**; there is no `apps/server/src/schemas/` directory.
+- `packages/sondehub` — SondeHub uploader library.
+- Note: `pnpm-workspace.yaml` lists `packages/ui`, `packages/ui/libs/forms`, `packages/ui/libs/utils` — those directories do not exist. Ignore them; do not import `@gapp/ui`.
 
-## Development Commands
+## Setup & dev
 
-### General
-- **Build All**: `pnpm turbo build`
-- **Lint All**: `pnpm run lint` (uses Biome)
-- **Fix Lint/Format**: `pnpm run lint:fix` (uses Biome)
-- **Test All**: `pnpm turbo test`
+1. `nvm use` — Node `v24.5.0` is required (`.nvmrc`). Enable corepack so the pinned pnpm runs.
+2. `pnpm install`.
+3. `docker compose up -d` — **required before `pnpm dev`**. Starts Postgres on `localhost:5434` and InfluxDB on `localhost:8086` (creds in `compose.yml`; matching dev defaults are baked into `apps/server/src/config.ts` via `envalid`).
+4. `pnpm dev` — runs `turbo run dev` for both apps.
+   - Server only: `pnpm --filter @gapp/server run dev` (uses `node --experimental-transform-types --watch` piped through `pino-pretty`).
+   - Dashboard only: `pnpm --filter @gapp/dashboard run dev` (`ng serve`).
+5. Useful URLs while running locally: Swagger UI `http://localhost:3000/docs`, Influx UI `http://localhost:8086` (`user` / `password`).
 
-### Apps & Packages
-- **Server Dev**: `pnpm --filter @gapp/server run dev` (Uses native Node.js TS support)
-- **Dashboard Dev**: `pnpm --filter @gapp/dashboard run dev`
-- **Migrations**: `pnpm run create-migration <name>` (Creates a Kysely migration)
+## Commands
 
-### Running Tests (Vitest)
-The project uses **Vitest** for testing (even in Angular packages).
+- Build everything: `pnpm build` (= `turbo run build`). `@gapp/dashboard` and `@gapp/server` consume `@gapp/shared`, so Turbo's `^build` chain rebuilds it first.
+- Lint: `pnpm lint` (Biome). Auto-fix + format: `pnpm lint:fix` (= `biome check --write`).
+- Tests: there is **no root `test` task**. Only `apps/dashboard` has tests today: `pnpm --filter @gapp/dashboard run test`. Server and `packages/*` have no tests yet.
+- Create a Kysely migration: `pnpm --filter @gapp/server run create-migration <name>` (= `kysely migrate:make -x ts`). Files land in `apps/server/src/migrations/`. Config is `.config/kysely.config.ts`.
+- **Migrations apply automatically on server startup** — see `migrateToLatest` in `apps/server/src/plugins/postgresdb.ts:51`. Do not run `kysely migrate:latest` manually.
 
-- **Run all tests in a package**:
-  ```bash
-  pnpm --filter @gapp/<pkg> run test
-  ```
-- **Run a single test file**:
-  ```bash
-  pnpm --filter @gapp/<pkg> exec vitest run <path/to/file.spec.ts>
-  ```
-- **Watch mode**:
-  ```bash
-  pnpm --filter @gapp/<pkg> exec vitest
-  ```
+## Pre-commit
 
-## Code Style & Guidelines
+Husky's `pre-commit` runs `pnpm lint-staged`, which executes `biome check --write --no-errors-on-unmatched` on staged `*.{js,ts,json,css,html}`. Don't bypass with `--no-verify` unless explicitly asked.
 
-### General & TypeScript
-- **Linter/Formatter**: The project uses **Biome**. Run `pnpm run lint:fix` to auto-format.
-- **Imports**: Use ES Modules.
-  - In `@gapp/server`, use `.ts` extensions in imports (e.g., `import { app } from './app.ts'`).
-- **Naming**:
-  - `PascalCase` for Classes, Components, and Types.
-  - `camelCase` for variables, methods, and file names (except Angular components).
-  - `B_Prefix` for Body schemas, `R_Prefix` for Response schemas (e.g., `B_CreateVehicle`).
-- **Types**: Avoid `any`. Use **TypeBox** for API schemas.
+## Style — non-defaults that trip agents
 
-### Frontend (Angular 21+)
-- **Standalone**: All components must be `standalone: true`.
-- **Signals**: Use Signals for state management (`signal`, `computed`, `effect`). Avoid `BehaviorSubject` unless necessary.
-- **Tailwind CSS 4**: Use utility classes directly in templates.
-- **Templates**: Prefer separate `.html` and `.css` files. Use `protected readonly` for properties accessed in templates.
-- **Component Structure**:
-  ```typescript
-  @Component({
+- **Biome** (`biome.json`): 4-space indent, **line width 160**, single quotes, trailing commas, semicolons always, LF. Two recommended rules are turned off: `suspicious/useIterableCallbackReturn`, `correctness/noInvalidUseBeforeDeclaration`.
+- **Server imports**: `apps/server` is `"type": "module"` and its tsconfig sets `rewriteRelativeImportExtensions` + `allowImportingTsExtensions`. Local imports must include the `.ts` extension (e.g. `import { app } from './app.ts'`). This is required by the runtime, not stylistic.
+- **Dashboard tsconfig** has `noPropertyAccessFromIndexSignature`, `strictTemplates`, `strictInputAccessModifiers`. Use bracket access for index-signature objects.
+- **Dashboard path aliases** (`apps/dashboard/tsconfig.json`): `@core/*`, `@shared/*`, `@features/*`, `@env/*`, `@app/*`, `@/*`. Prefer these over deep relative imports.
+- **API schemas** are exported from `@gapp/shared` as `*Schema` (e.g. `VehicleCreateSchema`). The codebase does **not** use `B_`/`R_` prefixes for body/response schemas.
+- **Angular conventions**: standalone components, Signals (`signal`, `computed`, `effect`) over `BehaviorSubject`, `ChangeDetectionStrategy.OnPush` (see `src/app/app.ts`), separate `.html` and `.css` files, `protected readonly` for template-bound members.
+- **Fastify error handling**: use `@fastify/sensible` reply helpers (`rep.notFound()`, `rep.conflict()`, `rep.internalServerError()`); wrap controller handlers in `try/catch` and call `req.server.log.error(e, '...')` before responding. See `apps/server/src/controllers/vehicle.controller.ts` for the canonical pattern.
+
+### Example controller pattern
+
+```ts
+fastify.post('', { schema: { body: VehicleCreateSchema, response: { 201: VehicleGetSchema } } }, async (req, rep) => {
+    try {
+        const result = await req.server.vehicleService.createVehicle(req.body);
+        rep.status(201).send(result);
+    } catch (e) {
+        req.server.log.error(e, 'Error creating vehicle');
+        return rep.internalServerError('Error creating vehicle');
+    }
+});
+```
+
+### Example standalone component
+
+```ts
+@Component({
     selector: 'app-feature',
     imports: [CommonModule],
     templateUrl: './feature.html',
     styleUrl: './feature.css',
-  })
-  export class FeatureComponent {
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class FeatureComponent {
     protected readonly data = signal<string>('init');
-  }
-  ```
-
-### Backend (Fastify 5)
-- **Architecture**: Controller (Plugin) -> Service (Class) -> Repository (Class).
-- **Dependency Injection**: Services and Repositories are decorated onto the Fastify instance via plugins.
-- **Validation**: Define schemas using `@sinclair/typebox`.
-- **Database**: Use `Kysely` for type-safe SQL. Follow existing patterns in `repositories/`.
-- **Database Models**: Models are defined in `postgres-database.ts` using `Selectable`, `Insertable`, etc.
-- **Error Handling**: Use `fastify-sensible` methods (e.g., `(rep as any).notFound()`). Wrap controller logic in `try-catch`.
-
-#### Example Controller Pattern
-```typescript
-fastify.post('', { schema: { body: B_Schema, response: { 201: R_Schema } } }, async (req, rep) => {
-  try {
-    const result = await req.server.myService.doWork(req.body);
-    rep.status(201).send(result);
-  } catch (e) {
-    req.server.log.error(e);
-    return (rep as any).internalServerError('Description');
-  }
-});
+}
 ```
 
-## Security & Best Practices
-- **No Secrets**: Never commit `.env` files or hardcoded credentials.
-- **Type Safety**: Ensure database models in `postgres-database.ts` match migrations.
-- **Testing**: Write Vitest specs for new logic in `packages/` and `apps/server`.
+## Adding a DB field — required order
 
-## Agent Instructions
-- **Analysis**: Always read existing service/repository patterns before creating new ones.
-- **Modifications**: When adding a field to a database entity, you must:
-  1. Create a migration in `apps/server/src/migrations/`.
-  2. Update the Kysely interface in `apps/server/src/repository/postgres-database.ts`.
-  3. Update TypeBox schemas in `apps/server/src/schemas/`.
-  4. Run `pnpm turbo build` to verify type consistency.
-- **Verification**: After any change, run `pnpm run lint` and relevant tests.
-- **Communication**: Be concise. Focus on technical accuracy and following project patterns.
+1. New migration in `apps/server/src/migrations/<timestamp>_<name>.ts` (use `create-migration`).
+2. Update the Kysely interface in `apps/server/src/repository/postgres-database.ts` (uses `ColumnType`, `Generated`, `Selectable`, `Insertable`, `Updateable`).
+3. Update the relevant TypeBox schema in `packages/shared/src/*.schema.ts` and rebuild shared (`pnpm --filter @gapp/shared run build`) so server and dashboard pick up the new types.
+4. `pnpm build` to verify types end-to-end.
+
+## Production / CI
+
+- `Dockerfile` is multi-stage: builds dashboard + server, then `pnpm --filter @gapp/server deploy --prod server`. At runtime the Fastify server serves the built dashboard from `../../dashboard/` (see `DASHBOARD_STATIC_FILES` in `apps/server/src/config.ts` and the `fastifyStatic` registration in `apps/server/src/main.ts`).
+- `.github/workflows/production.yml` builds and pushes `ghcr.io/odz-ujf-av-cr/gapp` on push to `main` and on version tags `vX.Y.Z`.
+
+## Don't
+
+- Don't add tests via Jest or Karma — only Vitest (through Angular's `unit-test` builder), and only in `apps/dashboard` so far.
+- Don't reach for `BehaviorSubject` in the dashboard — use Signals.
+- Don't introduce `apps/server/src/schemas/`; schemas belong in `@gapp/shared`.
+- Don't run `kysely migrate:latest` by hand; the server applies migrations on boot.
+- Don't commit `.env` files or hardcoded secrets. Dev secrets come from `compose.yml` and `envalid` `devDefault` values in `apps/server/src/config.ts`.

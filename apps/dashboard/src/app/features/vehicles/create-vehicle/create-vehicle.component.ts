@@ -30,7 +30,7 @@ export class CreateVehicleComponent {
     public form = this.formBuilder.nonNullable.group({
         name: ['', [Validators.required, Validators.maxLength(32)]],
         description: [],
-        vehicle_type_id: [0, Validators.required],
+        vehicle_type_id: ['', Validators.required],
         beacons: this.formBuilder.nonNullable.array([
             this.formBuilder.nonNullable.group({
                 callsign: ['', [Validators.required, Validators.maxLength(32)]],
@@ -44,7 +44,7 @@ export class CreateVehicleComponent {
     constructor() {
         this.form.valueChanges
             .pipe(
-                map((value) => this.vehiclesService.vehicleTypesList().find((type) => type.id === value.vehicle_type_id)),
+                map((value) => this.vehiclesService.vehicleTypesList().find((type) => type.id === parseInt(value.vehicle_type_id || ''))),
                 tap((type) => (this.selectedType = type)),
                 distinctUntilChanged((prev, curr) => prev === curr),
                 takeUntilDestroyed(),
@@ -109,6 +109,7 @@ export class CreateVehicleComponent {
     }
 
     public open() {
+        this.form.reset();
         this.dialogRef().open();
     }
 }

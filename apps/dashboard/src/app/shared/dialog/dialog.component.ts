@@ -39,11 +39,13 @@ export class DialogComponent {
         },
     ]);
     private _title = signal<string>('');
+    private _isOpened = signal(false);
 
     public readonly isOpen = input(false, { transform: booleanAttribute });
     public readonly content = input('');
     public readonly modalClass = input<string | string[]>('');
     public readonly closed = output<void>();
+    public readonly isOpened = this._isOpened.asReadonly();
 
     constructor() {
         effect(() => {
@@ -57,9 +59,11 @@ export class DialogComponent {
 
     public open() {
         this.modalRef().nativeElement.showModal();
+        this._isOpened.set(true);
     }
 
     public close() {
         this.modalRef().nativeElement.close();
+        this._isOpened.set(false);
     }
 }

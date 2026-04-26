@@ -37,7 +37,7 @@ const influxDbPlugin: FastifyPluginAsync<InfluxdbPluginOptions> = async (fastify
     try {
         const orgsApi = new OrgsAPI(influxClient);
         const orgs = await orgsApi.getOrgs();
-        let org = orgs.orgs.find((org) => org.name === options.org);
+        let org = orgs.orgs?.find((org) => org.name === options.org);
         if (!org) {
             fastify.log.info(`Creating organization ${options.org}`);
             org = await orgsApi.postOrgs({

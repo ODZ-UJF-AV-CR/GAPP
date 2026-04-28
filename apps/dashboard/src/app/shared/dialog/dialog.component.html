@@ -10,13 +10,11 @@
         <ng-content>{{ content() }}</ng-content>
         }
 
-        <ng-content select="[footer]">
-            <div class="modal-action">
-                @for (button of buttons(); track button.label) { @if(button.close) {
-                <form method="dialog"><button class="btn" [ngClass]="button.style">{{ button.label }}</button></form>
-                } @else {<button class="btn" [ngClass]="button.style" (click)="button?.action($event)">{{ button.label }}</button>} }
-            </div>
-        </ng-content>
+        <div class="modal-action">
+            @for (button of buttons(); track button.label) { @if(button.close) {
+            <form method="dialog"><button class="btn" [ngClass]="button.style">{{ button.label }}</button></form>
+            } @else {<button class="btn" [ngClass]="button.style" (click)="button?.action($event)">{{ button.label }}</button>} }
+        </div>
     </div>
 
     <form method="dialog" class="modal-backdrop"><button>close</button></form>

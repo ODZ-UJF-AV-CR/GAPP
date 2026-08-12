@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { type FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '@app/core/toasts';
@@ -14,6 +14,7 @@ import { distinctUntilChanged, filter, map, tap } from 'rxjs';
     selector: 'create-vehicle',
     templateUrl: './create-vehicle.component.html',
     imports: [ReactiveFormsModule, TextInputComponent, SelectInputComponent, NgIcon, DialogComponent],
+    changeDetection: ChangeDetectionStrategy.Eager,
     providers: [provideIcons({ tablerTrash })],
 })
 export class CreateVehicleComponent {

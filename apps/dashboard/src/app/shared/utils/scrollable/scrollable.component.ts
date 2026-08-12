@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
     selector: 'scrollable',
+    changeDetection: ChangeDetectionStrategy.Eager,
     template: `
         <div class="max-h-[75vh] overflow-auto">
             <div class="flex gap-4 flex-col">

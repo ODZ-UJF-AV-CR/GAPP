@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import type { GappRoutes } from '@app/app.routes';
 import { NgIcon, provideNgIconsConfig } from '@ng-icons/core';
@@ -7,6 +7,7 @@ import { NgIcon, provideNgIconsConfig } from '@ng-icons/core';
     selector: 'gapp-navbar',
     templateUrl: './navbar.component.html',
     imports: [RouterLink, NgIcon, RouterLinkActive],
+    changeDetection: ChangeDetectionStrategy.Eager,
     providers: [provideNgIconsConfig({ size: '1.5rem', strokeWidth: 2 })],
 })
 export class NavbarComponent {

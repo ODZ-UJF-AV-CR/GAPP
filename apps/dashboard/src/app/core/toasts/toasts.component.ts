@@ -1,11 +1,12 @@
 import { NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService } from './toast.service';
 
 @Component({
     selector: 'gapp-toasts',
     templateUrl: './toasts.component.html',
     styleUrl: './toasts.component.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [NgClass],
 })
 export class ToastsComponent {

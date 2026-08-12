@@ -19,6 +19,12 @@ const sondehubPlugin: FastifyPluginAsync<SondehubPluginOptions> = async (fastify
         dev: options.dev,
         software_name: 'gapp-server',
         software_version: '0.0.1',
+        logLevel: options.dev ? 'debug' : 'info',
+        logger: {
+            debug: (message: string) => fastify.log.debug(message),
+            info: (message: string) => fastify.log.info(message),
+            error: (message: string) => fastify.log.error(message),
+        },
     });
 
     fastify.decorate('sondehub', uploader);

@@ -8,7 +8,7 @@
         "test": "ng test"
     },
     "dependencies": {
-        "@angular/cdk": "^21.1.5",
+        "@angular/cdk": "^22.1.1",
         "@angular/common": "^22.1.1",
         "@angular/compiler": "^22.1.1",
         "@angular/core": "^22.1.1",

@@ -3,7 +3,7 @@
     "type": "module",
     "private": true,
     "scripts": {
-        "dev": "NODE_ENV=development node --experimental-transform-types --watch src/main.ts | pino-pretty",
+        "dev": "NODE_ENV=development node --watch src/main.ts | pino-pretty",
         "build": "tsc -p tsconfig.app.json",
         "start": "node dist/main.js",
         "clean": "rm -rf dist",

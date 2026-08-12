@@ -45,6 +45,14 @@ export interface StationPositionPacket extends StationBasePayload {
     mobile?: boolean;
 }
 
+export type LogLevel = 'debug' | 'info' | 'error' | 'none';
+
+export interface Logger {
+    debug: (message: string) => void;
+    info: (message: string) => void;
+    error: (message: string) => void;
+}
+
 interface UploaderConfig extends BasePacket {
     /** @description how often packets will be sent to sondehub (in ms) */
     uploadRate: number;
@@ -52,9 +60,11 @@ interface UploaderConfig extends BasePacket {
     /** @todo implement */
     uploadRetries: number;
     dev: boolean;
+    logLevel?: LogLevel;
+    logger?: Partial<Logger>;
 }
 
-type MinimalUploaderConfig = Partial<Omit<UploaderConfig, 'uploader_Callsign'>> & Pick<UploaderConfig, 'uploader_callsign'>;
+type MinimalUploaderConfig = Partial<Omit<UploaderConfig, 'uploader_callsign'>> & Pick<UploaderConfig, 'uploader_callsign'>;
 
 /**
  * A class for uploading telemetry and station position data to SondeHub.
@@ -78,6 +88,7 @@ export class Uploader {
         dev: false,
         software_name: 'node-sondehub',
         software_version: '0.0.1',
+        logLevel: 'info',
     };
 
     private telemetryQueue: TelemetryPacket[] = [];
@@ -216,7 +227,6 @@ export class Uploader {
                 this.logError(`Failed to upload telemetry. Status: ${response.status}, Message: ${response.statusText}`);
             }
         } catch (error) {
-            console.log(error);
             this.logError(`Error uploading telemetry: ${error}`);
         }
     }
@@ -255,14 +265,32 @@ export class Uploader {
     }
 
     private logDebug(message: string): void {
-        console.debug(`Sondehub Uploader: ${message}`);
+        if (this.uploaderConfig.logLevel === 'debug') {
+            if (this.uploaderConfig.logger?.debug) {
+                this.uploaderConfig.logger.debug(message);
+            } else {
+                console.debug(`Sondehub Uploader: ${message}`);
+            }
+        }
     }
 
     private logInfo(message: string): void {
-        console.info(`Sondehub Uploader: ${message}`);
+        if (this.uploaderConfig.logLevel === 'debug' || this.uploaderConfig.logLevel === 'info') {
+            if (this.uploaderConfig.logger?.info) {
+                this.uploaderConfig.logger.info(message);
+            } else {
+                console.info(`Sondehub Uploader: ${message}`);
+            }
+        }
     }
 
     private logError(message: string): void {
-        console.error(`Sondehub Uploader: ${message}`);
+        if (this.uploaderConfig.logLevel !== 'none') {
+            if (this.uploaderConfig.logger?.error) {
+                this.uploaderConfig.logger.error(message);
+            } else {
+                console.error(`Sondehub Uploader: ${message}`);
+            }
+        }
     }
 }

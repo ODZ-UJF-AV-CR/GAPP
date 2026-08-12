@@ -4,19 +4,18 @@ import { type DialogRef, DialogService } from './dialog.service';
 
 @Directive({
     selector: '[dialog]',
+    exportAs: 'dialog',
 })
 export class DialogDirective implements OnDestroy {
     private dialogService = inject(DialogService);
     private viewContainerRef = inject(ViewContainerRef);
 
-    private dialogRef!: DialogRef;
+    private dialogRef?: DialogRef;
+
     private defaultButtons: DialogButton[] = [
         {
             label: 'Delete',
             style: 'btn-error',
-            action: () => {
-                this.dialogRef.close();
-            },
         },
     ];
 
@@ -45,5 +44,10 @@ export class DialogDirective implements OnDestroy {
 
     public ngOnDestroy(): void {
         this.dialogRef?.close();
+    }
+
+    public close(): void {
+        this.dialogRef?.close();
+        this.dialogRef = undefined;
     }
 }

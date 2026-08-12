@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, viewChild } from '@angular/core';
 import { ToastService } from '@app/core/toasts';
 import { type DialogButton, DialogDirective } from '@app/shared/dialog';
 import { TextLimitDirective } from '@app/shared/utils';
@@ -19,6 +19,8 @@ import { filter } from 'rxjs';
 export class VehicleListItemComponent {
     private vehicleServce = inject(VehicleService);
     private toastService = inject(ToastService);
+
+    private deleteDialog = viewChild.required<DialogDirective>('deleteDialog');
 
     public vehicle = input.required<VehicleGet>();
 
@@ -41,6 +43,7 @@ export class VehicleListItemComponent {
             .pipe(filter((response) => !response.loading))
             .subscribe(() => {
                 this.toastService.toast('alert-warning', `Vehicle ${this.vehicle().name} deleted.`);
+                this.deleteDialog().close();
             });
     }
 }

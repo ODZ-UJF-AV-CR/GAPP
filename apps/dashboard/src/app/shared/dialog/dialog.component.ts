@@ -1,5 +1,17 @@
 import { NgClass } from '@angular/common';
-import { booleanAttribute, Component, type ElementRef, effect, Input, input, output, type Signal, signal, viewChild } from '@angular/core';
+import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    type ElementRef,
+    effect,
+    Input,
+    input,
+    output,
+    type Signal,
+    signal,
+    viewChild,
+} from '@angular/core';
 import { TextLimitDirective } from '@app/shared/utils/utils/text-limit.directive';
 
 export interface DialogButton {
@@ -12,6 +24,7 @@ export interface DialogButton {
 @Component({
     selector: 'gapp-dialog',
     templateUrl: './dialog.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [NgClass, TextLimitDirective],
 })
 export class DialogComponent {

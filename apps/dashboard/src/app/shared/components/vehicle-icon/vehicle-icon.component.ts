@@ -1,10 +1,11 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { VEHICLE_ICONS } from './vehicle-icon.provider';
 
 @Component({
     selector: 'vehicle-icon',
     template: `<ng-icon [svg]="icon()" [size]="size()"></ng-icon>`,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [NgIcon],
 })
 export class VehicleIconComponent {

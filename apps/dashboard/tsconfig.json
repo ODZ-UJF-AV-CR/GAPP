@@ -4,6 +4,7 @@
         "rootDir": ".",
         "sourceMap": true,
         "declaration": false,
+        "esModuleInterop": true,
         "module": "esnext",
         "lib": ["es2022", "dom"],
         "skipDefaultLibCheck": true,
@@ -18,6 +19,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": false,
         "importHelpers": true,
+        "ignoreDeprecations": "6.0",
         "target": "ES2022",
         "baseUrl": ".",
         "paths": {

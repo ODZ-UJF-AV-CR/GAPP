@@ -1,7 +1,6 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "rootDir": ".",
         "sourceMap": true,
         "declaration": false,
         "moduleResolution": "node",
@@ -11,7 +10,8 @@
         "lib": ["es2020", "dom"],
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "rootDir": "."
     },
     "exclude": ["node_modules", "tmp"],
     "files": [],
@@ -19,9 +19,6 @@
     "references": [
         {
             "path": "./tsconfig.app.json"
-        },
-        {
-            "path": "./tsconfig.spec.json"
         }
     ]
 }

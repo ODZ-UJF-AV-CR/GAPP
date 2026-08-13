@@ -3,7 +3,7 @@ FROM alpine AS init
 RUN apk update && apk add --no-cache libc6-compat dumb-init
 
 # Initialize node environment with pnpm
-FROM node:24.5.0-alpine AS pnpm-base
+FROM node:26.7.0-alpine AS pnpm-base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 COPY package.json ./
@@ -28,7 +28,7 @@ RUN pnpm run build
 RUN pnpm --filter @gapp/server deploy --prod server
 
 # Runtime image
-FROM node:24.5.0-alpine AS runner
+FROM node:26.7.0-alpine AS runner
 WORKDIR /gapp
 
 COPY --from=init /usr/bin/dumb-init /usr/bin/dumb-init

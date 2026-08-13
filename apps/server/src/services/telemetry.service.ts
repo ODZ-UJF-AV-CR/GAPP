@@ -67,8 +67,9 @@ export class TelemetryService {
 
         try {
             while (!abortSignal.aborted) {
-                if (queue.length) {
-                    yield queue.shift();
+                const message = queue.shift();
+                if (message) {
+                    yield message;
                 } else {
                     await new Promise((r) => setTimeout(r, 1000));
                 }

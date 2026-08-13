@@ -1,16 +1,15 @@
 import type { VehicleCreate } from '@gapp/shared';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import { stripBeacons } from '../utils/strip-beacons.ts';
 
 export class VehicleService {
     constructor(private readonly vehiclesRepository: VehiclesRepository) {}
 
     public createVehicle(vehicle: VehicleCreate) {
-        return this.vehiclesRepository.createVehicleWithBeacons(stripBeacons(vehicle), vehicle.beacons);
+        return this.vehiclesRepository.createVehicle(vehicle);
     }
 
-    public getVehicles() {
-        return this.vehiclesRepository.getVehicles();
+    public getVehicles(includeBeacons = false) {
+        return this.vehiclesRepository.getVehicles(includeBeacons);
     }
 
     public getVehicleTypes() {

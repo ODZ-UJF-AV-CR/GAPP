@@ -1,5 +1,5 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { VehicleCreateSchema, VehicleGetSchema, VehicleTypeGetSchema } from '@gapp/shared';
+import { VehicleCreateSchema, VehicleGetSchema, VehiclesQuerySchema, VehicleTypeGetSchema } from '@gapp/shared';
 
 export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -8,7 +8,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
             schema: {
                 tags: ['vehicle'],
                 summary: 'Create a new vehicle',
-                description: 'Creates new vehicle with associated beacons.',
+                description: 'Creates new vehicle. Beacons are managed via the /beacons endpoints.',
                 body: VehicleCreateSchema,
                 response: {
                     201: VehicleGetSchema,
@@ -22,9 +22,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
             } catch (err) {
                 const e = err as Error & { constraint?: string };
                 if (e.constraint === 'vehicles_callsign_key') {
-                    return rep.conflict(`Vehicle callsign ${req.body.name} already exists.`);
-                } else if (e.constraint === 'beacons_callsign_key') {
-                    return rep.conflict(`Beacon already exists.`);
+                    return rep.conflict(`Vehicle name ${req.body.name} already exists.`);
                 }
 
                 req.server.log.error(e, 'Error creating vehicle');
@@ -39,7 +37,8 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
             schema: {
                 tags: ['vehicle'],
                 summary: 'Get all vehicles',
-                description: 'Returns all vehicles with list of its beacons.',
+                description: 'Returns all vehicles, with their beacons when includeBeacons is set.',
+                querystring: VehiclesQuerySchema,
                 response: {
                     200: Type.Array(VehicleGetSchema),
                 },
@@ -47,7 +46,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
         },
         async (req, rep) => {
             try {
-                const vehicles = await req.server.vehicleService.getVehicles();
+                const vehicles = await req.server.vehicleService.getVehicles(req.query.includeBeacons);
                 rep.status(200).send(vehicles);
             } catch (e) {
                 req.server.log.error(e, 'Error getting vehicles');

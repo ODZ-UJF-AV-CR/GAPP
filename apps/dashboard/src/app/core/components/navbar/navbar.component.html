@@ -1,4 +1,4 @@
-<nav class="flex flex-row justify-center gap-1">
+<nav class="flex flex-row gap-1 w-min pointer-events-auto">
     @for (item of navbarItems; track item.path) {
     <a class="btn btn-lg btn-soft" routerLinkActive="btn-primary btn-active" [routerLink]="item.path"> <ng-icon [svg]="item.icon"></ng-icon></a>
     }

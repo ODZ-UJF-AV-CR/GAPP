@@ -1,5 +1,5 @@
 import type { Route } from '@angular/router';
-import type { HeaderData } from '@core/components/header/header-builder';
+import { type HeaderData, useHeader } from '@core/components/header/header-builder';
 import { type NavbarData, useNavbar } from '@core/components/navbar/navbar-builder';
 import { useFullScreen } from '@core/layout/fullscreen-builder';
 import { tablerLayoutDashboard, tablerList, tablerMap2, tablerSettings2 } from '@ng-icons/tabler-icons';
@@ -18,13 +18,6 @@ export type GappRoutes = Array<GappRoute>;
 
 export const ROUTES: GappRoutes = [
     {
-        path: 'telemetry',
-        loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
-        data: {
-            ...useNavbar(tablerLayoutDashboard),
-        },
-    },
-    {
         path: 'vehicles',
         loadChildren: () => import('@features/vehicles/vehicles-routes').then((r) => r.VEHICLES_ROUTES),
         data: {
@@ -32,10 +25,18 @@ export const ROUTES: GappRoutes = [
         },
     },
     {
-        path: 'sondehub',
-        loadComponent: () => import('@features/sondehub/sondehub.component').then((c) => c.SondehubComponent),
-        title: 'GAPP | Sondehub',
+        path: 'telemetry',
+        loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
         data: {
+            ...useNavbar(tablerLayoutDashboard),
+        },
+    },
+    {
+        path: 'map',
+        loadComponent: () => import('@features/map/map.component').then((c) => c.MapComponent),
+        title: 'GAPP | Map',
+        data: {
+            ...useHeader('Live map'),
             ...useNavbar(tablerMap2),
             ...useFullScreen(),
         },

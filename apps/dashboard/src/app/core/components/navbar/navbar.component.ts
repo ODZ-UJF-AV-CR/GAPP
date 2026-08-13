@@ -6,6 +6,11 @@ import { NgIcon, provideNgIconsConfig } from '@ng-icons/core';
 @Component({
     selector: 'gapp-navbar',
     templateUrl: './navbar.component.html',
+    styles: `
+        :host {
+            @apply flex justify-center pointer-events-none;
+        }
+    `,
     imports: [RouterLink, NgIcon, RouterLinkActive],
     changeDetection: ChangeDetectionStrategy.Eager,
     providers: [provideNgIconsConfig({ size: '1.5rem', strokeWidth: 2 })],

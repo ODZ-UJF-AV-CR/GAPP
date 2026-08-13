@@ -1,4 +1,4 @@
-import { DOCUMENT, effect, Injectable, inject, type Renderer2, RendererFactory2, signal } from '@angular/core';
+import { DOCUMENT, effect, Injectable, inject, type Renderer2, RendererFactory2, signal, untracked } from '@angular/core';
 
 export type Theme = 'light' | 'dark'; // Theme value used in DaisyUI
 export type ThemeSetting = Theme | 'system'; // Theme value saved in local storage
@@ -10,6 +10,9 @@ export class ThemeService {
     private rendererFactory = inject(RendererFactory2);
     private document = inject(DOCUMENT);
     private renderer: Renderer2;
+
+    private _effectiveTheme = signal<Theme>(this.getSystemPreference());
+    public readonly effectiveTheme = this._effectiveTheme.asReadonly();
 
     private readonly _theme = signal<ThemeSetting>(this.getInitialTheme());
     public readonly theme = this._theme.asReadonly();
@@ -45,6 +48,7 @@ export class ThemeService {
             const systemTheme = this.systemThemeValue();
             const effectiveTheme = theme === 'system' ? systemTheme : theme;
             this.renderer.setAttribute(this.document.documentElement, 'data-theme', effectiveTheme);
+            untracked(() => this._effectiveTheme.set(effectiveTheme));
         });
     }
 }

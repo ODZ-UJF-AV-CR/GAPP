@@ -7,7 +7,7 @@ FROM node:26.7.0-alpine AS pnpm-base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 COPY package.json ./
-RUN corepack enable
+RUN npm install -g corepack@latest && corepack enable
 RUN pnpm config set inject-workspace-packages=true
 
 # Build the app and export server

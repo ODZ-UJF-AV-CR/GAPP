@@ -3,7 +3,7 @@ import Sensible from '@fastify/sensible';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
-import { telemetryController, vehicleController } from './controllers/index.ts';
+import { beaconController, telemetryController, vehicleController } from './controllers/index.ts';
 import abortControllerPlugin from './plugins/abort-controller.ts';
 import cachePlugin from './plugins/cache.ts';
 import eventBusPlugin from './plugins/event-bus.ts';
@@ -29,6 +29,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     fastify.register(eventBusPlugin);
     fastify.register(cors, {
         origin: '*',
+        methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'],
     });
 
     // PLUGINS
@@ -53,6 +54,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
             },
             tags: [
                 { name: 'vehicle', description: 'API for vehicles (Cars, Vessels, Balloons, etc.)' },
+                { name: 'beacon', description: 'API for beacons attached to vehicles' },
                 { name: 'telemetry', description: 'API for receiving telemetry data from cars and vessels' },
             ],
         },
@@ -69,6 +71,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         async (fastify) => {
             fastify.register(telemetryController, { prefix: '/telemetry' });
             fastify.register(vehicleController, { prefix: '/vehicles' });
+            fastify.register(beaconController, { prefix: '/beacons' });
             fastify.get('/ping', () => 'pong');
         },
         { prefix: '/api' },

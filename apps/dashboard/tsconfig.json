@@ -19,9 +19,8 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": false,
         "importHelpers": true,
-        "ignoreDeprecations": "6.0",
+        "strictNullChecks": false,
         "target": "ES2022",
-        "baseUrl": ".",
         "paths": {
             "@core/*": ["./src/app/core/*"],
             "@shared/*": ["./src/app/shared/*"],

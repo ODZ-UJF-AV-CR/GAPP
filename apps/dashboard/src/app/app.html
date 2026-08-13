@@ -1,4 +1,4 @@
-<gapp-toasts></gapp-toasts>
+<gapp-toasts class="z-20"></gapp-toasts>
 
 @if(fullScreen()) {
 <div class="relative h-svh w-full overflow-hidden">
@@ -6,22 +6,22 @@
 
     @if(showHeader()) {
     <div class="absolute inset-x-0 top-0 z-10 p-4 max-sm:px-2 pointer-events-none">
-        <div class="pointer-events-auto"><gapp-header [title]="headerTitle()" [content]="headerContent()"></gapp-header></div>
+        <gapp-header class="pointer-events-auto" [title]="headerTitle()" [content]="headerContent()" [back]="headerBack()"></gapp-header>
     </div>
     }
 
     <div class="absolute inset-x-0 bottom-0 z-10 p-4 max-md:pb-6 pointer-events-none">
-        <div class="pointer-events-auto"><gapp-navbar></gapp-navbar></div>
+        <gapp-navbar class="w-full"></gapp-navbar>
     </div>
 </div>
 } @else {
 <div class="flex justify-center">
     <div class="flex flex-col h-svh gap-3 p-4 max-sm:px-2 max-md:pb-6 w-full">
-        @if(showHeader()) {<gapp-header [title]="headerTitle()" [content]="headerContent()"></gapp-header>}
+        @if(showHeader()) {<gapp-header [title]="headerTitle()" [content]="headerContent()" [back]="headerBack()"></gapp-header>}
 
         <div class="grow w-full flex justify-center items-center overflow-hidden"><router-outlet></router-outlet></div>
 
-        <div class="w-full"><gapp-navbar></gapp-navbar></div>
+        <gapp-navbar class="w-full"></gapp-navbar>
     </div>
 </div>
 }

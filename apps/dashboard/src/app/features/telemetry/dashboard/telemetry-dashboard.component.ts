@@ -11,7 +11,7 @@ import { TelemetryService } from '../telemetry.service';
 import { VehicleRowComponent } from './vehicle-row.component';
 
 export interface BeaconWithTelemetry {
-    beacon: VehicleGet['beacons'][number];
+    beacon: NonNullable<VehicleGet['beacons']>[number];
     telemetry: WritableSignal<GenericTelemetry | undefined>;
 }
 
@@ -60,7 +60,7 @@ export class TelemetryDashboardComponent implements OnInit {
                     this.vehiclesWithTelemetry.set(
                         vehicles.map((vehicle) => ({
                             ...vehicle,
-                            beacons: vehicle.beacons.map((beacon) => ({
+                            beacons: (vehicle.beacons ?? []).map((beacon) => ({
                                 beacon,
                                 telemetry: signal(undefined, {
                                     equal: telemetryCompare,
@@ -70,7 +70,7 @@ export class TelemetryDashboardComponent implements OnInit {
                     ),
                 ),
                 // Extract callsigns list
-                map((vehicles) => vehicles.flatMap((vehicle) => vehicle.beacons.map((beacon) => beacon.callsign))),
+                map((vehicles) => vehicles.flatMap((vehicle) => (vehicle.beacons ?? []).map((beacon) => beacon.callsign))),
                 switchMap((callsigns) =>
                     concat(
                         this.telemetryService.getLatestTelemetry$(callsigns),
@@ -85,7 +85,7 @@ export class TelemetryDashboardComponent implements OnInit {
 
     public ngOnInit() {
         this.vehiclesService.loadVehicleTypes();
-        this.vehiclesService.loadVehicles();
+        this.vehiclesService.loadVehicles(true);
     }
 
     private mapTelemetry(data: GenericTelemetry[]) {

@@ -18,7 +18,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             try {
                 await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body), req.body.callsign);
                 rep.code(201).send();
-            } catch (e) {
+            } catch {
                 return rep.status(422).send(`Callsign ${req.body.callsign} does not exist`);
             }
         },
@@ -42,7 +42,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             try {
                 await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body), req.body.end_device_ids.device_id);
                 rep.code(200).send('OK');
-            } catch (e) {
+            } catch {
                 return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
             }
         },

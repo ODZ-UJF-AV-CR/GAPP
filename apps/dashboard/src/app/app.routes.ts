@@ -18,6 +18,13 @@ export type GappRoutes = Array<GappRoute>;
 
 export const ROUTES: GappRoutes = [
     {
+        path: 'vehicles',
+        loadChildren: () => import('@features/vehicles/vehicles-routes').then((r) => r.VEHICLES_ROUTES),
+        data: {
+            ...useNavbar(tablerList),
+        },
+    },
+    {
         path: 'telemetry',
         loadChildren: () => import('@features/telemetry/telemetry-routes').then((r) => r.TELEMETRY_ROUTES),
         data: {
@@ -25,19 +32,11 @@ export const ROUTES: GappRoutes = [
         },
     },
     {
-        path: 'vehicles',
-        loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
-        title: 'GAPP | Vehicles',
+        path: 'map',
+        loadComponent: () => import('@features/map/map.component').then((c) => c.MapComponent),
+        title: 'GAPP | Map',
         data: {
-            ...useNavbar(tablerList),
-            ...useHeader('Vehicles'),
-        },
-    },
-    {
-        path: 'sondehub',
-        loadComponent: () => import('@features/sondehub/sondehub.component').then((c) => c.SondehubComponent),
-        title: 'GAPP | Sondehub',
-        data: {
+            ...useHeader('Live map'),
             ...useNavbar(tablerMap2),
             ...useFullScreen(),
         },

@@ -1,0 +1,52 @@
+<div *headerContent class="grow flex flex-row justify-end gap-2">
+    @if(vehicle(); as vehicle) {
+    <button
+        #deleteDialog="dialog"
+        dialog="Are you sure you want to delete {{ vehicle.name }} with all its transmitters?"
+        title="Delete vehicle?"
+        class="btn btn-error"
+        [buttons]="deleteButtons"
+    >
+        <ng-icon name="tablerTrash" size="1rem"></ng-icon>
+        Delete
+    </button>
+
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saving() || !canSave()">Save</button>
+    }
+</div>
+
+<div class="gapp-card gapp-container max-h-full overflow-y-auto">
+    @if(loading()) {<loader></loader>} @else if (notFound()) {
+    <p>Vehicle not found.</p>
+    } @else if (vehicle(); as vehicle) {
+    <div class="flex flex-row items-center gap-3">
+        <vehicle-icon [typeId]="vehicle.vehicle_type_id" size="2rem"></vehicle-icon>
+        <h2 class="text-2xl font-bold">{{ vehicle.name }}</h2>
+    </div>
+
+    <form [formGroup]="form">
+        <text-input formControlName="description" label="Description" help="Optional description of vehicle." type="textarea"></text-input>
+
+        <div class="divider divider-start">Transmitters</div>
+
+        <ng-container formArrayName="beacons">
+            @for(beacon of beaconsInput.controls; track beacon; let index = $index) {
+            <ng-container [formGroupName]="index">
+                <text-input formControlName="callsign" placeholder="CALLSIGN" size="sm">
+                    <button rightPart type="button" class="btn btn-error btn-outline" (click)="removeBeacon(index)" aria-label="Remove transmitter">
+                        <ng-icon name="tablerTrash" size="1rem"></ng-icon>
+                    </button>
+                </text-input>
+            </ng-container>
+            } @empty {
+            <p class="fieldset-label">No transmitters yet.</p>
+            }
+        </ng-container>
+
+        <button type="button" (click)="addBeacon()" class="btn btn-primary btn-sm btn-outline mt-2">
+            <ng-icon name="tablerPlus" size="1rem"></ng-icon>
+            Add transmitter
+        </button>
+    </form>
+    }
+</div>

@@ -1,7 +1,8 @@
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { type ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideUnits, type UnitConfig } from '@core/services/unit.provider';
+import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
 import { tablerAirBalloon, tablerCar, tablerDrone, tablerHelpHexagon } from '@ng-icons/tabler-icons';
 import { provideVehicleIcons, type VehicleIcons } from '@shared/components/vehicle-icon/vehicle-icon.provider';
 import { ROUTES } from './app.routes';
@@ -28,8 +29,9 @@ export const appConfig: ApplicationConfig = {
     providers: [
         provideZonelessChangeDetection(),
         provideRouter(ROUTES),
-        provideHttpClient(withFetch()),
+        provideHttpClient(),
         provideUnits(UNIT_CONFIG),
         provideVehicleIcons(VEHICLE_ICONS),
+        provideMaplibreWorker('maplibre-gl-worker.mjs'),
     ],
 };

@@ -21,5 +21,6 @@ export class App {
     public readonly headerTitle = this.headerService.title;
     public readonly showHeader = this.headerService.showHeader;
     public readonly headerContent = this.headerService.content;
+    public readonly headerBack = this.headerService.back;
     public readonly fullScreen = computed(() => this.routeData().fullScreen ?? false);
 }

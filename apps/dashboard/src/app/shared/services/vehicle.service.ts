@@ -1,6 +1,6 @@
 import { computed, Injectable, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import type { VehicleCreate, VehicleGet, VehicleTypeGet } from '@gapp/shared';
+import type { VehicleCreate, VehicleGet, VehicleTypeGet, VehicleUpdate } from '@gapp/shared';
 import { tap } from 'rxjs';
 import { type ApiResponse, ApiService } from '../../core/services/api.service';
 
@@ -29,6 +29,16 @@ export class VehicleService {
         );
     }
 
+    public updateVehicle$(id: number, vehicle: VehicleUpdate) {
+        return this.apiService.patch$<VehicleGet>(`/vehicles/${id}`, vehicle).pipe(
+            tap(({ data }) => {
+                if (data) {
+                    this.vehiclesResponse.update((response) => ({ ...response, data: response.data?.map((v) => (v.id === id ? { ...v, ...data } : v)) }));
+                }
+            }),
+        );
+    }
+
     public deleteVehicle$(id: number) {
         return this.apiService.delete$(`/vehicles/${id}`).pipe(
             tap(({ data }) => {
@@ -39,8 +49,12 @@ export class VehicleService {
         );
     }
 
-    public loadVehicles() {
-        this.apiService.get$<VehicleGet[]>('/vehicles').subscribe((data) => this.vehiclesResponse.set(data));
+    public getVehicle$(id: number, includeBeacons = true) {
+        return this.apiService.get$<VehicleGet>(`/vehicles/${id}${includeBeacons ? '?includeBeacons=true' : ''}`);
+    }
+
+    public loadVehicles(includeBeacons = false) {
+        this.apiService.get$<VehicleGet[]>(`/vehicles${includeBeacons ? '?includeBeacons=true' : ''}`).subscribe((data) => this.vehiclesResponse.set(data));
     }
 
     public loadVehicleTypes() {

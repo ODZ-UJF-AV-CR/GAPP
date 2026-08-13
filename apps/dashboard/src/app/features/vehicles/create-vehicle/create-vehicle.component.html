@@ -1,23 +1,6 @@
-<gapp-dialog #dialog title="Create new vehicle" closeButton="Close" [buttons]="dialogButtons">
+<gapp-dialog #dialog title="Create new vehicle" [buttons]="dialogButtons">
     <form [formGroup]="form">
         <select-input formControlName="vehicle_type_id" label="Type" help="Vehicle type." [options]="vehicleTypes()"></select-input>
-        <text-input formControlName="name" label="Name" help="Unique identification of vehicle."></text-input>
-        <text-input formControlName="description" label="Description" help="Optional description of vehicle." type="textarea"></text-input>
-        @if(showBeacons()) {
-        <div class="divider divider-start">Transmitters</div>
-
-        <ng-container formArrayName="beacons">
-            @for(beacon of beaconsInput.controls; track beacon; let index = $index) {
-            <ng-container [formGroupName]="index">
-                <text-input formControlName="callsign" [placeholder]="getTransmitterPlaceholder(index)" size="sm">
-                    <button rightPart class="btn btn-error btn-outline" (click)="removeBeacon(index)" [disabled]="beaconsInput.controls.length === 1">
-                        <ng-icon name="tablerTrash" size="1rem"></ng-icon>
-                    </button>
-                </text-input>
-            </ng-container>
-            }
-        </ng-container>
-
-        <button (click)="addBeacon()" class="btn btn-primary btn-sm">Add transmitter</button>}
+        <text-input formControlName="name" label="Callsign" help="Unique identification of vehicle."></text-input>
     </form>
 </gapp-dialog>

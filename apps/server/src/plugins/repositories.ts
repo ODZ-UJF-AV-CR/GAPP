@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
+import { BeaconsRepository } from '../repository/beacons.repository.ts';
 import { TelemetryRepository } from '../repository/telemetry.repository.ts';
 import { VehiclesRepository } from '../repository/vehicles.repository.ts';
 import { Plugins } from './plugins.ts';
@@ -7,6 +8,7 @@ import { Plugins } from './plugins.ts';
 declare module 'fastify' {
     interface FastifyInstance {
         vehiclesRepository: VehiclesRepository;
+        beaconsRepository: BeaconsRepository;
         telemetryRepository: TelemetryRepository;
     }
 }
@@ -17,6 +19,7 @@ const repositories: FastifyPluginAsync = async (fastify) => {
     await telemetryRepository.init();
 
     fastify.decorate('vehiclesRepository', new VehiclesRepository(fastify.postgresdb));
+    fastify.decorate('beaconsRepository', new BeaconsRepository(fastify.postgresdb));
     fastify.decorate('telemetryRepository', telemetryRepository);
 
     fastify.addHook('onClose', () => telemetryRepository.deinit());

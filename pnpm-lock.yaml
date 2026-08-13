@@ -174,8 +174,8 @@ importers:
         specifier: ^4.23.12
         version: 4.23.12
       typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
+        specifier: ~7.0.2
+        version: 7.0.2
 
   packages/shared:
     dependencies:
@@ -4177,11 +4177,6 @@ packages:
   typebox@1.0.81:
     resolution: {integrity: sha512-bCslZUmZESHhBn4kHDghzH2oo3qu8m2W89xDLxQHv/aPvY4i81Nd1jvijlBp9wSpsVytDSfSoosbiBAjgsNb2Q==}
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
@@ -8020,8 +8015,6 @@ snapshots:
       mime-types: 3.0.2
 
   typebox@1.0.81: {}
-
-  typescript@5.9.3: {}
 
   typescript@6.0.3: {}
 

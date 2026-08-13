@@ -17,30 +17,46 @@ export type LocationData = {
 
 export class TelemetryRepository {
     private readonly bucketName = 'telemetry';
-    private writeApi?: WriteApi;
-    private queryAPi?: QueryApi;
+    private readonly orgId: string;
+    private _writeApi?: WriteApi;
+    private _queryAPi?: QueryApi;
 
     constructor(
         private readonly client: InfluxDB,
-        private readonly org: Organization,
-    ) {}
+        org: Organization,
+    ) {
+        if (!org.id) {
+            throw new Error('Organization id is required');
+        }
 
-    private checkApis() {
-        if (!this.writeApi || !this.queryAPi) {
+        this.orgId = org.id;
+    }
+
+    private get writeApi(): WriteApi {
+        if (!this._writeApi) {
             throw new Error('influxDB APi is not initialized');
         }
+
+        return this._writeApi;
+    }
+
+    private get queryAPi(): QueryApi {
+        if (!this._queryAPi) {
+            throw new Error('influxDB APi is not initialized');
+        }
+
+        return this._queryAPi;
     }
 
     private async ensureBucket(name: string): Promise<Bucket> {
-        this.checkApis();
         const bucketsApi = new BucketsAPI(this.client);
 
         const buckets = await bucketsApi.getBuckets();
-        let bucket = buckets.buckets.find((bucket) => bucket.name === name);
+        let bucket = buckets.buckets?.find((bucket) => bucket.name === name);
         if (!bucket) {
             bucket = await bucketsApi.postBuckets({
                 body: {
-                    orgID: this.org.id,
+                    orgID: this.orgId,
                     name,
                 },
             });
@@ -52,8 +68,8 @@ export class TelemetryRepository {
     public async init() {
         await this.ensureBucket(this.bucketName);
 
-        this.writeApi = this.client.getWriteApi(this.org.id, this.bucketName);
-        this.queryAPi = this.client.getQueryApi(this.org.id);
+        this._writeApi = this.client.getWriteApi(this.orgId, this.bucketName);
+        this._queryAPi = this.client.getQueryApi(this.orgId);
     }
 
     public async deinit() {
@@ -61,7 +77,6 @@ export class TelemetryRepository {
     }
 
     public writeTelemetry(pointType: PointType, data: GenericTelemetry) {
-        this.checkApis();
         const dataPoint = new Point(pointType);
 
         for (const [key, value] of Object.entries(data)) {
@@ -82,7 +97,6 @@ export class TelemetryRepository {
     }
 
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<LocationData[]> {
-        this.checkApis();
         let query = `from(bucket: "${this.bucketName}")
             |> range(start: -24h)
             |> last()

@@ -37,8 +37,6 @@ export class TelemetryService {
 
         const previousTime = await this.cache.get<string>(callsignKey(callsign));
 
-        console.log(packet.data);
-
         if (!previousTime || packet.data._time > previousTime) {
             this.eventBus.emit('telemetry.new', packet.data);
             this.cache.set(callsignKey(callsign), packet.data._time);

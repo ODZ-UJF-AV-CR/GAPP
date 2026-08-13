@@ -1,32 +1,16 @@
 import { computed, Injectable, inject, signal, type TemplateRef } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
-import type { GappData } from '@app/app.routes';
-import { filter, map, startWith } from 'rxjs';
+import { ROUTE_DATA } from '@core/layout/route-data.provider';
 
 export type HeaderContent = TemplateRef<unknown>;
 
 @Injectable({ providedIn: 'root' })
 export class HeaderService {
-    private router = inject(Router);
+    private routeData = inject(ROUTE_DATA);
 
     private _content = signal<HeaderContent | undefined>(undefined);
-    private routeData = toSignal(
-        this.router.events.pipe(
-            filter((event) => event instanceof NavigationEnd),
-            startWith(null),
-            map(() => {
-                let route = this.router.routerState.root;
-                while (route.firstChild) {
-                    route = route.firstChild;
-                }
-                return route.snapshot.data as GappData;
-            }),
-        ),
-    );
 
-    public readonly title = computed(() => this.routeData()?.header?.title);
-    public readonly showHeader = computed(() => this.routeData()?.header?.showHeader ?? false);
+    public readonly title = computed(() => this.routeData().header?.title);
+    public readonly showHeader = computed(() => this.routeData().header?.showHeader ?? false);
     public readonly content = this._content.asReadonly();
 
     public setContent(template: HeaderContent) {

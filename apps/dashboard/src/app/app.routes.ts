@@ -1,15 +1,17 @@
 import type { Route } from '@angular/router';
 import { type HeaderData, useHeader } from '@core/components/header/header-builder';
 import { type NavbarData, useNavbar } from '@core/components/navbar/navbar-builder';
+import { useFullScreen } from '@core/layout/fullscreen-builder';
 import { tablerLayoutDashboard, tablerList, tablerMap2, tablerSettings2 } from '@ng-icons/tabler-icons';
 
-export interface GappData {
+export interface GappRouteData {
     navbar?: NavbarData;
     header?: HeaderData;
+    fullScreen?: boolean;
 }
 
 export interface GappRoute extends Route {
-    data?: GappData;
+    data?: GappRouteData;
 }
 
 export type GappRoutes = Array<GappRoute>;
@@ -37,6 +39,7 @@ export const ROUTES: GappRoutes = [
         title: 'GAPP | Sondehub',
         data: {
             ...useNavbar(tablerMap2),
+            ...useFullScreen(),
         },
     },
     {

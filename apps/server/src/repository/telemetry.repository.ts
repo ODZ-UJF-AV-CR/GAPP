@@ -17,15 +17,22 @@ export type LocationData = {
 
 export class TelemetryRepository {
     private readonly bucketName = 'telemetry';
-    private writeApi: WriteApi;
-    private queryAPi: QueryApi;
+    private writeApi?: WriteApi;
+    private queryAPi?: QueryApi;
 
     constructor(
         private readonly client: InfluxDB,
         private readonly org: Organization,
     ) {}
 
+    private checkApis() {
+        if (!this.writeApi || !this.queryAPi) {
+            throw new Error('influxDB APi is not initialized');
+        }
+    }
+
     private async ensureBucket(name: string): Promise<Bucket> {
+        this.checkApis();
         const bucketsApi = new BucketsAPI(this.client);
 
         const buckets = await bucketsApi.getBuckets();
@@ -54,6 +61,7 @@ export class TelemetryRepository {
     }
 
     public writeTelemetry(pointType: PointType, data: GenericTelemetry) {
+        this.checkApis();
         const dataPoint = new Point(pointType);
 
         for (const [key, value] of Object.entries(data)) {
@@ -74,6 +82,7 @@ export class TelemetryRepository {
     }
 
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<LocationData[]> {
+        this.checkApis();
         let query = `from(bucket: "${this.bucketName}")
             |> range(start: -24h)
             |> last()

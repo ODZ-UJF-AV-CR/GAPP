@@ -1,3 +1,3 @@
-export * from './general.schema';
-export * from './telemetry.schema';
-export * from './vehicle.schema';
+export * from './general.schema.js';
+export * from './telemetry.schema.js';
+export * from './vehicle.schema.js';

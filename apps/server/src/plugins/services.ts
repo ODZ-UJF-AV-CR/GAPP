@@ -15,7 +15,7 @@ declare module 'fastify' {
 
 const services: FastifyPluginAsync = async (fastify) => {
     const telemetryService = new TelemetryService(fastify.telemetryRepository, fastify.vehiclesRepository, fastify.sondehub, fastify.eventBus, fastify.cache);
-    const vehicleService = new VehicleService(fastify.vehiclesRepository);
+    const vehicleService = new VehicleService(fastify.vehiclesRepository, fastify.beaconsRepository);
     const beaconService = new BeaconService(fastify.beaconsRepository, fastify.vehiclesRepository);
 
     fastify.decorate('telemetryService', telemetryService);

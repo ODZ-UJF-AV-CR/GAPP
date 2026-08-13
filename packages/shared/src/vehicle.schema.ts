@@ -20,6 +20,14 @@ export const VehicleGetSchema = T.Object({
 });
 export type VehicleGet = Static<typeof VehicleGetSchema>;
 
+export const VehicleUpdateSchema = T.Object(
+    {
+        description: T.Optional(T.String()),
+    },
+    { additionalProperties: false },
+);
+export type VehicleUpdate = Static<typeof VehicleUpdateSchema>;
+
 export const VehiclesQuerySchema = T.Object({
     includeBeacons: T.Optional(T.Boolean({ default: false })),
 });

@@ -29,6 +29,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     fastify.register(eventBusPlugin);
     fastify.register(cors, {
         origin: '*',
+        methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'],
     });
 
     // PLUGINS

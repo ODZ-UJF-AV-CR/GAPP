@@ -63,6 +63,22 @@ export class ApiService {
         );
     }
 
+    public patch$<T>(url: string, body: unknown | null): Observable<ApiResponse<T>> {
+        return this.http.patch<T>(this.apiUrl(url), body).pipe(
+            map((data) => ({ loading: false, data })),
+            catchError(({ error }) =>
+                of({
+                    loading: false,
+                    error: {
+                        type: error.error,
+                        message: error.message,
+                    },
+                }),
+            ),
+            startWith({ loading: true }),
+        );
+    }
+
     public get$<T>(url: string): Observable<ApiResponse<T>> {
         return this.http.get<T>(this.apiUrl(url)).pipe(
             map((data) => ({ loading: false, data })),

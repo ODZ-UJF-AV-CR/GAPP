@@ -1,4 +1,4 @@
-<div class="toast toast-end toast-bottom">
+<div class="toast toast-end toast-bottom max-md:toast-center max-md:toast-top">
     @for(toast of toasts(); track toast.id) {
     <div [ngClass]="['alert', toast.type]" animate.leave="leaving"><span>{{ toast.message }}</span></div>
     }

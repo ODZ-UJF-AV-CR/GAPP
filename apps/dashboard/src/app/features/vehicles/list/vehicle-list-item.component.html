@@ -1,0 +1,10 @@
+<li class="list-row hover:bg-base-200 cursor-pointer" [routerLink]="['/vehicles', vehicle().id]" aria-label="Edit vehicle">
+    <div class="flex items-center"><vehicle-icon [typeId]="vehicle().vehicle_type_id" size="1.6rem"></vehicle-icon></div>
+
+    <div>
+        <div textLimit="1" class="font-semibold">{{ vehicle().name }}</div>
+        @if(vehicle().description; as description) {
+        <div textLimit="2" class="text-xs font-semibold opacity-60">{{ description }}</div>
+        }
+    </div>
+</li>

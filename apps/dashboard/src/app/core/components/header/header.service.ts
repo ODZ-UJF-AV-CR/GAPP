@@ -10,6 +10,7 @@ export class HeaderService {
     private _content = signal<HeaderContent | undefined>(undefined);
 
     public readonly title = computed(() => this.routeData().header?.title);
+    public readonly back = computed(() => this.routeData().header?.back);
     public readonly showHeader = computed(() => this.routeData().header?.showHeader ?? false);
     public readonly content = this._content.asReadonly();
 

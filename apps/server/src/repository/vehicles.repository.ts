@@ -1,6 +1,6 @@
 import { sql } from 'kysely';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
-import type { DatabaseInstance, NewVehicle } from './postgres-database.ts';
+import type { DatabaseInstance, NewVehicle, VehicleUpdate } from './postgres-database.ts';
 
 export class VehiclesRepository {
     /** @description Returns a query builder for the vehicles, optionally with beacons json */
@@ -56,7 +56,15 @@ export class VehiclesRepository {
         return await this.db.selectFrom('vehicle_types').selectAll().execute();
     }
 
+    public async getVehicleTypeById(vehicleTypeId: number) {
+        return await this.db.selectFrom('vehicle_types').selectAll().where('id', '=', vehicleTypeId).executeTakeFirst();
+    }
+
     // ======== UPDATE ===========
+    public async updateVehicle(vehicleId: number, vehicle: VehicleUpdate) {
+        return await this.db.updateTable('vehicles').set(vehicle).where('id', '=', vehicleId).returningAll().executeTakeFirst();
+    }
+
     public async softDeleteVehicle(vehicleId: number) {
         await this.db.updateTable('vehicles').set({ deleted_at: sql`now()` }).where('id', '=', vehicleId).execute();
     }

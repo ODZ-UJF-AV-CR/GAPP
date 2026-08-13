@@ -1,5 +1,5 @@
 import type { Route } from '@angular/router';
-import { type HeaderData, useHeader } from '@core/components/header/header-builder';
+import type { HeaderData } from '@core/components/header/header-builder';
 import { type NavbarData, useNavbar } from '@core/components/navbar/navbar-builder';
 import { useFullScreen } from '@core/layout/fullscreen-builder';
 import { tablerLayoutDashboard, tablerList, tablerMap2, tablerSettings2 } from '@ng-icons/tabler-icons';
@@ -26,11 +26,9 @@ export const ROUTES: GappRoutes = [
     },
     {
         path: 'vehicles',
-        loadComponent: () => import('@features/vehicles/vehicles.component').then((c) => c.VehiclesComponent),
-        title: 'GAPP | Vehicles',
+        loadChildren: () => import('@features/vehicles/vehicles-routes').then((r) => r.VEHICLES_ROUTES),
         data: {
             ...useNavbar(tablerList),
-            ...useHeader('Vehicles'),
         },
     },
     {

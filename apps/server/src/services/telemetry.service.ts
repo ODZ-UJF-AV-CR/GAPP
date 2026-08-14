@@ -60,7 +60,7 @@ export class TelemetryService {
         return await this.telemetryRepository.getCallsignsLastLocation(callsigns);
     }
 
-    public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
+    public async *telemetryStream(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
         const abortSignal = abortCotroller.signal;
         const queue: EventMessage[] = [];
         const interval = setInterval(() => queue.push({ data: '{"data":"ping"}' }), 30_000);

@@ -20,11 +20,24 @@ export class TelemetryService {
         private readonly cache: Cache,
     ) {}
 
-    public async writeTelemetry(packet: TelemetryPacket, callsign: string) {
-        const vehicle = await this.vehiclesRepository.getVehicleByBeaconCallsign(callsign);
+    public async writeTelemetry(packet: TelemetryPacket, uploadedBy?: string) {
+        const callsign = packet.data.callsign;
+
+        const vehiclesQuery = [this.vehiclesRepository.getVehicleByBeaconCallsign(callsign)];
+        uploadedBy && vehiclesQuery.push(this.vehiclesRepository.getVehicleByBeaconCallsign(uploadedBy));
+
+        const [vehicle, uploaderVehicle] = await Promise.all(vehiclesQuery);
 
         if (!vehicle) {
             throw new Error(`Callsign ${callsign} does not exist`);
+        }
+
+        if (uploadedBy && !uploaderVehicle) {
+            throw new Error(`Uploader ${uploadedBy} does not exist`);
+        }
+
+        if (uploadedBy && !uploaderVehicle?.is_station) {
+            throw new Error(`Uploader ${uploadedBy} is not a station`);
         }
 
         if (vehicle.is_station) {

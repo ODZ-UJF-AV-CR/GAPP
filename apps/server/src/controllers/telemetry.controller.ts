@@ -1,7 +1,9 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { GenericTelemetrySchema, OptionalCallsignQuery, TtnTelemetrySchema } from '@gapp/shared';
+import { GenericTelemetrySchema, OptionalCallsignQuery, OptionalTelemetryUploaderSchema, TtnTelemetrySchema } from '@gapp/shared';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 import { TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
+
+const TTN_UPLOADER_CALLSIGN = 'TTN_Gateway';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -12,14 +14,16 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 summary: 'Endpoint for storing telemetry data',
                 description: 'Received telemetry data are stored and forwarded to SondeHub.',
                 body: GenericTelemetrySchema,
+                querystring: OptionalTelemetryUploaderSchema,
             },
         },
         async (req, rep) => {
             try {
-                await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body), req.body.callsign);
+                await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body), req.query.uploaded_by);
                 rep.code(201).send();
-            } catch {
-                return rep.status(422).send(`Callsign ${req.body.callsign} does not exist`);
+            } catch (e) {
+                const msg = (e as Error).message;
+                return rep.status(422).send(msg);
             }
         },
     );
@@ -40,7 +44,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         },
         async (req, rep) => {
             try {
-                await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body), req.body.end_device_ids.device_id);
+                await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body), TTN_UPLOADER_CALLSIGN);
                 rep.code(200).send('OK');
             } catch {
                 return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);

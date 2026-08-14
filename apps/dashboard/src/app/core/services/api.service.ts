@@ -112,6 +112,6 @@ export class ApiService {
     }
 
     public ping$(): Observable<ApiResponse<unknown>> {
-        return this.get$('/ping');
+        return this.get$(`/ping?cb=${Date.now()}`);
     }
 }

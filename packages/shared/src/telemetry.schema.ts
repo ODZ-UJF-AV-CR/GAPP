@@ -81,7 +81,10 @@ export const GenericTelemetrySchema = T.Object(
 );
 export type GenericTelemetry = Static<typeof GenericTelemetrySchema> & Record<string, number | string | boolean | undefined>;
 
-export const TelemetryUploaderSchema = T.Object({
-    receivedBy: T.String(),
-});
-export type TelemetryUploader = Static<typeof TelemetryUploaderSchema>;
+export const OptionalTelemetryUploaderSchema = T.Object(
+    {
+        uploaded_by: T.Optional(T.String()),
+    },
+    { nullable: true },
+);
+export type OptionalTelemetryUploader = Static<typeof OptionalTelemetryUploaderSchema>;

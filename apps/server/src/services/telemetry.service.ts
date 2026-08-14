@@ -1,9 +1,9 @@
-import type { GenericTelemetry } from '@gapp/shared';
+import type { DashboardStream, GenericTelemetry } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
 import type { Events } from '../plugins/event-bus.ts';
 import { PointType, type TelemetryRepository } from '../repository/telemetry.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import { buildStream } from '../utils/build-stream.ts';
+import { buildStream, type InitialDataCallback, type SubscribeCallback } from '../utils/build-stream.ts';
 import type { Cache } from '../utils/cache.ts';
 import type { EventBus } from '../utils/event-bus.ts';
 import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
@@ -74,5 +74,30 @@ export class TelemetryService {
                 return () => this.eventBus.off('telemetry.new', handler);
             },
         });
+    }
+
+    public getDashboardStream(callsigns?: string[]) {
+        const initialData: InitialDataCallback<DashboardStream> = async () => {
+            const [telemetryData, uploaderContact] = await Promise.all([
+                this.telemetryRepository.getCallsignsLastLocation(callsigns),
+                this.telemetryRepository.getUploadersLastContact(callsigns),
+            ]);
+
+            const telemetry = telemetryData.map((t) => ({
+                _time: t._time,
+                callsign: t.callsign,
+            }));
+
+            return {
+                telemetry,
+                uploaderContact: uploaderContact,
+            };
+        };
+
+        const subscribe: SubscribeCallback<DashboardStream> = (push) => {
+            return () => void 0;
+        };
+
+        return buildStream<DashboardStream>({ initialData, subscribe });
     }
 }

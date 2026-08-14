@@ -10,6 +10,9 @@ export type StreamOptions<T> = {
     idleDelayMs?: number;
 };
 
+export type SubscribeCallback<T> = StreamOptions<T>['subscribe'];
+export type InitialDataCallback<T> = StreamOptions<T>['initialData'];
+
 export const buildStream = <T>(options: StreamOptions<T>) =>
     async function* (abortController: AbortController): AsyncGenerator<EventMessage> {
         const { initialData, subscribe, pingIntervalMs = 30_000, idleDelayMs = 1000 } = options;

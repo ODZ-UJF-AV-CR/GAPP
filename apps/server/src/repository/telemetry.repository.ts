@@ -13,6 +13,7 @@ export type LocationData = {
     callsign: string;
     latitude: number;
     longitude: number;
+    uploader_callsign?: string;
 };
 
 export type LastContactData = {
@@ -104,40 +105,36 @@ export class TelemetryRepository {
     }
 
     public async getUploadersLastContact(callsigns?: string[]): Promise<LastContactData[]> {
-        let query = `from(bucket: "${this.bucketName}")
-            |> range(start: -24h)
-            |> filter(fn: (r) => exists r.uploader_callsign)
-            |> last()
-            |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-            |> keep(columns: ["_time", "uploader_callsign"])`;
+        const uploaderFilter = callsigns?.length
+            ? `|> filter(fn: (r) => contains(value: r.uploader_callsign, set: ${arrayAsString(callsigns)}))`
+            : `|> filter(fn: (r) => exists r.uploader_callsign)`;
 
-        if (callsigns?.length) {
-            query = `from(bucket: "${this.bucketName}")
-                |> range(start: -24h)
-                |> filter(fn: (r) => contains(value: r.uploader_callsign, set: ${arrayAsString(callsigns)}))
-                |> last()
-                |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-                |> keep(columns: ["_time", "uploader_callsign"])`;
-        }
+        // group + sort + last collapses the one row per series that last() returns into one row per uploader
+        const query = `from(bucket: "${this.bucketName}")
+            |> range(start: -24h)
+            ${uploaderFilter}
+            |> last()
+            |> keep(columns: ["_time", "uploader_callsign"])
+            |> group(columns: ["uploader_callsign"])
+            |> sort(columns: ["_time"])
+            |> last(column: "_time")`;
 
         return await this.queryAPi.collectRows(query);
     }
 
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<LocationData[]> {
-        let query = `from(bucket: "${this.bucketName}")
+        const callsignFilter = callsigns?.length ? `|> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))` : '';
+
+        // group + sort + last collapses the one row per series that last() returns into one row per callsign
+        const query = `from(bucket: "${this.bucketName}")
             |> range(start: -24h)
+            ${callsignFilter}
             |> last()
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
-
-        if (callsigns?.length) {
-            query = `from(bucket: "${this.bucketName}")
-                |> range(start: -24h)
-                |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
-                |> last()
-                |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-                |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])`;
-        }
+            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])
+            |> group(columns: ["callsign"])
+            |> sort(columns: ["_time"])
+            |> last(column: "_time")`;
 
         return await this.queryAPi.collectRows(query);
     }

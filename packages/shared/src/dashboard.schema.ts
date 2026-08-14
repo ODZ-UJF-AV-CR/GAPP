@@ -5,6 +5,7 @@ export const DashboardStreamSchema = T.Object({
         T.Object({
             _time: T.String({ format: 'date-time' }),
             callsign: T.String(),
+            uploader_callsign: T.Optional(T.String()),
         }),
     ),
     uploaderContact: T.Array(

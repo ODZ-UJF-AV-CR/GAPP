@@ -56,8 +56,6 @@ export class TelemetryService {
             this.eventBus.emit('telemetry.new', telemetry);
             this.cache.set(callsignKey(callsign), packet.data._time);
         }
-
-        this.telemetryRepository.getCallsignsLastLocation().then((data) => console.log(data));
     }
 
     public async getCallsignsTelemetry(callsigns?: string[]) {
@@ -90,14 +88,8 @@ export class TelemetryService {
             ]);
 
             return {
-                telemetry: this.newestPerCallsign(
-                    locations.map(({ _time, callsign }) => ({ _time, callsign })),
-                    (row) => row.callsign,
-                ),
-                uploaderContact: this.newestPerCallsign(
-                    contacts.map(({ _time, uploader_callsign }) => ({ _time, uploader_callsign })),
-                    (row) => row.uploader_callsign,
-                ),
+                telemetry: locations.map(({ _time, callsign, uploader_callsign }) => ({ _time, callsign, uploader_callsign })),
+                uploaderContact: contacts.map(({ _time, uploader_callsign }) => ({ _time, uploader_callsign })),
             };
         };
 
@@ -118,19 +110,5 @@ export class TelemetryService {
         };
 
         return buildStream<DashboardStream>({ initialData, subscribe });
-    }
-
-    // influx last() returns one row per series, so a callsign can repeat once per uploader tag
-    private newestPerCallsign<T extends { _time: string }>(rows: T[], keyOf: (row: T) => string): T[] {
-        const newest = new Map<string, T>();
-
-        for (const row of rows) {
-            const current = newest.get(keyOf(row));
-            if (!current || row._time > current._time) {
-                newest.set(keyOf(row), row);
-            }
-        }
-
-        return [...newest.values()];
     }
 }

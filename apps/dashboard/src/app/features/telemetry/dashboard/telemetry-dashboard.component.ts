@@ -1,25 +1,31 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, type OnInit, signal, type WritableSignal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderContentDirective } from '@core/components/header/header-content.directive';
-import { LatencyService } from '@core/services/latency.service';
-import type { GenericTelemetry, VehicleGet } from '@gapp/shared';
+import type { DashboardStream, VehicleGet } from '@gapp/shared';
 import { VehicleIconComponent } from '@shared/components/vehicle-icon/vehicle-icon.component';
 import { VehicleService } from '@shared/services';
-import { concat, filter, map, skip, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { TelemetryService } from '../telemetry.service';
 import { VehicleRowComponent } from './vehicle-row.component';
 
-export interface BeaconWithTelemetry {
+export type BeaconContactData = DashboardStream['telemetry'][number];
+export type BeaconUploadData = DashboardStream['uploaderContact'][number];
+
+export interface BeaconWithContact {
     beacon: NonNullable<VehicleGet['beacons']>[number];
-    telemetry: WritableSignal<GenericTelemetry | undefined>;
+    contact: WritableSignal<BeaconContactData | undefined>;
+    upload: WritableSignal<BeaconUploadData | undefined>;
 }
 
-export interface VehicleWithTelemetry extends Omit<VehicleGet, 'beacons'> {
-    beacons: BeaconWithTelemetry[];
+export interface VehicleWithContact extends Omit<VehicleGet, 'beacons'> {
+    beacons: BeaconWithContact[];
 }
 
-const telemetryCompare = (prev: GenericTelemetry | undefined, next: GenericTelemetry | undefined) => prev?._time === next?._time;
+const contactCompare = (prev: BeaconContactData | undefined, next: BeaconContactData | undefined) =>
+    prev?._time === next?._time && prev?.uploader_callsign === next?.uploader_callsign;
+
+const uploadCompare = (prev: BeaconUploadData | undefined, next: BeaconUploadData | undefined) => prev?._time === next?._time;
 
 @Component({
     selector: 'telemetry-dashboard',
@@ -31,12 +37,13 @@ const telemetryCompare = (prev: GenericTelemetry | undefined, next: GenericTelem
 export class TelemetryDashboardComponent implements OnInit {
     private vehiclesService = inject(VehicleService);
     private telemetryService = inject(TelemetryService);
-    private latencyService = inject(LatencyService);
 
-    private vehiclesWithTelemetry = signal<VehicleWithTelemetry[]>([]);
-    private beaconsWithTelemetry = computed(() => this.vehiclesWithTelemetry().flatMap((vehicle) => vehicle.beacons));
+    private beaconsByCallsign = new Map<string, BeaconWithContact>();
+
+    private vehiclesWithContact = signal<VehicleWithContact[]>([]);
+    private beaconsWithContact = computed(() => this.vehiclesWithContact().flatMap((vehicle) => vehicle.beacons));
     private vehiclesByVehicleType = computed(() => {
-        const vehiclesList = this.vehiclesWithTelemetry();
+        const vehiclesList = this.vehiclesWithContact();
         const typesList = this.vehiclesService.vehicleTypesList();
 
         return typesList.map((type) => ({
@@ -45,42 +52,20 @@ export class TelemetryDashboardComponent implements OnInit {
         }));
     });
 
-    public latency = toSignal(this.latencyService.latency$(5_000).pipe(map((latency) => (latency ? `${latency} ms` : `no internet`))));
-    public connectedStatus = computed(() => `${this.beaconsWithTelemetry().filter((b) => !!b.telemetry()).length}/${this.beaconsWithTelemetry().length}`);
+    public connectedStatus = computed(() => `${this.beaconsWithContact().filter((b) => !!b.contact()).length}/${this.beaconsWithContact().length}`);
     public stationTypes = computed(() => this.vehiclesByVehicleType().filter((entry) => entry.type.is_station));
     public mobileTypes = computed(() => this.vehiclesByVehicleType().filter((entry) => !entry.type.is_station));
 
     constructor() {
         this.vehiclesService.vehiclesList$
             .pipe(
-                skip(1),
                 filter((vehicles) => vehicles.length > 0),
-                // Create initial data structure for VehicleWithTelemetry
-                tap((vehicles) =>
-                    this.vehiclesWithTelemetry.set(
-                        vehicles.map((vehicle) => ({
-                            ...vehicle,
-                            beacons: (vehicle.beacons ?? []).map((beacon) => ({
-                                beacon,
-                                telemetry: signal(undefined, {
-                                    equal: telemetryCompare,
-                                }),
-                            })),
-                        })),
-                    ),
-                ),
-                // Extract callsigns list
-                map((vehicles) => vehicles.flatMap((vehicle) => (vehicle.beacons ?? []).map((beacon) => beacon.callsign))),
-                switchMap((callsigns) =>
-                    concat(
-                        this.telemetryService.getLatestTelemetry$(callsigns),
-                        this.telemetryService.streamTelemetry$(callsigns).pipe(map((data: GenericTelemetry) => [data])),
-                    ),
-                ),
-                filter((data) => data.length > 0),
+                tap((vehicles) => this.initVehicles(vehicles)),
+                map(() => [...this.beaconsByCallsign.keys()]),
+                switchMap((callsigns) => this.telemetryService.streamDashboard$(callsigns)),
                 takeUntilDestroyed(),
             )
-            .subscribe((telemetry) => this.mapTelemetry(telemetry));
+            .subscribe((data) => this.mapStreamData(data));
     }
 
     public ngOnInit() {
@@ -88,11 +73,28 @@ export class TelemetryDashboardComponent implements OnInit {
         this.vehiclesService.loadVehicles(true);
     }
 
-    private mapTelemetry(data: GenericTelemetry[]) {
-        data.forEach((telemetry) =>
-            this.beaconsWithTelemetry()
-                .find(({ beacon }) => beacon.callsign === telemetry.callsign)
-                ?.telemetry.set(telemetry),
+    private initVehicles(vehicles: VehicleGet[]) {
+        this.beaconsByCallsign = new Map();
+
+        this.vehiclesWithContact.set(
+            vehicles.map((vehicle) => ({
+                ...vehicle,
+                beacons: (vehicle.beacons ?? []).map((beacon) => {
+                    const entry: BeaconWithContact = {
+                        beacon,
+                        contact: signal(undefined, { equal: contactCompare }),
+                        upload: signal(undefined, { equal: uploadCompare }),
+                    };
+
+                    this.beaconsByCallsign.set(beacon.callsign, entry);
+                    return entry;
+                }),
+            })),
         );
+    }
+
+    private mapStreamData({ telemetry, uploaderContact }: DashboardStream) {
+        telemetry.forEach((contact) => this.beaconsByCallsign.get(contact.callsign)?.contact.set(contact));
+        uploaderContact.forEach((upload) => this.beaconsByCallsign.get(upload.uploader_callsign)?.upload.set(upload));
     }
 }

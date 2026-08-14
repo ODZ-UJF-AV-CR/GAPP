@@ -131,7 +131,7 @@ export class TelemetryRepository {
             ${callsignFilter}
             |> last()
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign"])
+            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "uploader_callsign"])
             |> group(columns: ["callsign"])
             |> sort(columns: ["_time"])
             |> last(column: "_time")`;

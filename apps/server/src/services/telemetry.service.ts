@@ -58,26 +58,6 @@ export class TelemetryService {
         }
     }
 
-    public async getCallsignsTelemetry(callsigns?: string[]) {
-        return await this.telemetryRepository.getCallsignsLastLocation(callsigns);
-    }
-
-    public getTelemetryStream(callsigns?: string[]) {
-        return buildStream<GenericTelemetry>({
-            initialData: () => this.telemetryRepository.getCallsignsLastLocation(callsigns),
-            subscribe: (push) => {
-                const handler = (data: GenericTelemetry) => {
-                    if (!callsigns || callsigns.includes(data.callsign)) {
-                        push(data);
-                    }
-                };
-
-                this.eventBus.on('telemetry.new', handler);
-                return () => this.eventBus.off('telemetry.new', handler);
-            },
-        });
-    }
-
     public getDashboardStream(callsigns?: string[]) {
         const isWatched = (callsign?: string) => !!callsign && (!callsigns?.length || callsigns.includes(callsign));
 
@@ -96,7 +76,7 @@ export class TelemetryService {
         const subscribe: SubscribeCallback<DashboardStream> = (push) => {
             const handler = ({ _time, callsign, uploader_callsign }: GenericTelemetry) => {
                 const update: DashboardStream = {
-                    telemetry: isWatched(callsign) ? [{ _time, callsign }] : [],
+                    telemetry: isWatched(callsign) ? [{ _time, callsign, uploader_callsign }] : [],
                     uploaderContact: isWatched(uploader_callsign) ? [{ _time, uploader_callsign: uploader_callsign as string }] : [],
                 };
 

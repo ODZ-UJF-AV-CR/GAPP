@@ -1,6 +1,5 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { GenericTelemetrySchema, OptionalCallsignQuery, OptionalTelemetryUploaderSchema, TtnTelemetrySchema } from '@gapp/shared';
-import { FastifySSEPlugin } from 'fastify-sse-v2';
+import { GenericTelemetrySchema, OptionalTelemetryUploaderSchema, TtnTelemetrySchema } from '@gapp/shared';
 import { TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
@@ -47,46 +46,6 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             } catch {
                 return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
             }
-        },
-    );
-
-    fastify.get(
-        '',
-        {
-            schema: {
-                tags: ['telemetry'],
-                summary: 'Get telemetry data',
-                description: 'Retrieve telemetry data for a specific vehicle.',
-                querystring: OptionalCallsignQuery,
-                response: {
-                    200: Type.Array(GenericTelemetrySchema),
-                },
-            },
-        },
-        async (req, rep) => {
-            const callsigns = req.query.callsign?.split(',');
-            const telemetry = await req.server.telemetryService.getCallsignsTelemetry(callsigns);
-            rep.code(200).send(telemetry);
-        },
-    );
-
-    fastify.register(FastifySSEPlugin);
-
-    fastify.get(
-        '/stream',
-        {
-            schema: {
-                tags: ['telemetry'],
-                summary: 'Get live data',
-                description:
-                    'Stream live data updates from vessels and chase cars using server sent events. callsign query parameter can contain multiple callsigns separated by ",".',
-                querystring: OptionalCallsignQuery,
-            },
-        },
-        async (req, rep) => {
-            const ac = req.server.getAbortController();
-            req.raw.on('close', () => ac.abort());
-            rep.sse(req.server.telemetryService.getTelemetryStream(req.query.callsign?.split(','))(ac));
         },
     );
 };

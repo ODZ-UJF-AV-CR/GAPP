@@ -183,7 +183,9 @@ export class Uploader {
             });
 
             if (response.status === 200) {
-                this.logInfo('Station position uploaded successfully.');
+                this.logDebug('Station position uploaded successfully.');
+            } else if (response.status === 202) {
+                this.logInfo('Station packet accepted in test mode');
             } else {
                 this.logError(`Failed to upload station position. Status: ${response.status}, Message: ${response.statusText}`);
             }
@@ -223,6 +225,8 @@ export class Uploader {
 
             if (response.status === 200) {
                 this.logInfo(`Uploaded ${packets.length} telemetry packets.`);
+            } else if (response.status === 202) {
+                this.logInfo('Station packet accepted in test mode');
             } else {
                 this.logError(`Failed to upload telemetry. Status: ${response.status}, Message: ${response.statusText}`);
             }

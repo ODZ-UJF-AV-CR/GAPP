@@ -15,6 +15,11 @@ export type LocationData = {
     longitude: number;
 };
 
+export type LastContactData = {
+    _time: string;
+    uploader_callsign: string;
+};
+
 export class TelemetryRepository {
     private readonly bucketName = 'telemetry';
     private readonly orgId: string;
@@ -82,6 +87,8 @@ export class TelemetryRepository {
         for (const [key, value] of Object.entries(data)) {
             if (key === 'callsign') {
                 dataPoint.tag(key, value as string);
+            } else if (key === 'uploader_callsign') {
+                dataPoint.tag(key, value as string);
             } else if (key === '_time') {
                 dataPoint.timestamp(new Date(value as string));
             } else if (typeof value === 'string') {
@@ -94,6 +101,26 @@ export class TelemetryRepository {
         }
 
         this.writeApi.writePoint(dataPoint);
+    }
+
+    public async getUploadersLastContact(callsigns?: string[]): Promise<LastContactData[]> {
+        let query = `from(bucket: "${this.bucketName}")
+            |> range(start: -24h)
+            |> filter(fn: (r) => exists r.uploader_callsign)
+            |> last()
+            |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+            |> keep(columns: ["_time", "uploader_callsign"])`;
+
+        if (callsigns?.length) {
+            query = `from(bucket: "${this.bucketName}")
+                |> range(start: -24h)
+                |> filter(fn: (r) => contains(value: r.uploader_callsign, set: ${arrayAsString(callsigns)}))
+                |> last()
+                |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+                |> keep(columns: ["_time", "uploader_callsign"])`;
+        }
+
+        return await this.queryAPi.collectRows(query);
     }
 
     public async getCallsignsLastLocation(callsigns?: string[]): Promise<LocationData[]> {

@@ -9,11 +9,15 @@ export interface TelemetryPacketOptions {
 export abstract class TelemetryPacket {
     constructor(
         private readonly telemetry: GenericTelemetry,
-        private readonly options: TelemetryPacketOptions = {},
+        private readonly _options: TelemetryPacketOptions = {},
     ) {}
 
     public get data() {
         return this.telemetry;
+    }
+
+    public get options() {
+        return this._options;
     }
 
     public get sondehubPacket(): SondehubTelemetryPacket {
@@ -24,8 +28,8 @@ export abstract class TelemetryPacket {
             lat: this.telemetry.latitude,
             lon: this.telemetry.longitude,
             alt: this.telemetry.altitude,
-            modulation: this.options.modulation || 'LoRa',
-            uploader_callsign: this.options.uploader_callsign || 'GAPP-Server',
+            modulation: this._options.modulation,
+            uploader_callsign: this._options.uploader_callsign || 'GAPP-Server',
             heading: this.telemetry.heading as number,
             batt: this.telemetry.batt as number,
             snr: this.telemetry.snr as number,
@@ -50,7 +54,7 @@ export class TelemetryPacketGeneral extends TelemetryPacket {
 }
 
 export class TelemetryPacketFromTtn extends TelemetryPacket {
-    constructor(ttnPayload: TtnTelemetry, options: TelemetryPacketOptions = {}) {
+    constructor(ttnPayload: TtnTelemetry) {
         super(
             {
                 _time: ttnPayload.uplink_message.received_at,
@@ -61,7 +65,10 @@ export class TelemetryPacketFromTtn extends TelemetryPacket {
                 heading: ttnPayload.uplink_message.decoded_payload.course,
                 speed_horizontal: ttnPayload.uplink_message.decoded_payload.speed_mps,
             },
-            options,
+            {
+                modulation: 'LoRa',
+                uploader_callsign: 'TTN_Gateway',
+            },
         );
     }
 }

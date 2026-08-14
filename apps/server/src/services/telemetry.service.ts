@@ -19,8 +19,9 @@ export class TelemetryService {
         private readonly cache: Cache,
     ) {}
 
-    public async writeTelemetry(packet: TelemetryPacket, uploadedBy?: string) {
+    public async writeTelemetry(packet: TelemetryPacket) {
         const callsign = packet.data.callsign;
+        const uploadedBy = packet.options.uploader_callsign;
 
         const vehiclesQuery = [this.vehiclesRepository.getVehicleByBeaconCallsign(callsign)];
         uploadedBy && vehiclesQuery.push(this.vehiclesRepository.getVehicleByBeaconCallsign(uploadedBy));
@@ -45,7 +46,7 @@ export class TelemetryService {
             this.sondehub.addTelemetry(packet.sondehubPacket);
         }
 
-        this.telemetryRepository.writeTelemetry(PointType.LOCATION, packet.data);
+        this.telemetryRepository.writeTelemetry(PointType.LOCATION, { ...packet.data, uploader_callsign: uploadedBy });
 
         const previousTime = await this.cache.get<string>(callsignKey(callsign));
 

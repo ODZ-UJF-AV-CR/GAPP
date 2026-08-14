@@ -73,6 +73,7 @@ export const GenericTelemetrySchema = T.Object(
         latitude: T.Number(),
         longitude: T.Number(),
         altitude: T.Number(),
+        uploader_callsign: T.Optional(T.String()),
         _time: T.String({ format: 'date-time' }),
     },
     {

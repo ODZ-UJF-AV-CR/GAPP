@@ -3,8 +3,6 @@ import { GenericTelemetrySchema, OptionalCallsignQuery, OptionalTelemetryUploade
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 import { TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
 
-const TTN_UPLOADER_CALLSIGN = 'TTN_Gateway';
-
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
         '',
@@ -19,7 +17,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         },
         async (req, rep) => {
             try {
-                await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body), req.query.uploaded_by);
+                await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body, { uploader_callsign: req.query.uploaded_by }));
                 rep.code(201).send();
             } catch (e) {
                 const msg = (e as Error).message;
@@ -44,7 +42,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
         },
         async (req, rep) => {
             try {
-                await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body), TTN_UPLOADER_CALLSIGN);
+                await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body));
                 rep.code(200).send('OK');
             } catch {
                 return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);

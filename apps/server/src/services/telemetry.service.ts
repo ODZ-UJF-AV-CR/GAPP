@@ -1,10 +1,9 @@
-import { setInterval } from 'node:timers';
 import type { GenericTelemetry } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
-import type { EventMessage } from 'fastify-sse-v2';
 import type { Events } from '../plugins/event-bus.ts';
 import { PointType, type TelemetryRepository } from '../repository/telemetry.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import { buildStream } from '../utils/build-stream.ts';
 import type { Cache } from '../utils/cache.ts';
 import type { EventBus } from '../utils/event-bus.ts';
 import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
@@ -60,37 +59,19 @@ export class TelemetryService {
         return await this.telemetryRepository.getCallsignsLastLocation(callsigns);
     }
 
-    public async *telemetryStream(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
-        const abortSignal = abortCotroller.signal;
-        const queue: EventMessage[] = [];
-        const interval = setInterval(() => queue.push({ data: '{"data":"ping"}' }), 30_000);
+    public getTelemetryStream(callsigns?: string[]) {
+        return buildStream<GenericTelemetry>({
+            initialData: () => this.telemetryRepository.getCallsignsLastLocation(callsigns),
+            subscribe: (push) => {
+                const handler = (data: GenericTelemetry) => {
+                    if (!callsigns || callsigns.includes(data.callsign)) {
+                        push(data);
+                    }
+                };
 
-        const data = await this.telemetryRepository.getCallsignsLastLocation(callsigns);
-        queue.push({ data: JSON.stringify(data) });
-
-        const newDataHandler = (data: GenericTelemetry) => {
-            if (!callsigns || callsigns.includes(data.callsign)) {
-                queue.push({ data: JSON.stringify(data) });
-            }
-        };
-
-        this.eventBus.on('telemetry.new', newDataHandler);
-
-        try {
-            while (!abortSignal.aborted) {
-                const message = queue.shift();
-                if (message) {
-                    yield message;
-                } else {
-                    await new Promise((r) => setTimeout(r, 1000));
-                }
-            }
-        } finally {
-            if (interval) {
-                clearInterval(interval);
-            }
-
-            this.eventBus.off('telemetry.new', newDataHandler);
-        }
+                this.eventBus.on('telemetry.new', handler);
+                return () => this.eventBus.off('telemetry.new', handler);
+            },
+        });
     }
 }

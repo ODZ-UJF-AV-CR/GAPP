@@ -5,12 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderContentDirective } from '@core/components/header/header-content.directive';
 import type { ApiResponse } from '@core/services/api.service';
 import { ToastService } from '@core/toasts';
-import type { BeaconsCreate, VehicleGet } from '@gapp/shared';
+import type { BeaconsCreate, VehicleGet, VehicleUpdate } from '@gapp/shared';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { tablerPlus, tablerTrash } from '@ng-icons/tabler-icons';
 import { VehicleIconComponent } from '@shared/components/vehicle-icon/vehicle-icon.component';
 import { type DialogButton, DialogDirective } from '@shared/dialog';
-import { TextInputComponent } from '@shared/forms';
+import { TextInputComponent, ToggleInputComponent } from '@shared/forms';
 import { BeaconService, VehicleService } from '@shared/services';
 import { LoaderComponent } from '@shared/utils';
 import { concat, filter, map, type Observable, take, toArray } from 'rxjs';
@@ -25,7 +25,16 @@ type BeaconGroup = FormGroup<{
     templateUrl: './vehicle-detail.component.html',
     host: { class: 'flex flex-col items-center max-h-full w-full' },
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ReactiveFormsModule, HeaderContentDirective, TextInputComponent, LoaderComponent, NgIcon, DialogDirective, VehicleIconComponent],
+    imports: [
+        ReactiveFormsModule,
+        HeaderContentDirective,
+        TextInputComponent,
+        ToggleInputComponent,
+        LoaderComponent,
+        NgIcon,
+        DialogDirective,
+        VehicleIconComponent,
+    ],
     providers: [provideIcons({ tablerTrash, tablerPlus })],
 })
 export class VehicleDetailComponent implements OnInit {
@@ -39,7 +48,7 @@ export class VehicleDetailComponent implements OnInit {
     private deleteDialog = viewChild.required<DialogDirective>('deleteDialog');
     private vehicleResponse = signal<ApiResponse<VehicleGet>>({ loading: true });
     private removedBeaconIds = signal<number[]>([]);
-    private loadedDescription = signal('');
+    private loadedSettings = signal<Required<VehicleUpdate>>({ description: '', upload_aggregation: true, upload_beacons: false });
 
     public vehicleId = toSignal(this.activatedRoute.paramMap.pipe(map((params) => Number(params.get('vehicleId')))), { requireSync: true });
     public vehicle = computed(() => this.vehicleResponse().data);
@@ -49,6 +58,8 @@ export class VehicleDetailComponent implements OnInit {
     public beaconsInput = new FormArray<BeaconGroup>([]);
     public form = this.formBuilder.nonNullable.group({
         description: [''],
+        upload_aggregation: [true],
+        upload_beacons: [false],
         beacons: this.beaconsInput,
     });
     public deleteButtons: DialogButton[] = [
@@ -60,18 +71,24 @@ export class VehicleDetailComponent implements OnInit {
     private changes = computed(() => {
         this.formState();
         const rows = this.beaconsInput.getRawValue();
-        const description = this.form.controls.description.value;
+        const { description, upload_aggregation, upload_beacons } = this.form.getRawValue();
+        const loaded = this.loadedSettings();
+        const vehicleUpdate: VehicleUpdate = {};
+
+        if (description !== loaded.description) vehicleUpdate.description = description;
+        if (upload_aggregation !== loaded.upload_aggregation) vehicleUpdate.upload_aggregation = upload_aggregation;
+        if (upload_beacons !== loaded.upload_beacons) vehicleUpdate.upload_beacons = upload_beacons;
 
         return {
             created: rows.filter((row) => row.id === null).map((row) => ({ callsign: row.callsign.trim(), vehicle_id: this.vehicleId() })) as BeaconsCreate,
             deleted: this.removedBeaconIds(),
-            description: description === this.loadedDescription() ? undefined : description,
+            vehicleUpdate,
         };
     });
 
     public canSave = computed(() => {
-        const { created, deleted, description } = this.changes();
-        return created.length > 0 || deleted.length > 0 || description !== undefined;
+        const { created, deleted, vehicleUpdate } = this.changes();
+        return created.length > 0 || deleted.length > 0 || Object.keys(vehicleUpdate).length > 0;
     });
 
     public ngOnInit() {
@@ -137,7 +154,7 @@ export class VehicleDetailComponent implements OnInit {
     }
 
     private buildSaveOperations() {
-        const { created, deleted, description } = this.changes();
+        const { created, deleted, vehicleUpdate } = this.changes();
         const operations: Observable<ApiResponse<unknown>>[] = [];
 
         deleted.forEach((id) => operations.push(this.beaconService.deleteBeacon$(id).pipe(this.firstResult())));
@@ -146,8 +163,8 @@ export class VehicleDetailComponent implements OnInit {
             operations.push(this.beaconService.createBeacons$(created).pipe(this.firstResult()));
         }
 
-        if (description !== undefined) {
-            operations.push(this.vehicleService.updateVehicle$(this.vehicleId(), { description }).pipe(this.firstResult()));
+        if (Object.keys(vehicleUpdate).length) {
+            operations.push(this.vehicleService.updateVehicle$(this.vehicleId(), vehicleUpdate).pipe(this.firstResult()));
         }
 
         return operations;
@@ -169,8 +186,13 @@ export class VehicleDetailComponent implements OnInit {
     private seedForm(vehicle: VehicleGet) {
         this.beaconsInput.clear();
         (vehicle.beacons ?? []).forEach((beacon) => this.beaconsInput.push(this.createBeaconGroup(beacon.id, beacon.callsign)));
-        this.form.controls.description.setValue(vehicle.description ?? '');
-        this.loadedDescription.set(vehicle.description ?? '');
+        const settings = {
+            description: vehicle.description ?? '',
+            upload_aggregation: vehicle.upload_aggregation,
+            upload_beacons: vehicle.upload_beacons,
+        };
+        this.form.patchValue(settings);
+        this.loadedSettings.set(settings);
         this.removedBeaconIds.set([]);
         this.form.markAsPristine();
         this.form.markAsUntouched();

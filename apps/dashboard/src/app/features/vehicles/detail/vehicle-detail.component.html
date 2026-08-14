@@ -27,6 +27,19 @@
     <form [formGroup]="form">
         <text-input formControlName="description" label="Description" help="Optional description of vehicle." type="textarea"></text-input>
 
+        <div class="divider divider-start">Upload settings</div>
+
+        <toggle-input
+            formControlName="upload_aggregation"
+            label="Upload aggregated position"
+            help="Send the aggregated vehicle position to SondeHub."
+        ></toggle-input>
+        <toggle-input
+            formControlName="upload_beacons"
+            label="Upload individual transmitters"
+            help="Send each transmitter's raw position to SondeHub."
+        ></toggle-input>
+
         <div class="divider divider-start">Transmitters</div>
 
         <ng-container formArrayName="beacons">

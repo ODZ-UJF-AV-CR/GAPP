@@ -46,14 +46,18 @@ export class TelemetryService {
             this.sondehub.addTelemetry(packet.sondehubPacket);
         }
 
-        this.telemetryRepository.writeTelemetry(PointType.LOCATION, { ...packet.data, uploader_callsign: uploadedBy });
+        const telemetry = { ...packet.data, uploader_callsign: uploadedBy };
+
+        this.telemetryRepository.writeTelemetry(PointType.LOCATION, telemetry);
 
         const previousTime = await this.cache.get<string>(callsignKey(callsign));
 
         if (!previousTime || packet.data._time > previousTime) {
-            this.eventBus.emit('telemetry.new', packet.data);
+            this.eventBus.emit('telemetry.new', telemetry);
             this.cache.set(callsignKey(callsign), packet.data._time);
         }
+
+        this.telemetryRepository.getCallsignsLastLocation().then((data) => console.log(data));
     }
 
     public async getCallsignsTelemetry(callsigns?: string[]) {
@@ -77,27 +81,56 @@ export class TelemetryService {
     }
 
     public getDashboardStream(callsigns?: string[]) {
+        const isWatched = (callsign?: string) => !!callsign && (!callsigns?.length || callsigns.includes(callsign));
+
         const initialData: InitialDataCallback<DashboardStream> = async () => {
-            const [telemetryData, uploaderContact] = await Promise.all([
+            const [locations, contacts] = await Promise.all([
                 this.telemetryRepository.getCallsignsLastLocation(callsigns),
                 this.telemetryRepository.getUploadersLastContact(callsigns),
             ]);
 
-            const telemetry = telemetryData.map((t) => ({
-                _time: t._time,
-                callsign: t.callsign,
-            }));
-
             return {
-                telemetry,
-                uploaderContact: uploaderContact,
+                telemetry: this.newestPerCallsign(
+                    locations.map(({ _time, callsign }) => ({ _time, callsign })),
+                    (row) => row.callsign,
+                ),
+                uploaderContact: this.newestPerCallsign(
+                    contacts.map(({ _time, uploader_callsign }) => ({ _time, uploader_callsign })),
+                    (row) => row.uploader_callsign,
+                ),
             };
         };
 
         const subscribe: SubscribeCallback<DashboardStream> = (push) => {
-            return () => void 0;
+            const handler = ({ _time, callsign, uploader_callsign }: GenericTelemetry) => {
+                const update: DashboardStream = {
+                    telemetry: isWatched(callsign) ? [{ _time, callsign }] : [],
+                    uploaderContact: isWatched(uploader_callsign) ? [{ _time, uploader_callsign: uploader_callsign as string }] : [],
+                };
+
+                if (update.telemetry.length || update.uploaderContact.length) {
+                    push(update);
+                }
+            };
+
+            this.eventBus.on('telemetry.new', handler);
+            return () => this.eventBus.off('telemetry.new', handler);
         };
 
         return buildStream<DashboardStream>({ initialData, subscribe });
+    }
+
+    // influx last() returns one row per series, so a callsign can repeat once per uploader tag
+    private newestPerCallsign<T extends { _time: string }>(rows: T[], keyOf: (row: T) => string): T[] {
+        const newest = new Map<string, T>();
+
+        for (const row of rows) {
+            const current = newest.get(keyOf(row));
+            if (!current || row._time > current._time) {
+                newest.set(keyOf(row), row);
+            }
+        }
+
+        return [...newest.values()];
     }
 }

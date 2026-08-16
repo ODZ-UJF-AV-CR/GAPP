@@ -20,10 +20,10 @@ export abstract class TelemetryPacket {
         return this._options;
     }
 
-    public get sondehubPacket(): SondehubTelemetryPacket {
+    public sondehubPacket(payloadCallsign = this.telemetry.callsign): SondehubTelemetryPacket {
         return {
             time_received: this.telemetry._time,
-            payload_callsign: this.telemetry.callsign,
+            payload_callsign: payloadCallsign,
             datetime: new Date().toISOString(),
             lat: this.telemetry.latitude,
             lon: this.telemetry.longitude,
@@ -38,9 +38,9 @@ export abstract class TelemetryPacket {
         };
     }
 
-    public get sondehubStationPosition(): StationPositionPacket {
+    public sondehubStationPosition(uploaderCallsign = this.telemetry.callsign): StationPositionPacket {
         return {
-            uploader_callsign: this.telemetry.callsign,
+            uploader_callsign: uploaderCallsign,
             uploader_position: [this.telemetry.latitude, this.telemetry.longitude, this.telemetry.altitude],
             mobile: true,
         };

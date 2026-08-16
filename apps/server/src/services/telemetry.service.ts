@@ -40,10 +40,14 @@ export class TelemetryService {
             throw new Error(`Uploader ${uploadedBy} is not a station`);
         }
 
-        if (vehicle.is_station) {
-            this.sondehub.uploadStationPosition(packet.sondehubStationPosition);
-        } else {
-            this.sondehub.addTelemetry(packet.sondehubPacket);
+        const uploadCallsigns = [...(vehicle.upload_aggregation ? [vehicle.name] : []), ...(vehicle.upload_beacons ? [callsign] : [])];
+
+        for (const uploadCallsign of uploadCallsigns) {
+            if (vehicle.is_station) {
+                this.sondehub.uploadStationPosition(packet.sondehubStationPosition(uploadCallsign));
+            } else {
+                this.sondehub.addTelemetry(packet.sondehubPacket(uploadCallsign));
+            }
         }
 
         const telemetry = { ...packet.data, uploader_callsign: uploadedBy };

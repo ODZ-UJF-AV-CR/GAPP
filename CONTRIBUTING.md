@@ -2,12 +2,12 @@
 
 ## Preparations
 
-1. You need to use NodeJS version `v24.5.0` or newer or use `nvm use` to switch to the correct version.
+1. You need to use NodeJS version `v26.7.0` or newer or use `nvm use` to switch to the correct version.
 
 2. Since we are using [PNPM](https://pnpm.io/), you need to install corepack:
 
 ```bash
-npm install -g corepack0.32.0
+npm install -g corepack@latest
 
 corepack enable
 ```

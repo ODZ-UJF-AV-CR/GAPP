@@ -1,6 +1,6 @@
 <fieldset class="fieldset w-full">
     <label class="label cursor-pointer justify-start gap-3">
-        <input type="checkbox" [formControl]="control" class="toggle {{ sizeClass() }}" [ngClass]="{ 'toggle-error': showError() }" />
+        <input type="checkbox" [formControl]="control" class="toggle toggle-primary {{ sizeClass() }}" [ngClass]="{ 'toggle-error': showError() }" />
         @if(label(); as label) {
         <span class="text-base-content">
             {{ label }}

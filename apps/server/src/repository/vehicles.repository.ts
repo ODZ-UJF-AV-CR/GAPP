@@ -46,7 +46,15 @@ export class VehiclesRepository {
             .selectFrom('beacons')
             .innerJoin('vehicles', 'beacons.vehicle_id', 'vehicles.id')
             .innerJoin('vehicle_types', 'vehicles.vehicle_type_id', 'vehicle_types.id')
-            .select(['vehicles.id', 'vehicles.name', 'vehicles.description', 'vehicle_types.is_station', 'vehicle_types.type_name'])
+            .select([
+                'vehicles.id',
+                'vehicles.name',
+                'vehicles.description',
+                'vehicle_types.is_station',
+                'vehicle_types.type_name',
+                'vehicles.upload_aggregation',
+                'upload_beacons',
+            ])
             .where('beacons.callsign', '=', callsign)
             .$if(!includeDeleted, (qb) => qb.where('vehicles.deleted_at', 'is', null))
             .executeTakeFirst();

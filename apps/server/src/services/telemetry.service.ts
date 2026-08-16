@@ -1,10 +1,9 @@
-import { setInterval } from 'node:timers';
-import type { GenericTelemetry } from '@gapp/shared';
+import type { DashboardStream, GenericTelemetry } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
-import type { EventMessage } from 'fastify-sse-v2';
 import type { Events } from '../plugins/event-bus.ts';
 import { PointType, type TelemetryRepository } from '../repository/telemetry.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
+import { buildStream, type InitialDataCallback, type SubscribeCallback } from '../utils/build-stream.ts';
 import type { Cache } from '../utils/cache.ts';
 import type { EventBus } from '../utils/event-bus.ts';
 import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
@@ -20,64 +19,80 @@ export class TelemetryService {
         private readonly cache: Cache,
     ) {}
 
-    public async writeTelemetry(packet: TelemetryPacket, callsign: string) {
-        const vehicle = await this.vehiclesRepository.getVehicleByBeaconCallsign(callsign);
+    public async writeTelemetry(packet: TelemetryPacket) {
+        const callsign = packet.data.callsign;
+        const uploadedBy = packet.options.uploader_callsign;
+
+        const vehiclesQuery = [this.vehiclesRepository.getVehicleByBeaconCallsign(callsign)];
+        uploadedBy && vehiclesQuery.push(this.vehiclesRepository.getVehicleByBeaconCallsign(uploadedBy));
+
+        const [vehicle, uploaderVehicle] = await Promise.all(vehiclesQuery);
 
         if (!vehicle) {
             throw new Error(`Callsign ${callsign} does not exist`);
         }
 
-        if (vehicle.is_station) {
-            this.sondehub.uploadStationPosition(packet.sondehubStationPosition);
-        } else {
-            this.sondehub.addTelemetry(packet.sondehubPacket);
+        if (uploadedBy && !uploaderVehicle) {
+            throw new Error(`Uploader ${uploadedBy} does not exist`);
         }
 
-        this.telemetryRepository.writeTelemetry(PointType.LOCATION, packet.data);
+        if (uploadedBy && !uploaderVehicle?.is_station) {
+            throw new Error(`Uploader ${uploadedBy} is not a station`);
+        }
+
+        const uploadCallsigns = [...(vehicle.upload_aggregation ? [vehicle.name] : []), ...(vehicle.upload_beacons ? [callsign] : [])];
+
+        for (const uploadCallsign of uploadCallsigns) {
+            if (vehicle.is_station) {
+                this.sondehub.uploadStationPosition(packet.sondehubStationPosition(uploadCallsign));
+            } else {
+                this.sondehub.addTelemetry(packet.sondehubPacket(uploadCallsign));
+            }
+        }
+
+        const telemetry = { ...packet.data, uploader_callsign: uploadedBy };
+
+        this.telemetryRepository.writeTelemetry(PointType.LOCATION, telemetry);
 
         const previousTime = await this.cache.get<string>(callsignKey(callsign));
 
         if (!previousTime || packet.data._time > previousTime) {
-            this.eventBus.emit('telemetry.new', packet.data);
+            this.eventBus.emit('telemetry.new', telemetry);
             this.cache.set(callsignKey(callsign), packet.data._time);
         }
     }
 
-    public async getCallsignsTelemetry(callsigns?: string[]) {
-        return await this.telemetryRepository.getCallsignsLastLocation(callsigns);
-    }
+    public getDashboardStream(callsigns?: string[]) {
+        const isWatched = (callsign?: string) => !!callsign && (!callsigns?.length || callsigns.includes(callsign));
 
-    public async *streamGenerator(abortCotroller: AbortController, callsigns?: string[]): AsyncGenerator<EventMessage> {
-        const abortSignal = abortCotroller.signal;
-        const queue: EventMessage[] = [];
-        const interval = setInterval(() => queue.push({ data: '{"data":"ping"}' }), 30_000);
+        const initialData: InitialDataCallback<DashboardStream> = async () => {
+            const [locations, contacts] = await Promise.all([
+                this.telemetryRepository.getCallsignsLastLocation(callsigns),
+                this.telemetryRepository.getUploadersLastContact(callsigns),
+            ]);
 
-        const data = await this.telemetryRepository.getCallsignsLastLocation(callsigns);
-        queue.push({ data: JSON.stringify(data) });
-
-        const newDataHandler = (data: GenericTelemetry) => {
-            if (!callsigns || callsigns.includes(data.callsign)) {
-                queue.push({ data: JSON.stringify(data) });
-            }
+            return {
+                telemetry: locations.map(({ _time, callsign, uploader_callsign }) => ({ _time, callsign, uploader_callsign })),
+                uploaderContact: contacts.map(({ _time, uploader_callsign }) => ({ _time, uploader_callsign })),
+            };
         };
 
-        this.eventBus.on('telemetry.new', newDataHandler);
+        const subscribe: SubscribeCallback<DashboardStream> = (push) => {
+            const handler = ({ _time, callsign, uploader_callsign }: GenericTelemetry) => {
+                const update: DashboardStream = {
+                    telemetry: isWatched(callsign) ? [{ _time, callsign, uploader_callsign }] : [],
+                    uploaderContact: isWatched(uploader_callsign) ? [{ _time, uploader_callsign: uploader_callsign as string }] : [],
+                };
 
-        try {
-            while (!abortSignal.aborted) {
-                const message = queue.shift();
-                if (message) {
-                    yield message;
-                } else {
-                    await new Promise((r) => setTimeout(r, 1000));
+                if (update.telemetry.length || update.uploaderContact.length) {
+                    push(update);
                 }
-            }
-        } finally {
-            if (interval) {
-                clearInterval(interval);
-            }
+            };
 
-            this.eventBus.off('telemetry.new', newDataHandler);
-        }
+            this.eventBus.on('telemetry.new', handler);
+            return () => this.eventBus.off('telemetry.new', handler);
+        };
+
+        return buildStream<DashboardStream>({ initialData, subscribe });
     }
 }

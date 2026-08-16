@@ -73,6 +73,7 @@ export const GenericTelemetrySchema = T.Object(
         latitude: T.Number(),
         longitude: T.Number(),
         altitude: T.Number(),
+        uploader_callsign: T.Optional(T.String()),
         _time: T.String({ format: 'date-time' }),
     },
     {
@@ -80,3 +81,11 @@ export const GenericTelemetrySchema = T.Object(
     },
 );
 export type GenericTelemetry = Static<typeof GenericTelemetrySchema> & Record<string, number | string | boolean | undefined>;
+
+export const OptionalTelemetryUploaderSchema = T.Object(
+    {
+        uploaded_by: T.Optional(T.String()),
+    },
+    { nullable: true },
+);
+export type OptionalTelemetryUploader = Static<typeof OptionalTelemetryUploaderSchema>;

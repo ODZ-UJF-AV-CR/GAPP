@@ -6,6 +6,8 @@ export const VehicleCreateSchema = T.Object(
         name: T.String({ minLength: 1, maxLength: 32 }),
         description: T.Optional(T.String()),
         vehicle_type_id: T.Number(),
+        upload_aggregation: T.Optional(T.Boolean()),
+        upload_beacons: T.Optional(T.Boolean()),
     },
     { additionalProperties: false },
 );
@@ -16,6 +18,8 @@ export const VehicleGetSchema = T.Object({
     name: T.String(),
     description: T.Optional(T.String()),
     vehicle_type_id: T.Number(),
+    upload_aggregation: T.Boolean(),
+    upload_beacons: T.Boolean(),
     beacons: T.Optional(T.Array(T.Pick(BeaconGetSchema, ['id', 'callsign']))),
 });
 export type VehicleGet = Static<typeof VehicleGetSchema>;
@@ -23,6 +27,8 @@ export type VehicleGet = Static<typeof VehicleGetSchema>;
 export const VehicleUpdateSchema = T.Object(
     {
         description: T.Optional(T.String()),
+        upload_aggregation: T.Optional(T.Boolean()),
+        upload_beacons: T.Optional(T.Boolean()),
     },
     { additionalProperties: false },
 );

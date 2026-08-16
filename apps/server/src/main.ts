@@ -1,14 +1,17 @@
 import path from 'node:path';
 import fastifyStatic from '@fastify/static';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-import Fastify from 'fastify';
+import Fastify, { LogController } from 'fastify';
 import pino from 'pino';
 import { app } from './app.ts';
 import { getConfig } from './config.ts';
 
 const logger = pino();
 const config = getConfig(process.env);
-const server = Fastify({ loggerInstance: logger, disableRequestLogging: true }).withTypeProvider<TypeBoxTypeProvider>();
+const server = Fastify({
+    loggerInstance: logger,
+    logController: new LogController({ disableRequestLogging: true }),
+}).withTypeProvider<TypeBoxTypeProvider>();
 
 server.register(app, {
     influxDbToken: config.INFLUXDB_TOKEN,

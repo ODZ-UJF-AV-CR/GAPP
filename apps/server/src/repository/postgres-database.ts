@@ -15,6 +15,8 @@ export interface VehicleTable {
     created_at: ColumnType<Date, never, never>;
     deleted_at: ColumnType<Date | null, never, Date | null>;
     vehicle_type_id: number;
+    upload_aggregation: ColumnType<boolean, boolean | undefined, boolean | undefined>;
+    upload_beacons: ColumnType<boolean, boolean | undefined, boolean | undefined>;
 }
 export type Vehicle = Selectable<VehicleTable>;
 export type NewVehicle = Insertable<VehicleTable>;

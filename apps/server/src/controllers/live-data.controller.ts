@@ -19,7 +19,8 @@ export const liveDataController: FastifyPluginAsyncTypebox = async (fastify) => 
         async (req, rep) => {
             const ac = req.server.getAbortController();
             req.raw.on('close', () => ac.abort());
-            rep.sse(req.server.telemetryService.getDashboardStream(req.query.callsign?.split(','))(ac));
+            const callsigns = req.query.callsign?.split(',').filter(Boolean);
+            rep.sse(req.server.telemetryService.getDashboardStream(callsigns)(ac));
         },
     );
 };

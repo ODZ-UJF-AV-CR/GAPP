@@ -15,13 +15,8 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            try {
-                await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body, { uploader_callsign: req.query.uploaded_by }));
-                rep.code(201).send();
-            } catch (e) {
-                const msg = (e as Error).message;
-                return rep.status(422).send(msg);
-            }
+            await req.server.telemetryService.writeTelemetry(new TelemetryPacketGeneral(req.body, { uploader_callsign: req.query.uploaded_by }));
+            rep.code(201).send();
         },
     );
 
@@ -35,17 +30,12 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
                 body: TtnTelemetrySchema,
                 response: {
                     200: Type.String(),
-                    422: Type.String(),
                 },
             },
         },
         async (req, rep) => {
-            try {
-                await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body));
-                rep.code(200).send('OK');
-            } catch {
-                return rep.status(422).send(`Callsign ${req.body.end_device_ids.device_id} does not exist`);
-            }
+            await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body));
+            rep.code(200).send('OK');
         },
     );
 };

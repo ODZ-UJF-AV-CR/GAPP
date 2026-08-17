@@ -1,7 +1,7 @@
 import type { VehicleCreate, VehicleUpdate } from '@gapp/shared';
 import type { BeaconsRepository } from '../repository/beacons.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import { ConflictError, NotFoundError } from '../utils/errors.ts';
+import { ConflictError, isUniqueViolation, NotFoundError } from '../utils/errors.ts';
 
 const MAX_CALLSIGN_SUFFIX = 100;
 
@@ -18,7 +18,13 @@ export class VehicleService {
             throw new NotFoundError(`Vehicle type with id ${vehicle.vehicle_type_id} does not exist.`);
         }
 
-        const createdVehicle = await this.vehiclesRepository.createVehicle(vehicle);
+        const createdVehicle = await this.vehiclesRepository.createVehicle(vehicle).catch((e) => {
+            if (isUniqueViolation(e)) {
+                throw new ConflictError(`Vehicle name ${vehicle.name} already exists.`);
+            }
+            throw e;
+        });
+
         const callsign = await this.resolveBeaconCallsign(createdVehicle.name);
         const beacons = await this.beaconsRepository.createBeacons([{ callsign, vehicle_id: createdVehicle.id }]);
 

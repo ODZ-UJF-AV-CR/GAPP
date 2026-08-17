@@ -1,7 +1,7 @@
 import type { GenericTelemetry } from '@gapp/shared';
 import { type InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
 import { type Bucket, BucketsAPI, type Organization } from '@influxdata/influxdb-client-apis';
-import { arrayAsString } from '../utils/array-as-atring.ts';
+import { arrayAsString } from '../utils/array-as-string.ts';
 
 export enum PointType {
     LOCATION = 'location',

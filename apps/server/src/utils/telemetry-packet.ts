@@ -22,9 +22,10 @@ export abstract class TelemetryPacket {
 
     public sondehubPacket(payloadCallsign = this.telemetry.callsign): SondehubTelemetryPacket {
         return {
+            // GAPP relays packets from receivers, payloads carry no GPS time, so receive time is the best datetime we have
             time_received: this.telemetry._time,
             payload_callsign: payloadCallsign,
-            datetime: new Date().toISOString(),
+            datetime: this.telemetry._time,
             lat: this.telemetry.latitude,
             lon: this.telemetry.longitude,
             alt: this.telemetry.altitude,
@@ -49,7 +50,7 @@ export abstract class TelemetryPacket {
 
 export class TelemetryPacketGeneral extends TelemetryPacket {
     constructor(telemetry: GenericTelemetry, options: TelemetryPacketOptions = {}) {
-        super(telemetry, options);
+        super(telemetry, { modulation: 'GFSK', ...options });
     }
 }
 
@@ -63,7 +64,7 @@ export class TelemetryPacketFromTtn extends TelemetryPacket {
                 longitude: ttnPayload.uplink_message.decoded_payload.lon,
                 altitude: ttnPayload.uplink_message.decoded_payload.alt_m,
                 heading: ttnPayload.uplink_message.decoded_payload.course,
-                speed_horizontal: ttnPayload.uplink_message.decoded_payload.speed_mps,
+                velocity_horizontal: ttnPayload.uplink_message.decoded_payload.speed_mps,
             },
             {
                 modulation: 'LoRa',

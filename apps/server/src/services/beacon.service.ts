@@ -1,7 +1,7 @@
 import type { BeaconsCreate } from '@gapp/shared';
 import type { BeaconsRepository } from '../repository/beacons.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import { ConflictError, NotFoundError } from '../utils/errors.ts';
+import { ConflictError, isUniqueViolation, NotFoundError } from '../utils/errors.ts';
 
 export class BeaconService {
     constructor(
@@ -25,7 +25,12 @@ export class BeaconService {
             throw new NotFoundError(`Vehicle with id ${vehicleIds[missingIndex]} does not exist.`);
         }
 
-        return await this.beaconsRepository.createBeacons(beacons);
+        return await this.beaconsRepository.createBeacons(beacons).catch((e) => {
+            if (isUniqueViolation(e)) {
+                throw new ConflictError(`One of the callsigns already exists: ${callsigns.join(', ')}`);
+            }
+            throw e;
+        });
     }
 
     public getBeacons(vehicleId?: number) {

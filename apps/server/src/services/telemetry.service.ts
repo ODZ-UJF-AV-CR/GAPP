@@ -5,10 +5,12 @@ import { PointType, type TelemetryRepository } from '../repository/telemetry.rep
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
 import { buildStream, type InitialDataCallback, type SubscribeCallback } from '../utils/build-stream.ts';
 import type { Cache } from '../utils/cache.ts';
+import { ValidationError } from '../utils/errors.ts';
 import type { EventBus } from '../utils/event-bus.ts';
 import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
 
 const callsignKey = (callsign: string) => `callsign.${callsign}`;
+const vehicleKey = (name: string) => `vehicle.${name}`;
 
 export class TelemetryService {
     constructor(
@@ -29,18 +31,23 @@ export class TelemetryService {
         const [vehicle, uploaderVehicle] = await Promise.all(vehiclesQuery);
 
         if (!vehicle) {
-            throw new Error(`Callsign ${callsign} does not exist`);
+            throw new ValidationError(`Callsign ${callsign} does not exist`);
         }
 
         if (uploadedBy && !uploaderVehicle) {
-            throw new Error(`Uploader ${uploadedBy} does not exist`);
+            throw new ValidationError(`Uploader ${uploadedBy} does not exist`);
         }
 
         if (uploadedBy && !uploaderVehicle?.is_station) {
-            throw new Error(`Uploader ${uploadedBy} is not a station`);
+            throw new ValidationError(`Uploader ${uploadedBy} is not a station`);
         }
 
-        const uploadCallsigns = [...(vehicle.upload_aggregation ? [vehicle.name] : []), ...(vehicle.upload_beacons ? [callsign] : [])];
+        const isNewBeaconData = await this.isNewerData(callsignKey(callsign), packet.data._time);
+        const isNewVehicleData = await this.isNewerData(vehicleKey(vehicle.name), packet.data._time);
+
+        const uploadCallsigns = new Set<string>();
+        vehicle.upload_aggregation && isNewVehicleData && uploadCallsigns.add(vehicle.name);
+        vehicle.upload_beacons && isNewBeaconData && uploadCallsigns.add(callsign);
 
         for (const uploadCallsign of uploadCallsigns) {
             if (vehicle.is_station) {
@@ -54,12 +61,20 @@ export class TelemetryService {
 
         this.telemetryRepository.writeTelemetry(PointType.LOCATION, telemetry);
 
-        const previousTime = await this.cache.get<string>(callsignKey(callsign));
-
-        if (!previousTime || packet.data._time > previousTime) {
+        if (isNewBeaconData) {
             this.eventBus.emit('telemetry.new', telemetry);
-            this.cache.set(callsignKey(callsign), packet.data._time);
         }
+    }
+
+    private async isNewerData(key: string, time: string) {
+        const previousTime = await this.cache.get<string>(key);
+
+        if (previousTime && Date.parse(time) <= Date.parse(previousTime)) {
+            return false;
+        }
+
+        await this.cache.set(key, time);
+        return true;
     }
 
     public getDashboardStream(callsigns?: string[]) {

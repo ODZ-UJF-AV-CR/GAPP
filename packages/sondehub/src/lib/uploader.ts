@@ -3,6 +3,9 @@ import axios from 'axios';
 
 type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
+/** @description Free-text on the SondeHub side, shown in the tracker sidebar. Known values are listed for convenience. */
+export type Modulation = 'APRS' | 'Horus Binary' | 'RTTY' | 'LoRa' | 'WSPR' | 'GFSK' | (string & {});
+
 interface BasePacket {
     software_name: string;
     software_version: string;
@@ -33,7 +36,8 @@ export interface TelemetryPacket extends Partial<BasePacket> {
     telemetry_hidden?: boolean;
     historical?: boolean;
     upload_time?: string;
-    modulation?: 'APRS' | 'Hours Binary' | 'RTTY' | 'LoRa' | 'WSPR';
+    modulation?: Modulation;
+    baud_rate?: number;
 }
 
 type StationBasePayload = Partial<Omit<BasePacket, 'uploader_callsign' | 'uploader_position'>> &

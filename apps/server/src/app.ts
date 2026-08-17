@@ -6,6 +6,7 @@ import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { beaconController, liveDataController, telemetryController, vehicleController } from './controllers/index.ts';
 import abortControllerPlugin from './plugins/abort-controller.ts';
 import cachePlugin from './plugins/cache.ts';
+import errorHandlerPlugin from './plugins/error-handler.ts';
 import eventBusPlugin from './plugins/event-bus.ts';
 import influxDbPlugin from './plugins/influxdb.ts';
 import postgresDbPlugin from './plugins/postgresdb.ts';
@@ -33,6 +34,7 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     });
 
     // PLUGINS
+    await fastify.register(errorHandlerPlugin);
     await fastify.register(influxDbPlugin, {
         url: opts.influxDbUrl,
         token: opts.influxDbToken,

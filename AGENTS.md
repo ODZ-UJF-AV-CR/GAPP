@@ -16,7 +16,7 @@ GAPP is a ground app for high-altitude balloon flights (ODZ-UJF-AV-CR). Turborep
 2. `pnpm install`.
 3. `docker compose up -d` — **required before `pnpm dev`**. Starts Postgres on `localhost:5434` and InfluxDB on `localhost:8086` (creds in `compose.yml`; matching dev defaults are baked into `apps/server/src/config.ts` via `envalid`).
 4. `pnpm dev` — runs `turbo run dev` for both apps.
-   - Server only: `pnpm --filter @gapp/server run dev` (uses `node --experimental-transform-types --watch` piped through `pino-pretty`).
+   - Server only: `pnpm --filter @gapp/server run dev` (uses `tsx watch` piped through `pino-pretty`).
    - Dashboard only: `pnpm --filter @gapp/dashboard run dev` (`ng serve`).
 5. Useful URLs while running locally: Swagger UI `http://localhost:3000/docs`, Influx UI `http://localhost:8086` (`user` / `password`).
 
@@ -40,19 +40,14 @@ Husky's `pre-commit` runs `pnpm lint-staged`, which executes `biome check --writ
 - **Dashboard path aliases** (`apps/dashboard/tsconfig.json`): `@core/*`, `@shared/*`, `@features/*`, `@env/*`, `@app/*`, `@/*`. Prefer these over deep relative imports.
 - **API schemas** are exported from `@gapp/shared` as `*Schema` (e.g. `VehicleCreateSchema`). The codebase does **not** use `B_`/`R_` prefixes for body/response schemas.
 - **Angular conventions**: standalone components, Signals (`signal`, `computed`, `effect`) over `BehaviorSubject`, `ChangeDetectionStrategy.OnPush` (see `src/app/app.ts`), separate `.html` and `.css` files, `protected readonly` for template-bound members.
-- **Fastify error handling**: use `@fastify/sensible` reply helpers (`rep.notFound()`, `rep.conflict()`, `rep.internalServerError()`); wrap controller handlers in `try/catch` and call `req.server.log.error(e, '...')` before responding. See `apps/server/src/controllers/vehicle.controller.ts` for the canonical pattern.
+- **Fastify error handling**: handled globally by `apps/server/src/plugins/error-handler.ts`. Controllers must **not** use `try/catch`. Services throw domain errors from `apps/server/src/utils/errors.ts` (`NotFoundError` → 404, `ConflictError` → 409, `ValidationError` → 422); anything else is logged and returned as 500. Translate Postgres unique violations into `ConflictError` in the service (use `isUniqueViolation(e)`) so the message keeps its context — never match on constraint names.
 
 ### Example controller pattern
 
 ```ts
 fastify.post('', { schema: { body: VehicleCreateSchema, response: { 201: VehicleGetSchema } } }, async (req, rep) => {
-    try {
-        const result = await req.server.vehicleService.createVehicle(req.body);
-        rep.status(201).send(result);
-    } catch (e) {
-        req.server.log.error(e, 'Error creating vehicle');
-        return rep.internalServerError('Error creating vehicle');
-    }
+    const result = await req.server.vehicleService.createVehicle(req.body);
+    rep.status(201).send(result);
 });
 ```
 

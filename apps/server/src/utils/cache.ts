@@ -1,3 +1,5 @@
+import { clearInterval, setInterval } from 'node:timers';
+
 export interface Cache {
     get: <T>(key: string) => Promise<T | undefined>;
     set: (key: string, value: unknown, ttl?: number) => Promise<void>;
@@ -5,8 +7,17 @@ export interface Cache {
     clear: () => Promise<void>;
 }
 
+const SWEEP_INTERVAL_MS = 60 * 60 * 1000;
+
 export class InMemoryCache implements Cache {
     private store = new Map<string, { value: unknown; expiresAt: number | null }>();
+    private sweep: NodeJS.Timeout;
+
+    /** @description Reading an entry is not guaranteed to happen again, so expired ones are swept instead of freed lazily */
+    constructor(sweepIntervalMs = SWEEP_INTERVAL_MS) {
+        this.sweep = setInterval(() => this.removeExpired(), sweepIntervalMs);
+        this.sweep.unref();
+    }
 
     async get<T>(key: string): Promise<T | undefined> {
         const item = this.store.get(key);
@@ -14,7 +25,7 @@ export class InMemoryCache implements Cache {
             return undefined;
         }
 
-        if (item.expiresAt && Date.now() > item.expiresAt) {
+        if (this.isExpired(item.expiresAt)) {
             this.store.delete(key);
             return undefined;
         }
@@ -33,5 +44,22 @@ export class InMemoryCache implements Cache {
 
     async clear(): Promise<void> {
         this.store.clear();
+    }
+
+    public dispose() {
+        clearInterval(this.sweep);
+        this.store.clear();
+    }
+
+    private isExpired(expiresAt: number | null) {
+        return !!expiresAt && Date.now() > expiresAt;
+    }
+
+    private removeExpired() {
+        for (const [key, item] of this.store) {
+            if (this.isExpired(item.expiresAt)) {
+                this.store.delete(key);
+            }
+        }
     }
 }

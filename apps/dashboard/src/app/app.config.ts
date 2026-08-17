@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { type ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideTicker } from '@core/services/ticker.provider';
 import { provideUnits, type UnitConfig } from '@core/services/unit.provider';
 import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
 import { tablerAirBalloon, tablerCar, tablerDrone, tablerHelpHexagon } from '@ng-icons/tabler-icons';
@@ -32,6 +33,7 @@ export const appConfig: ApplicationConfig = {
         provideHttpClient(),
         provideUnits(UNIT_CONFIG),
         provideVehicleIcons(VEHICLE_ICONS),
+        provideTicker(),
         provideMaplibreWorker('maplibre-gl-worker.mjs'),
     ],
 };

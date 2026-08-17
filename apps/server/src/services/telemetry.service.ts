@@ -15,6 +15,9 @@ const callsignKey = (callsign: string) => `callsign.${callsign}`;
 /** @description Receiver clocks drifting beyond this are reported, such packets stay invisible on the dashboard until real time catches up */
 const MAX_CLOCK_SKEW_MS = 5 * 60 * 1000;
 
+/** @description Beacons silent for this long are dropped from the cache, the dashboard guards against a stale packet being re-emitted */
+const LAST_PACKET_TTL_MS = 12 * 60 * 60 * 1000;
+
 export class TelemetryService {
     constructor(
         private readonly telemetryRepository: TelemetryRepository,
@@ -92,23 +95,29 @@ export class TelemetryService {
             return false;
         }
 
-        await this.cache.set(callsignKey(callsign), time);
+        await this.cache.set(callsignKey(callsign), time, LAST_PACKET_TTL_MS);
         return true;
     }
 
     public getDashboardStream(callsigns?: string[]) {
         const isWatched = (callsign?: string) => !!callsign && (!callsigns?.length || callsigns.includes(callsign));
 
+        // headers are already sent when this runs, so a failed snapshot must not reject the stream
         const initialData: InitialDataCallback<DashboardStream> = async () => {
-            const [locations, contacts] = await Promise.all([
-                this.telemetryRepository.getCallsignsLastLocation(callsigns),
-                this.telemetryRepository.getUploadersLastContact(callsigns),
-            ]);
+            try {
+                const [locations, contacts] = await Promise.all([
+                    this.telemetryRepository.getCallsignsLastLocation(callsigns),
+                    this.telemetryRepository.getUploadersLastContact(callsigns),
+                ]);
 
-            return {
-                telemetry: locations.map(({ _time, callsign, uploader_callsign }) => ({ _time, callsign, uploader_callsign })),
-                uploaderContact: contacts.map(({ _time, uploader_callsign }) => ({ _time, uploader_callsign })),
-            };
+                return {
+                    telemetry: locations.map(({ _time, callsign, uploader_callsign }) => ({ _time, callsign, uploader_callsign })),
+                    uploaderContact: contacts.map(({ _time, uploader_callsign }) => ({ _time, uploader_callsign })),
+                };
+            } catch (e) {
+                this.logger.error(e, 'Failed to load the initial dashboard snapshot, streaming live updates only');
+                return { telemetry: [], uploaderContact: [] };
+            }
         };
 
         const subscribe: SubscribeCallback<DashboardStream> = (push) => {

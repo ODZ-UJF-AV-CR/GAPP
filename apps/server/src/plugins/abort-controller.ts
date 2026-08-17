@@ -8,18 +8,13 @@ declare module 'fastify' {
     }
 }
 
-const eventBus: FastifyPluginAsync = async (fastify) => {
-    const abortControllers: AbortController[] = [];
+const abortControllerPlugin: FastifyPluginAsync = async (fastify) => {
+    const abortControllers = new Set<AbortController>();
 
     fastify.decorate('getAbortController', () => {
         const ac = new AbortController();
-        abortControllers.push(ac);
-        ac.signal.addEventListener('abort', () => {
-            const index = abortControllers.indexOf(ac);
-            if (index !== -1) {
-                abortControllers.splice(index, 1);
-            }
-        });
+        abortControllers.add(ac);
+        ac.signal.addEventListener('abort', () => abortControllers.delete(ac), { once: true });
         return ac;
     });
 
@@ -28,4 +23,4 @@ const eventBus: FastifyPluginAsync = async (fastify) => {
     });
 };
 
-export default fp(eventBus, { name: Plugins.ABORT_CONTROLLER });
+export default fp(abortControllerPlugin, { name: Plugins.ABORT_CONTROLLER });

@@ -12,6 +12,7 @@ export default fp(
     async (fastify) => {
         const cache = new InMemoryCache();
         fastify.decorate('cache', cache);
+        fastify.addHook('onClose', () => cache.dispose());
     },
     {
         name: Plugins.CACHE,

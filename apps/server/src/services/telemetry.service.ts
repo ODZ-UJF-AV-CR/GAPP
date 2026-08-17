@@ -1,5 +1,6 @@
-import type { DashboardStream, GenericTelemetry } from '@gapp/shared';
+import type { DashboardStream, TelemetryRecord } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
+import type { FastifyBaseLogger } from 'fastify';
 import type { Events } from '../plugins/event-bus.ts';
 import { PointType, type TelemetryRepository } from '../repository/telemetry.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
@@ -10,7 +11,9 @@ import type { EventBus } from '../utils/event-bus.ts';
 import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
 
 const callsignKey = (callsign: string) => `callsign.${callsign}`;
-const vehicleKey = (name: string) => `vehicle.${name}`;
+
+/** @description Receiver clocks drifting beyond this are reported, such packets stay invisible on the dashboard until real time catches up */
+const MAX_CLOCK_SKEW_MS = 5 * 60 * 1000;
 
 export class TelemetryService {
     constructor(
@@ -19,6 +22,7 @@ export class TelemetryService {
         private readonly sondehub: Uploader,
         private readonly eventBus: EventBus<Events>,
         private readonly cache: Cache,
+        private readonly logger: FastifyBaseLogger,
     ) {}
 
     public async writeTelemetry(packet: TelemetryPacket) {
@@ -42,12 +46,12 @@ export class TelemetryService {
             throw new ValidationError(`Uploader ${uploadedBy} is not a station`);
         }
 
-        const isNewBeaconData = await this.isNewerData(callsignKey(callsign), packet.data._time);
-        const isNewVehicleData = await this.isNewerData(vehicleKey(vehicle.name), packet.data._time);
+        this.warnOnClockSkew(vehicle.name, callsign, packet.data._time);
 
+        // uploaded unconditionally, ground stations may backfill old packets after being offline
         const uploadCallsigns = new Set<string>();
-        vehicle.upload_aggregation && isNewVehicleData && uploadCallsigns.add(vehicle.name);
-        vehicle.upload_beacons && isNewBeaconData && uploadCallsigns.add(callsign);
+        vehicle.upload_aggregation && uploadCallsigns.add(vehicle.name);
+        vehicle.upload_beacons && uploadCallsigns.add(callsign);
 
         for (const uploadCallsign of uploadCallsigns) {
             if (vehicle.is_station) {
@@ -57,23 +61,38 @@ export class TelemetryService {
             }
         }
 
-        const telemetry = { ...packet.data, uploader_callsign: uploadedBy };
+        const telemetry: TelemetryRecord = { ...packet.data, uploader_callsign: uploadedBy };
 
         this.telemetryRepository.writeTelemetry(PointType.LOCATION, telemetry);
 
-        if (isNewBeaconData) {
+        // the live dashboard only shows the newest position, backfilled packets must not overwrite it
+        if (await this.isNewestPacket(callsign, packet.data._time)) {
             this.eventBus.emit('telemetry.new', telemetry);
         }
     }
 
-    private async isNewerData(key: string, time: string) {
-        const previousTime = await this.cache.get<string>(key);
+    /** @description Future timestamps mean a misconfigured receiver clock, the packet is still stored so nothing is lost */
+    private warnOnClockSkew(vehicleName: string, beaconCallsign: string, time: string) {
+        const skewMs = Date.parse(time) - Date.now();
+
+        if (skewMs <= MAX_CLOCK_SKEW_MS) {
+            return;
+        }
+
+        this.logger.warn(
+            { vehicle: vehicleName, beacon: beaconCallsign, packetTime: time, secondsAhead: Math.round(skewMs / 1000) },
+            `Telemetry from beacon ${beaconCallsign} (vehicle ${vehicleName}) is ${Math.round(skewMs / 1000)}s in the future, check the receiver clock`,
+        );
+    }
+
+    private async isNewestPacket(callsign: string, time: string) {
+        const previousTime = await this.cache.get<string>(callsignKey(callsign));
 
         if (previousTime && Date.parse(time) <= Date.parse(previousTime)) {
             return false;
         }
 
-        await this.cache.set(key, time);
+        await this.cache.set(callsignKey(callsign), time);
         return true;
     }
 
@@ -93,7 +112,7 @@ export class TelemetryService {
         };
 
         const subscribe: SubscribeCallback<DashboardStream> = (push) => {
-            const handler = ({ _time, callsign, uploader_callsign }: GenericTelemetry) => {
+            const handler = ({ _time, callsign, uploader_callsign }: TelemetryRecord) => {
                 const update: DashboardStream = {
                     telemetry: isWatched(callsign) ? [{ _time, callsign, uploader_callsign }] : [],
                     uploaderContact: isWatched(uploader_callsign) ? [{ _time, uploader_callsign: uploader_callsign as string }] : [],

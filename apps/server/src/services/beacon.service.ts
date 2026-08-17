@@ -18,11 +18,12 @@ export class BeaconService {
         }
 
         const vehicleIds = [...new Set(beacons.map((beacon) => beacon.vehicle_id))];
-        const vehicles = await Promise.all(vehicleIds.map((id) => this.vehiclesRepository.getVehicleById(id)));
-        const missingIndex = vehicles.findIndex((vehicle) => !vehicle);
+        const vehicles = await this.vehiclesRepository.getVehiclesByIds(vehicleIds);
+        const foundIds = new Set(vehicles.map((vehicle) => vehicle.id));
+        const missingId = vehicleIds.find((id) => !foundIds.has(id));
 
-        if (missingIndex !== -1) {
-            throw new NotFoundError(`Vehicle with id ${vehicleIds[missingIndex]} does not exist.`);
+        if (missingId !== undefined) {
+            throw new NotFoundError(`Vehicle with id ${missingId} does not exist.`);
         }
 
         return await this.beaconsRepository.createBeacons(beacons).catch((e) => {

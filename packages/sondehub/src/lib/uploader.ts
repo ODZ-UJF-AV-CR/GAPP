@@ -33,6 +33,7 @@ export interface TelemetryPacket extends Partial<BasePacket> {
     sats?: number;
     snr?: number;
     rssi?: number;
+    frame?: number;
     telemetry_hidden?: boolean;
     historical?: boolean;
     upload_time?: string;

@@ -1,8 +1,8 @@
 import type { GenericTelemetry, TtnTelemetry } from '@gapp/shared';
-import type { TelemetryPacket as SondehubTelemetryPacket, StationPositionPacket } from '@gapp/sondehub';
+import type { Modulation, TelemetryPacket as SondehubTelemetryPacket, StationPositionPacket } from '@gapp/sondehub';
 
 export interface TelemetryPacketOptions {
-    modulation?: SondehubTelemetryPacket['modulation'];
+    modulation?: Modulation;
     uploader_callsign?: SondehubTelemetryPacket['uploader_callsign'];
 }
 
@@ -31,11 +31,18 @@ export abstract class TelemetryPacket {
             alt: this.telemetry.altitude,
             modulation: this._options.modulation,
             uploader_callsign: this._options.uploader_callsign || 'GAPP-Server',
-            heading: this.telemetry.heading as number,
-            batt: this.telemetry.batt as number,
-            snr: this.telemetry.snr as number,
-            rssi: this.telemetry.rssi as number,
-            vel_h: this.telemetry.velocity_horizontal as number,
+            vel_h: this.telemetry.velocity_horizontal,
+            vel_v: this.telemetry.velocity_vertical,
+            heading: this.telemetry.heading,
+            sats: this.telemetry.satellites,
+            batt: this.telemetry.battery,
+            temp: this.telemetry.temperature,
+            humidity: this.telemetry.humidity,
+            pressure: this.telemetry.pressure,
+            frame: this.telemetry.frame,
+            snr: this.telemetry.snr,
+            rssi: this.telemetry.rssi,
+            frequency: this.telemetry.frequency,
         };
     }
 
@@ -50,21 +57,24 @@ export abstract class TelemetryPacket {
 
 export class TelemetryPacketGeneral extends TelemetryPacket {
     constructor(telemetry: GenericTelemetry, options: TelemetryPacketOptions = {}) {
-        super(telemetry, { modulation: 'GFSK', ...options });
+        // SiK radios used by the ground stations are GFSK, callers may override per packet
+        super(telemetry, { ...options, modulation: options.modulation ?? 'GFSK' });
     }
 }
 
 export class TelemetryPacketFromTtn extends TelemetryPacket {
     constructor(ttnPayload: TtnTelemetry) {
+        const { decoded_payload, received_at } = ttnPayload.uplink_message;
+
         super(
             {
-                _time: ttnPayload.uplink_message.received_at,
+                _time: received_at,
                 callsign: ttnPayload.end_device_ids.device_id,
-                latitude: ttnPayload.uplink_message.decoded_payload.lat,
-                longitude: ttnPayload.uplink_message.decoded_payload.lon,
-                altitude: ttnPayload.uplink_message.decoded_payload.alt_m,
-                heading: ttnPayload.uplink_message.decoded_payload.course,
-                velocity_horizontal: ttnPayload.uplink_message.decoded_payload.speed_mps,
+                latitude: decoded_payload.lat,
+                longitude: decoded_payload.lon,
+                altitude: decoded_payload.alt_m,
+                heading: decoded_payload.course,
+                velocity_horizontal: decoded_payload.speed_mps,
             },
             {
                 modulation: 'LoRa',

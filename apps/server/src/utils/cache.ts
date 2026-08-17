@@ -1,5 +1,3 @@
-import { clearInterval, setInterval } from 'node:timers';
-
 export interface Cache {
     get: <T>(key: string) => Promise<T | undefined>;
     set: (key: string, value: unknown, ttl?: number) => Promise<void>;

@@ -57,11 +57,25 @@ export class VehicleService {
     }
 
     public async restoreVehicle(id: number) {
-        const restoredCount = await this.vehiclesRepository.restoreVehicle(id);
+        const vehicle = await this.vehiclesRepository.getVehicleById(id, false, true);
+
+        if (!vehicle) {
+            throw new NotFoundError(`Vehicle with id ${id} does not exist.`);
+        }
+
+        // the name is only reserved among active vehicles, so another vehicle may have taken it meanwhile
+        const restoredCount = await this.vehiclesRepository.restoreVehicle(id).catch((e) => {
+            if (isUniqueViolation(e)) {
+                throw new ConflictError(`Vehicle name ${vehicle.name} is already used by an active vehicle.`);
+            }
+            throw e;
+        });
 
         if (!restoredCount) {
-            throw new NotFoundError(`Deleted vehicle with id ${id} does not exist.`);
+            throw new ConflictError(`Vehicle with id ${id} is not deleted.`);
         }
+
+        return await this.getVehicleById(id, true);
     }
 
     public getVehicleByBeaconCallsign(callsign: string) {

@@ -19,11 +19,11 @@ const UNIT_CONFIG: UnitConfig = {
 
 const VEHICLE_ICONS: VehicleIcons = {
     defaultIcon: tablerHelpHexagon,
-    icons: new Map([
-        [1, tablerAirBalloon],
-        [2, tablerDrone],
-        [3, tablerCar],
-    ]),
+    icons: {
+        balloon: tablerAirBalloon,
+        drone: tablerDrone,
+        car: tablerCar,
+    },
 };
 
 export const appConfig: ApplicationConfig = {

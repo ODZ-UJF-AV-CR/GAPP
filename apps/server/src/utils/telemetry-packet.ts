@@ -4,6 +4,8 @@ import type { Modulation, TelemetryPacket as SondehubTelemetryPacket, StationPos
 export interface TelemetryPacketOptions {
     modulation?: Modulation;
     uploader_callsign?: SondehubTelemetryPacket['uploader_callsign'];
+    /** @description Reported to SondeHub when the packet carries no uploader of its own */
+    defaultUploaderCallsign?: string;
 }
 
 export abstract class TelemetryPacket {
@@ -30,7 +32,7 @@ export abstract class TelemetryPacket {
             lon: this.telemetry.longitude,
             alt: this.telemetry.altitude,
             modulation: this._options.modulation,
-            uploader_callsign: this._options.uploader_callsign || 'GAPP-Server',
+            uploader_callsign: this._options.uploader_callsign || this._options.defaultUploaderCallsign,
             vel_h: this.telemetry.velocity_horizontal,
             vel_v: this.telemetry.velocity_vertical,
             heading: this.telemetry.heading,
@@ -63,7 +65,7 @@ export class TelemetryPacketGeneral extends TelemetryPacket {
 }
 
 export class TelemetryPacketFromTtn extends TelemetryPacket {
-    constructor(ttnPayload: TtnTelemetry) {
+    constructor(ttnPayload: TtnTelemetry, uploaderCallsign: string) {
         const { decoded_payload, received_at } = ttnPayload.uplink_message;
 
         super(
@@ -78,7 +80,7 @@ export class TelemetryPacketFromTtn extends TelemetryPacket {
             },
             {
                 modulation: 'LoRa',
-                uploader_callsign: 'TTN_Gateway',
+                uploader_callsign: uploaderCallsign,
             },
         );
     }

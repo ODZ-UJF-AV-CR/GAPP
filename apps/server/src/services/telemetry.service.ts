@@ -1,4 +1,4 @@
-import type { DashboardStream, TelemetryRecord } from '@gapp/shared';
+import type { DashboardStream, GenericTelemetry, TelemetryQuery, TelemetryRecord, TtnTelemetry } from '@gapp/shared';
 import type { Uploader } from '@gapp/sondehub';
 import type { FastifyBaseLogger } from 'fastify';
 import type { Events } from '../plugins/event-bus.ts';
@@ -8,7 +8,12 @@ import { buildStream, type InitialDataCallback, type SubscribeCallback } from '.
 import type { Cache } from '../utils/cache.ts';
 import { ValidationError } from '../utils/errors.ts';
 import type { EventBus } from '../utils/event-bus.ts';
-import type { TelemetryPacket } from '../utils/telemetry-packet.ts';
+import { type TelemetryPacket, TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
+
+export interface UploaderCallsigns {
+    defaultUploaderCallsign: string;
+    ttnUploaderCallsign: string;
+}
 
 const callsignKey = (callsign: string) => `callsign.${callsign}`;
 
@@ -26,9 +31,24 @@ export class TelemetryService {
         private readonly eventBus: EventBus<Events>,
         private readonly cache: Cache,
         private readonly logger: FastifyBaseLogger,
+        private readonly uploaderCallsigns: UploaderCallsigns,
     ) {}
 
-    public async writeTelemetry(packet: TelemetryPacket) {
+    public writeGenericTelemetry(telemetry: GenericTelemetry, query: TelemetryQuery = {}) {
+        return this.writeTelemetry(
+            new TelemetryPacketGeneral(telemetry, {
+                uploader_callsign: query.uploaded_by,
+                modulation: query.modulation,
+                defaultUploaderCallsign: this.uploaderCallsigns.defaultUploaderCallsign,
+            }),
+        );
+    }
+
+    public writeTtnTelemetry(payload: TtnTelemetry) {
+        return this.writeTelemetry(new TelemetryPacketFromTtn(payload, this.uploaderCallsigns.ttnUploaderCallsign));
+    }
+
+    private async writeTelemetry(packet: TelemetryPacket) {
         const callsign = packet.data.callsign;
         const uploadedBy = packet.options.uploader_callsign;
 

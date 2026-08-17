@@ -14,6 +14,9 @@ const envSchema = {
     INFLUXDB_ORG: str({ desc: 'Influx db organization', default: 'flight' }),
 
     POSTGRES_URL: url({ desc: 'postgres database url', devDefault: 'postgresql://postgres:password@localhost:5434/gapp' }),
+
+    SONDEHUB_DEFAULT_UPLOADER: str({ desc: 'Uploader callsign reported to SondeHub when a packet carries no uploader', default: 'GAPP-Server' }),
+    SONDEHUB_TTN_UPLOADER: str({ desc: 'Uploader callsign reported to SondeHub for packets received through TTN', default: 'TTN_Gateway' }),
 };
 
 export const getConfig = (configObject: object) => {

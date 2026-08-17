@@ -1,4 +1,3 @@
-import { clearInterval, setInterval } from 'node:timers';
 import type { EventMessage } from 'fastify-sse-v2';
 
 type Push<T> = (data: T) => void;

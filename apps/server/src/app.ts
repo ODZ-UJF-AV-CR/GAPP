@@ -21,6 +21,9 @@ interface AppOptions extends FastifyPluginOptions {
 
     postgresDbUrl: string;
 
+    defaultUploaderCallsign: string;
+    ttnUploaderCallsign: string;
+
     isDevelopment: boolean;
 }
 
@@ -41,11 +44,14 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
         org: opts.influxDbOrg,
     });
     await fastify.register(postgresDbPlugin, { url: opts.postgresDbUrl });
-    await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
+    await fastify.register(sondehubPlugin, { dev: opts.isDevelopment, uploaderCallsign: opts.defaultUploaderCallsign });
     await fastify.register(abortControllerPlugin);
     await fastify.register(cachePlugin);
     await fastify.register(repositoriesPlugin);
-    await fastify.register(servicesPlugin);
+    await fastify.register(servicesPlugin, {
+        defaultUploaderCallsign: opts.defaultUploaderCallsign,
+        ttnUploaderCallsign: opts.ttnUploaderCallsign,
+    });
 
     await fastify.register(swagger, {
         openapi: {

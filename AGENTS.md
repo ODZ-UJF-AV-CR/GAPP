@@ -24,7 +24,8 @@ GAPP is a ground app for high-altitude balloon flights (ODZ-UJF-AV-CR). Turborep
 
 - Build everything: `pnpm build` (= `turbo run build`). `@gapp/dashboard` and `@gapp/server` consume `@gapp/shared`, so Turbo's `^build` chain rebuilds it first.
 - Lint: `pnpm lint` (Biome). Auto-fix + format: `pnpm lint:fix` (= `biome check --write`).
-- Tests: there is **no root `test` task**. Only `apps/dashboard` has tests today: `pnpm --filter @gapp/dashboard run test`. Server and `packages/*` have no tests yet.
+- Tests: `pnpm test` (= `turbo run test`) runs every package. Individually: `pnpm --filter @gapp/server run test` and `pnpm --filter @gapp/sondehub run test` (Vitest, specs live next to the source as `*.spec.ts`), `pnpm --filter @gapp/dashboard run test` (Angular `unit-test` builder).
+- Server timers must use the **global** `setTimeout`/`setInterval`, not the `node:timers` imports — Vitest fake timers only patch the globals, so imported ones never fire in tests.
 - Create a Kysely migration: `pnpm --filter @gapp/server run create-migration <name>` (= `kysely migrate:make -x ts`). Files land in `apps/server/src/migrations/`. Config is `.config/kysely.config.ts`.
 - **Migrations apply automatically on server startup** — see `migrateToLatest` in `apps/server/src/plugins/postgresdb.ts:51`. Do not run `kysely migrate:latest` manually.
 
@@ -80,7 +81,7 @@ export class FeatureComponent {
 
 ## Don't
 
-- Don't add tests via Jest or Karma — only Vitest (through Angular's `unit-test` builder), and only in `apps/dashboard` so far.
+- Don't add tests via Jest or Karma — only Vitest (directly in `apps/server` and `packages/sondehub`, through Angular's `unit-test` builder in `apps/dashboard`).
 - Don't reach for `BehaviorSubject` in the dashboard — use Signals.
 - Don't introduce `apps/server/src/schemas/`; schemas belong in `@gapp/shared`.
 - Don't run `kysely migrate:latest` by hand; the server applies migrations on boot.

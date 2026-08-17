@@ -102,15 +102,39 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
         },
     );
 
+    fastify.post(
+        '/:id/restore',
+        {
+            schema: {
+                tags: ['vehicle'],
+                summary: 'Restore vehicle',
+                description: 'Restores a soft deleted vehicle, fails when the name is already taken by an active vehicle.',
+                params: Type.Object({
+                    id: Type.Number(),
+                }),
+                response: {
+                    200: VehicleGetSchema,
+                },
+            },
+        },
+        async (req, rep) => {
+            const vehicle = await req.server.vehicleService.restoreVehicle(req.params.id);
+            rep.status(200).send(vehicle);
+        },
+    );
+
     fastify.delete(
         '/:id',
         {
             schema: {
                 tags: ['vehicle'],
                 summary: 'Delete vehicle',
-                description: 'Deletes vehicle with given id.',
+                description: 'Soft deletes the vehicle with given id, force removes it together with its beacons and cannot be undone.',
                 params: Type.Object({
                     id: Type.Number(),
+                }),
+                querystring: Type.Object({
+                    force: Type.Optional(Type.Boolean({ default: false, description: 'Permanently delete the vehicle instead of soft deleting it' })),
                 }),
                 response: {
                     204: Type.Null(),
@@ -118,7 +142,7 @@ export const vehicleController: FastifyPluginAsyncTypebox = async (fastify) => {
             },
         },
         async (req, rep) => {
-            await req.server.vehicleService.deleteVehicle(req.params.id);
+            await req.server.vehicleService.deleteVehicle(req.params.id, req.query.force);
             rep.status(204).send(null);
         },
     );

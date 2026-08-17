@@ -9,6 +9,10 @@
             "cache": false,
             "persistent": true,
             "interruptible": true
+        },
+        "test": {
+            "dependsOn": ["^build"],
+            "outputs": []
         }
     },
     "globalPassThroughEnv": ["POSTGRES_URL"]

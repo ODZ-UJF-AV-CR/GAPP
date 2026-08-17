@@ -1,6 +1,5 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
 import { GenericTelemetrySchema, TelemetryQuerySchema, TtnTelemetrySchema } from '@gapp/shared';
-import { TelemetryPacketFromTtn, TelemetryPacketGeneral } from '../utils/telemetry-packet.ts';
 
 export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post(
@@ -15,8 +14,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            const packet = new TelemetryPacketGeneral(req.body, { uploader_callsign: req.query.uploaded_by, modulation: req.query.modulation });
-            await req.server.telemetryService.writeTelemetry(packet);
+            await req.server.telemetryService.writeGenericTelemetry(req.body, req.query);
             rep.code(201).send();
         },
     );
@@ -35,7 +33,7 @@ export const telemetryController: FastifyPluginAsyncTypebox = async (fastify) =>
             },
         },
         async (req, rep) => {
-            await req.server.telemetryService.writeTelemetry(new TelemetryPacketFromTtn(req.body));
+            await req.server.telemetryService.writeTtnTelemetry(req.body);
             rep.code(200).send('OK');
         },
     );

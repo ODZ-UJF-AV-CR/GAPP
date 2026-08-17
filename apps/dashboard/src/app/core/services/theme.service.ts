@@ -1,4 +1,5 @@
 import { DOCUMENT, effect, Injectable, inject, type Renderer2, RendererFactory2, signal, untracked } from '@angular/core';
+import { readStoredValue, writeStoredValue } from './storage';
 
 export type Theme = 'light' | 'dark'; // Theme value used in DaisyUI
 export type ThemeSetting = Theme | 'system'; // Theme value saved in local storage
@@ -26,11 +27,11 @@ export class ThemeService {
         }
 
         this._theme.set(theme);
-        localStorage.setItem(LOCAL_STORAGE_KEY, theme);
+        writeStoredValue(LOCAL_STORAGE_KEY, theme);
     }
 
     private getInitialTheme(): ThemeSetting {
-        return (localStorage.getItem(LOCAL_STORAGE_KEY) as ThemeSetting | null) || 'system';
+        return readStoredValue<ThemeSetting>(LOCAL_STORAGE_KEY) || 'system';
     }
 
     private getSystemPreference(): Theme {

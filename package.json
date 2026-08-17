@@ -2,14 +2,15 @@
     "name": "gapp",
     "license": "MIT",
     "author": {
-        "name": "Vilém Raška"
+        "name": "Vil\u00e9m Ra\u0161ka"
     },
     "scripts": {
         "build": "turbo run build",
         "dev": "turbo run dev",
         "lint": "biome lint",
         "lint:fix": "biome check --write",
-        "prepare": "test -d .git && husky || echo \".git not found, skipping husky\""
+        "prepare": "test -d .git && husky || echo \".git not found, skipping husky\"",
+        "test": "turbo run test"
     },
     "lint-staged": {
         "*.{js,ts,json,css,html}": ["biome check --write --no-errors-on-unmatched"]

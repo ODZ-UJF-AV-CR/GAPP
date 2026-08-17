@@ -1,4 +1,4 @@
-import type { ColumnType, Generated, Insertable, Kysely, Selectable, Updateable } from 'kysely';
+import type { ColumnType, Generated, Insertable, Kysely, Selectable, Transaction, Updateable } from 'kysely';
 
 export interface Database {
     vehicles: VehicleTable;
@@ -7,11 +7,12 @@ export interface Database {
 }
 
 export type DatabaseInstance = Kysely<Database>;
+export type DatabaseExecutor = DatabaseInstance | Transaction<Database>;
 
 export interface VehicleTable {
     id: Generated<number>;
     name: string;
-    description: string | undefined;
+    description: ColumnType<string | null, string | null | undefined, string | null | undefined>;
     created_at: ColumnType<Date, never, never>;
     deleted_at: ColumnType<Date | null, never, Date | null>;
     vehicle_type_id: number;
@@ -20,7 +21,7 @@ export interface VehicleTable {
 }
 export type Vehicle = Selectable<VehicleTable>;
 export type NewVehicle = Insertable<VehicleTable>;
-export type VehicleUpdate = Updateable<VehicleTable>;
+export type VehicleTableUpdate = Updateable<VehicleTable>;
 
 export interface BeaconTable {
     id: Generated<number>;
@@ -29,7 +30,7 @@ export interface BeaconTable {
 }
 export type Beacon = Selectable<BeaconTable>;
 export type NewBeacon = Insertable<BeaconTable>;
-export type BeaconUpdate = Updateable<BeaconTable>;
+export type BeaconTableUpdate = Updateable<BeaconTable>;
 
 export interface VehicleTypeTable {
     id: Generated<number>;
@@ -38,4 +39,4 @@ export interface VehicleTypeTable {
 }
 export type VehicleType = Selectable<VehicleTypeTable>;
 export type NewVehicleType = Insertable<VehicleTypeTable>;
-export type VehicleTypeUpdate = Updateable<VehicleTypeTable>;
+export type VehicleTypeTableUpdate = Updateable<VehicleTypeTable>;

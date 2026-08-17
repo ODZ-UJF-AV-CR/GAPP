@@ -1,6 +1,16 @@
 <div *headerContent class="flex justify-end text-sm">
-    <div class="flex flex-col gap-1 text-right">
+    <div class="flex flex-col items-end gap-1 text-right">
         <div>Connected: {{ connectedStatus() }}</div>
+
+        @switch (connectionStatus()) { @case ('live') {
+        <div class="badge badge-sm badge-success">Live</div>
+        } @case ('reconnecting') {
+        <div class="badge badge-sm badge-warning">Reconnecting&hellip;</div>
+        } @case ('connecting') {
+        <div class="badge badge-sm badge-info">Connecting&hellip;</div>
+        } @default {
+        <div class="badge badge-sm badge-neutral">Offline</div>
+        } }
     </div>
 </div>
 

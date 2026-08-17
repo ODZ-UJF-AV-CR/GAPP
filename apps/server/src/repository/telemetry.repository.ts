@@ -1,7 +1,7 @@
-import type { GenericTelemetry } from '@gapp/shared';
+import type { TelemetryRecord } from '@gapp/shared';
 import { type InfluxDB, Point, type QueryApi, type WriteApi } from '@influxdata/influxdb-client';
 import { type Bucket, BucketsAPI, type Organization } from '@influxdata/influxdb-client-apis';
-import { arrayAsString } from '../utils/array-as-atring.ts';
+import { arrayAsString } from '../utils/array-as-string.ts';
 
 export enum PointType {
     LOCATION = 'location',
@@ -82,22 +82,18 @@ export class TelemetryRepository {
         await this.writeApi.close();
     }
 
-    public writeTelemetry(pointType: PointType, data: GenericTelemetry) {
-        const dataPoint = new Point(pointType);
+    public writeTelemetry(pointType: PointType, data: TelemetryRecord) {
+        const { callsign, uploader_callsign, _time, ...measurements } = data;
+        const dataPoint = new Point(pointType).tag('callsign', callsign).timestamp(new Date(_time));
 
-        for (const [key, value] of Object.entries(data)) {
-            if (key === 'callsign') {
-                dataPoint.tag(key, value as string);
-            } else if (key === 'uploader_callsign') {
-                dataPoint.tag(key, value as string);
-            } else if (key === '_time') {
-                dataPoint.timestamp(new Date(value as string));
-            } else if (typeof value === 'string') {
-                dataPoint.stringField(key, value);
-            } else if (typeof value === 'number') {
+        if (uploader_callsign) {
+            dataPoint.tag('uploader_callsign', uploader_callsign);
+        }
+
+        // every remaining schema field is numeric, floatField keeps the type consistent with already stored data
+        for (const [key, value] of Object.entries(measurements)) {
+            if (value !== undefined) {
                 dataPoint.floatField(key, value);
-            } else if (typeof value === 'boolean') {
-                dataPoint.booleanField(key, value);
             }
         }
 

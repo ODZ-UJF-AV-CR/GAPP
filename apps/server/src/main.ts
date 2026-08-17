@@ -19,6 +19,8 @@ server.register(app, {
     influxDbOrg: config.INFLUXDB_ORG,
     isDevelopment: config.isDevelopment,
     postgresDbUrl: config.POSTGRES_URL,
+    defaultUploaderCallsign: config.SONDEHUB_DEFAULT_UPLOADER,
+    ttnUploaderCallsign: config.SONDEHUB_TTN_UPLOADER,
 });
 
 if (config.isProd) {

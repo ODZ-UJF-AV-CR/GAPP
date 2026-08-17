@@ -12,6 +12,8 @@ export interface ApiResponse<T> {
     };
 }
 
+export type SseStatus = 'idle' | 'connecting' | 'live' | 'reconnecting';
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
     private http = inject(HttpClient);
@@ -20,29 +22,36 @@ export class ApiService {
         return `${environment.apiBaseUrl}${path}`;
     }
 
-    public sse$<T>(url: string): Observable<T> {
-        const source = new EventSource(this.apiUrl(url));
-
+    /**
+     * Keepalives arrive as SSE comments, so they never reach onmessage. Transient drops are left to the
+     * browser, which reconnects on its own, only a closed connection is surfaced as an error to be retried.
+     */
+    public sse$<T>(url: string, onStatus?: (status: SseStatus) => void): Observable<T> {
         return new Observable((observer) => {
+            const source = new EventSource(this.apiUrl(url));
+            onStatus?.('connecting');
+
+            source.onopen = () => onStatus?.('live');
+
             source.onmessage = (message) => {
                 try {
-                    const data = JSON.parse(message.data);
-                    if (data?.data !== 'ping') {
-                        observer.next(data);
-                    }
+                    observer.next(JSON.parse(message.data) as T);
                 } catch (error) {
-                    console.error(error);
-                    observer.error(error);
+                    console.error('Malformed SSE message', error);
                 }
             };
 
-            source.onerror = (error) => {
-                console.error(error);
-                observer.error(error);
+            source.onerror = () => {
+                onStatus?.('reconnecting');
+
+                if (source.readyState === EventSource.CLOSED) {
+                    observer.error(new Error(`SSE connection to ${url} was closed`));
+                }
             };
 
             return () => {
                 source.close();
+                onStatus?.('idle');
             };
         });
     }

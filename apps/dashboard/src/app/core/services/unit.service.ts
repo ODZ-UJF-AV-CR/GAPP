@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { readStoredValue, writeStoredValue } from './storage';
 import { UNIT_CONFIG, type UnitCategory, type UnitDefinition, type UnitSystem } from './unit.provider';
 
 const LOCAL_STORAGE_KEY = 'gapp-unit-system';
@@ -16,7 +17,7 @@ export class UnitService {
     public setSystem(system: UnitSystem) {
         if (system in this.config) {
             this._system.set(system);
-            localStorage.setItem(LOCAL_STORAGE_KEY, system);
+            writeStoredValue(LOCAL_STORAGE_KEY, system);
         }
     }
 
@@ -37,7 +38,7 @@ export class UnitService {
     }
 
     private getInitialSystem(): UnitSystem {
-        const stored = localStorage.getItem(LOCAL_STORAGE_KEY) as UnitSystem | null;
+        const stored = readStoredValue<UnitSystem>(LOCAL_STORAGE_KEY);
 
         if (stored && this.availableSystems.includes(stored)) {
             return stored;

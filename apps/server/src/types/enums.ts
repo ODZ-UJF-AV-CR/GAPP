@@ -13,4 +13,5 @@ export enum Plugins {
     REPOSITORIES = 'repositories',
     EVENT_BUS = 'eventBus',
     ABORT_CONTROLLER = 'abortController',
+    ERROR_HANDLER = 'errorHandler',
 }

@@ -1,17 +1,17 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, type Signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, input, type Signal } from '@angular/core';
+import { TICKER } from '@core/services/ticker.provider';
 import { ClassRangeDirective, secondsFromDate, TimeAgoComponent } from '@shared/utils';
-import { distinctUntilChanged, filter, interval, map, merge } from 'rxjs';
 import type { BeaconWithContact } from './telemetry-dashboard.component';
 
 @Component({
     selector: 'beacon-row',
     templateUrl: './beacon-row.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TimeAgoComponent, ClassRangeDirective, AsyncPipe],
+    imports: [TimeAgoComponent, ClassRangeDirective],
 })
 export class BeaconRowComponent {
+    private ticker = inject(TICKER);
+
     public beacon = input.required<BeaconWithContact>();
     public isStation = input<boolean>(false);
 
@@ -25,15 +25,15 @@ export class BeaconRowComponent {
     public uploaderCallsign = computed(() => this.beacon().contact()?.uploader_callsign);
     public uploadTimestamp = computed(() => this.beacon().upload()?._time);
 
-    public contactSecondsAgo$ = this.secondsAgo$(this.contactTimestamp);
-    public uploadSecondsAgo$ = this.secondsAgo$(this.uploadTimestamp);
+    public contactSecondsAgo = this.secondsAgo(this.contactTimestamp);
+    public uploadSecondsAgo = this.secondsAgo(this.uploadTimestamp);
 
-    private secondsAgo$(timestamp: Signal<string | undefined>) {
-        return merge(interval(1000), toObservable(timestamp)).pipe(
-            map(() => timestamp()),
-            filter((value) => value !== undefined),
-            map((value) => secondsFromDate(new Date(value))),
-            distinctUntilChanged(),
-        );
+    private secondsAgo(timestamp: Signal<string | undefined>) {
+        return computed(() => {
+            this.ticker();
+            const value = timestamp();
+
+            return value ? secondsFromDate(new Date(value)) : undefined;
+        });
     }
 }

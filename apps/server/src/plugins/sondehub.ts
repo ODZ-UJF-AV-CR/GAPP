@@ -5,6 +5,7 @@ import { Plugins } from './plugins.ts';
 
 interface SondehubPluginOptions extends FastifyPluginOptions {
     dev: boolean;
+    uploaderCallsign: string;
 }
 
 declare module 'fastify' {
@@ -15,7 +16,7 @@ declare module 'fastify' {
 
 const sondehubPlugin: FastifyPluginAsync<SondehubPluginOptions> = async (fastify, options) => {
     const uploader = new Uploader({
-        uploader_callsign: 'gapp-default',
+        uploader_callsign: options.uploaderCallsign,
         dev: options.dev,
         software_name: 'gapp-server',
         software_version: '0.0.1',

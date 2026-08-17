@@ -1,7 +1,7 @@
 import type { BeaconsCreate } from '@gapp/shared';
 import type { BeaconsRepository } from '../repository/beacons.repository.ts';
 import type { VehiclesRepository } from '../repository/vehicles.repository.ts';
-import { ConflictError, NotFoundError } from '../utils/errors.ts';
+import { ConflictError, isUniqueViolation, NotFoundError } from '../utils/errors.ts';
 
 export class BeaconService {
     constructor(
@@ -18,14 +18,20 @@ export class BeaconService {
         }
 
         const vehicleIds = [...new Set(beacons.map((beacon) => beacon.vehicle_id))];
-        const vehicles = await Promise.all(vehicleIds.map((id) => this.vehiclesRepository.getVehicleById(id)));
-        const missingIndex = vehicles.findIndex((vehicle) => !vehicle);
+        const vehicles = await this.vehiclesRepository.getVehiclesByIds(vehicleIds);
+        const foundIds = new Set(vehicles.map((vehicle) => vehicle.id));
+        const missingId = vehicleIds.find((id) => !foundIds.has(id));
 
-        if (missingIndex !== -1) {
-            throw new NotFoundError(`Vehicle with id ${vehicleIds[missingIndex]} does not exist.`);
+        if (missingId !== undefined) {
+            throw new NotFoundError(`Vehicle with id ${missingId} does not exist.`);
         }
 
-        return await this.beaconsRepository.createBeacons(beacons);
+        return await this.beaconsRepository.createBeacons(beacons).catch((e) => {
+            if (isUniqueViolation(e)) {
+                throw new ConflictError(`One of the callsigns already exists: ${callsigns.join(', ')}`);
+            }
+            throw e;
+        });
     }
 
     public getBeacons(vehicleId?: number) {

@@ -6,6 +6,7 @@ import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { beaconController, liveDataController, telemetryController, vehicleController } from './controllers/index.ts';
 import abortControllerPlugin from './plugins/abort-controller.ts';
 import cachePlugin from './plugins/cache.ts';
+import errorHandlerPlugin from './plugins/error-handler.ts';
 import eventBusPlugin from './plugins/event-bus.ts';
 import influxDbPlugin from './plugins/influxdb.ts';
 import postgresDbPlugin from './plugins/postgresdb.ts';
@@ -20,6 +21,9 @@ interface AppOptions extends FastifyPluginOptions {
 
     postgresDbUrl: string;
 
+    defaultUploaderCallsign: string;
+    ttnUploaderCallsign: string;
+
     isDevelopment: boolean;
 }
 
@@ -33,17 +37,21 @@ export const app = async (fastify: FastifyInstance, opts: AppOptions) => {
     });
 
     // PLUGINS
+    await fastify.register(errorHandlerPlugin);
     await fastify.register(influxDbPlugin, {
         url: opts.influxDbUrl,
         token: opts.influxDbToken,
         org: opts.influxDbOrg,
     });
     await fastify.register(postgresDbPlugin, { url: opts.postgresDbUrl });
-    await fastify.register(sondehubPlugin, { dev: opts.isDevelopment });
+    await fastify.register(sondehubPlugin, { dev: opts.isDevelopment, uploaderCallsign: opts.defaultUploaderCallsign });
     await fastify.register(abortControllerPlugin);
     await fastify.register(cachePlugin);
     await fastify.register(repositoriesPlugin);
-    await fastify.register(servicesPlugin);
+    await fastify.register(servicesPlugin, {
+        defaultUploaderCallsign: opts.defaultUploaderCallsign,
+        ttnUploaderCallsign: opts.ttnUploaderCallsign,
+    });
 
     await fastify.register(swagger, {
         openapi: {

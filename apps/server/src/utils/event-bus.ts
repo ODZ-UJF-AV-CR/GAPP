@@ -1,8 +1,11 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: ok for evetn bus
 import EventEmitter from 'node:events';
 
+/** @description One listener is added per open stream, the cap only controls when node warns about a suspected leak */
+const MAX_LISTENERS = 1000;
+
 export class EventBus<TEvents extends Record<string, any>> {
-    private _emitter = new EventEmitter().setMaxListeners(1000);
+    private _emitter = new EventEmitter().setMaxListeners(MAX_LISTENERS);
 
     public get emitter() {
         return this._emitter;

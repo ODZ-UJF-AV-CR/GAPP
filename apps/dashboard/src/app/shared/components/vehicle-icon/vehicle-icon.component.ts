@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { VehicleService } from '@shared/services';
 import { VEHICLE_ICONS } from './vehicle-icon.provider';
 
 @Component({
@@ -10,17 +11,14 @@ import { VEHICLE_ICONS } from './vehicle-icon.provider';
 })
 export class VehicleIconComponent {
     private iconsConfig = inject(VEHICLE_ICONS);
+    private vehicleService = inject(VehicleService);
 
     public typeId = input.required<number>();
     public size = input.required<string>();
 
     public icon = computed(() => {
-        const type = this.typeId();
+        const typeName = this.vehicleService.vehicleTypesList().find((type) => type.id === this.typeId())?.type_name;
 
-        if (this.iconsConfig.icons.has(type)) {
-            return this.iconsConfig.icons.get(type);
-        }
-
-        return this.iconsConfig.defaultIcon;
+        return (typeName && this.iconsConfig.icons[typeName]) || this.iconsConfig.defaultIcon;
     });
 }

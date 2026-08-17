@@ -5,7 +5,7 @@
         @if(!isStation() && uploaderCallsign(); as uploader) {
         <div class="text-xs opacity-60">via {{ uploader }}</div>
         } @if(contactTimestamp(); as timestamp) {
-        <div class="badge badge-outline gap-1" [classRange]="badgeClasses" [value]="contactSecondsAgo$ | async">
+        <div class="badge badge-outline gap-1" [classRange]="badgeClasses" [value]="contactSecondsAgo()">
             @if(isStation()) {
             <span class="opacity-60">uploaded location</span>
             }
@@ -14,7 +14,7 @@
         } @else {
         <div class="badge badge-neutral">No location</div>
         } @if(isStation()) { @if(uploadTimestamp(); as timestamp) {
-        <div class="badge badge-outline gap-1" [classRange]="badgeClasses" [value]="uploadSecondsAgo$ | async">
+        <div class="badge badge-outline gap-1" [classRange]="badgeClasses" [value]="uploadSecondsAgo()">
             <span class="opacity-60">received packet</span>
             <span [time-ago]="timestamp"></span>
         </div>

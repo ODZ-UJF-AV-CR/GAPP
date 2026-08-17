@@ -3,6 +3,9 @@ import axios from 'axios';
 
 type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
+/** @description Free-text on the SondeHub side, shown in the tracker sidebar. Known values are listed for convenience. */
+export type Modulation = 'APRS' | 'Horus Binary' | 'RTTY' | 'LoRa' | 'WSPR' | 'GFSK' | (string & {});
+
 interface BasePacket {
     software_name: string;
     software_version: string;
@@ -30,10 +33,12 @@ export interface TelemetryPacket extends Partial<BasePacket> {
     sats?: number;
     snr?: number;
     rssi?: number;
+    frame?: number;
     telemetry_hidden?: boolean;
     historical?: boolean;
     upload_time?: string;
-    modulation?: 'APRS' | 'Hours Binary' | 'RTTY' | 'LoRa' | 'WSPR';
+    modulation?: Modulation;
+    baud_rate?: number;
 }
 
 type StationBasePayload = Partial<Omit<BasePacket, 'uploader_callsign' | 'uploader_position'>> &
@@ -57,8 +62,10 @@ interface UploaderConfig extends BasePacket {
     /** @description how often packets will be sent to sondehub (in ms) */
     uploadRate: number;
     uploadTimeout: number;
-    /** @todo implement */
+    /** @description attempts per batch, only server errors are retried */
     uploadRetries: number;
+    /** @description delay between retry attempts (in ms) */
+    uploadRetryDelay: number;
     dev: boolean;
     logLevel?: LogLevel;
     logger?: Partial<Logger>;
@@ -80,11 +87,13 @@ type MinimalUploaderConfig = Partial<Omit<UploaderConfig, 'uploader_callsign'>> 
  */
 export class Uploader {
     private timeoutId?: NodeJS.Timeout;
+    private stopped = false;
     private uploaderConfig: UploaderConfig = {
         uploader_callsign: '',
         uploadRate: 5_000,
         uploadTimeout: 20_000,
         uploadRetries: 5,
+        uploadRetryDelay: 1_000,
         dev: false,
         software_name: 'node-sondehub',
         software_version: '0.0.1',
@@ -102,7 +111,7 @@ export class Uploader {
             ...options,
         };
 
-        this.timeoutId = setTimeout(() => this.processQueue(), this.uploaderConfig.uploadRate);
+        this.scheduleNextUpload();
     }
 
     /**
@@ -136,11 +145,22 @@ export class Uploader {
      * await uploader.deinit();
      */
     public async deinit(): Promise<void> {
-        this.timeoutId?.unref();
+        this.stop();
 
         if (this.telemetryQueue.length) {
-            await this.uploadTelemetryPackets(this.telemetryQueue);
+            const remaining = this.telemetryQueue;
+            this.telemetryQueue = [];
+            await this.uploadTelemetryPackets(remaining);
         }
+    }
+
+    /**
+     * Stops the upload cycle without flushing, queued packets are kept in memory.
+     * Use `deinit` for a clean shutdown that still delivers them.
+     */
+    public stop(): void {
+        this.stopped = true;
+        clearTimeout(this.timeoutId);
     }
 
     /**
@@ -170,69 +190,101 @@ export class Uploader {
             mobile: stationPacket.mobile ?? false,
         };
 
-        try {
-            const compressedPayload = await this.compress(payload);
-            const headers = {
-                'User-Agent': `${this.uploaderConfig.software_name}-${this.uploaderConfig.software_version}`,
-                'Content-Encoding': 'gzip',
-                'Content-Type': 'application/json',
-            };
-            const response = await axios.put(Uploader.SONDEHUB_AMATEUR_STATION_POSITION_URL, compressedPayload, {
-                headers,
-                timeout: this.uploaderConfig.uploadTimeout,
-            });
-
-            if (response.status === 200) {
-                this.logDebug('Station position uploaded successfully.');
-            } else if (response.status === 202) {
-                this.logInfo('Station packet accepted in test mode');
-            } else {
-                this.logError(`Failed to upload station position. Status: ${response.status}, Message: ${response.statusText}`);
-            }
-        } catch (error) {
-            this.logError(`Error uploading station position: ${error}`);
-        }
+        await this.putWithRetry(Uploader.SONDEHUB_AMATEUR_STATION_POSITION_URL, payload, `station position of ${stationPacket.uploader_callsign}`);
     }
 
-    private async processQueue() {
-        if (!this.telemetryQueue.length) {
-            this.timeoutId = setTimeout(() => this.processQueue(), this.uploaderConfig.uploadRate);
+    private scheduleNextUpload() {
+        if (this.stopped) {
             return;
         }
 
-        const queue = [...this.telemetryQueue];
-        this.telemetryQueue = [];
-
-        await this.uploadTelemetryPackets(queue);
-
-        this.timeoutId?.unref();
         this.timeoutId = setTimeout(() => this.processQueue(), this.uploaderConfig.uploadRate);
+        this.timeoutId.unref();
     }
 
-    private async uploadTelemetryPackets(packets: TelemetryPacket[]): Promise<void> {
-        try {
-            const compressedPayload = await this.compress(packets);
-            const headers = {
-                'User-Agent': `${this.uploaderConfig.software_name}-${this.uploaderConfig.software_version}`,
-                'Content-Encoding': 'gzip',
-                'Content-Type': 'application/json',
-            };
+    private async processQueue() {
+        const queue = this.telemetryQueue;
+        this.telemetryQueue = [];
 
-            const response = await axios.put(Uploader.SONDEHUB_AMATEUR_URL, compressedPayload, {
-                headers,
-                timeout: this.uploaderConfig.uploadTimeout,
-            });
+        if (queue.length) {
+            const delivered = await this.uploadTelemetryPackets(queue);
 
-            if (response.status === 200) {
-                this.logInfo(`Uploaded ${packets.length} telemetry packets.`);
-            } else if (response.status === 202) {
-                this.logInfo('Station packet accepted in test mode');
-            } else {
-                this.logError(`Failed to upload telemetry. Status: ${response.status}, Message: ${response.statusText}`);
+            // packets are only dropped once sondehub has taken them, otherwise they wait for the next cycle
+            if (!delivered) {
+                this.telemetryQueue = [...queue, ...this.telemetryQueue];
             }
-        } catch (error) {
-            this.logError(`Error uploading telemetry: ${error}`);
         }
+
+        this.scheduleNextUpload();
+    }
+
+    private uploadTelemetryPackets(packets: TelemetryPacket[]): Promise<boolean> {
+        return this.putWithRetry(Uploader.SONDEHUB_AMATEUR_URL, packets, `${packets.length} telemetry packets`);
+    }
+
+    /** @description Resolves false only when the payload is still worth retrying later, a rejected payload is not */
+    private async putWithRetry(url: string, payload: JSONValue | TelemetryPacket[] | StationPositionPacket, description: string): Promise<boolean> {
+        let compressedPayload: Buffer;
+
+        try {
+            compressedPayload = await this.compress(payload);
+        } catch (error) {
+            this.logError(`Error compressing ${description}, dropping it: ${error}`);
+            return true;
+        }
+
+        const headers = {
+            'User-Agent': `${this.uploaderConfig.software_name}-${this.uploaderConfig.software_version}`,
+            'Content-Encoding': 'gzip',
+            'Content-Type': 'application/json',
+        };
+
+        for (let attempt = 1; attempt <= this.uploaderConfig.uploadRetries; attempt++) {
+            try {
+                const response = await axios.put(url, compressedPayload, {
+                    headers,
+                    timeout: this.uploaderConfig.uploadTimeout,
+                    validateStatus: () => true,
+                });
+
+                if (response.status === 200) {
+                    this.logInfo(`Uploaded ${description}.`);
+                    return true;
+                }
+
+                if (response.status === 202) {
+                    this.logInfo(`Accepted ${description} in test mode.`);
+                    return true;
+                }
+
+                // sondehub asks clients to retry server errors only, anything else would fail again the same way
+                if (!this.isRetriable(response.status)) {
+                    this.logError(`Failed to upload ${description}. Status: ${response.status}, Message: ${response.statusText}`);
+                    return true;
+                }
+
+                this.logDebug(`Sondehub is busy (status ${response.status}), attempt ${attempt} of ${this.uploaderConfig.uploadRetries}.`);
+            } catch (error) {
+                this.logDebug(`Error uploading ${description}, attempt ${attempt} of ${this.uploaderConfig.uploadRetries}: ${error}`);
+            }
+
+            if (attempt < this.uploaderConfig.uploadRetries) {
+                await this.delay(this.uploaderConfig.uploadRetryDelay);
+            }
+        }
+
+        this.logError(`Upload of ${description} failed after ${this.uploaderConfig.uploadRetries} attempts.`);
+        return false;
+    }
+
+    private isRetriable(status: number) {
+        return status >= 500;
+    }
+
+    private delay(ms: number) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms).unref();
+        });
     }
 
     private enhanceTelemetryPacket(packet: TelemetryPacket): TelemetryPacket {
@@ -258,11 +310,13 @@ export class Uploader {
     }
 
     private compress(data: JSONValue | TelemetryPacket[] | StationPositionPacket): Promise<Buffer> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             gzip(JSON.stringify(data), (error, compressedData) => {
                 if (error) {
-                    this.logError(error.message);
+                    reject(error);
+                    return;
                 }
+
                 resolve(compressedData);
             });
         });

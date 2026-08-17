@@ -16,7 +16,7 @@ export type VehicleCreate = Static<typeof VehicleCreateSchema>;
 export const VehicleGetSchema = T.Object({
     id: T.Number(),
     name: T.String(),
-    description: T.Optional(T.String()),
+    description: T.Union([T.String(), T.Null()]),
     vehicle_type_id: T.Number(),
     upload_aggregation: T.Boolean(),
     upload_beacons: T.Boolean(),

@@ -1,9 +1,14 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
 import { BeaconService } from '../services/beacon.service.ts';
 import { TelemetryService } from '../services/telemetry.service.ts';
 import { VehicleService } from '../services/vehicle.service.ts';
 import { Plugins } from './plugins.ts';
+
+interface ServicesPluginOptions extends FastifyPluginOptions {
+    defaultUploaderCallsign: string;
+    ttnUploaderCallsign: string;
+}
 
 declare module 'fastify' {
     interface FastifyInstance {
@@ -13,9 +18,17 @@ declare module 'fastify' {
     }
 }
 
-const services: FastifyPluginAsync = async (fastify) => {
-    const telemetryService = new TelemetryService(fastify.telemetryRepository, fastify.vehiclesRepository, fastify.sondehub, fastify.eventBus, fastify.cache);
-    const vehicleService = new VehicleService(fastify.vehiclesRepository, fastify.beaconsRepository);
+const services: FastifyPluginAsync<ServicesPluginOptions> = async (fastify, options) => {
+    const telemetryService = new TelemetryService(
+        fastify.telemetryRepository,
+        fastify.vehiclesRepository,
+        fastify.sondehub,
+        fastify.eventBus,
+        fastify.cache,
+        fastify.log,
+        { defaultUploaderCallsign: options.defaultUploaderCallsign, ttnUploaderCallsign: options.ttnUploaderCallsign },
+    );
+    const vehicleService = new VehicleService(fastify.vehiclesRepository);
     const beaconService = new BeaconService(fastify.beaconsRepository, fastify.vehiclesRepository);
 
     fastify.decorate('telemetryService', telemetryService);

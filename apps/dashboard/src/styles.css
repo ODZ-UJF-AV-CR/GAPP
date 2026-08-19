@@ -34,3 +34,8 @@
 body {
     background-color: var(--color-base-300);
 }
+
+/* the wrapper is min-width:100% and absolutely positioned, so a wide row would stretch it instead of being truncated */
+.cdk-virtual-scroll-content-wrapper {
+    max-width: 100%;
+}

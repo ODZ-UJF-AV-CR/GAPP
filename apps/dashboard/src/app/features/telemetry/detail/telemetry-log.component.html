@@ -1,0 +1,17 @@
+@if (entries().length) {
+<cdk-virtual-scroll-viewport [itemSize]="rowHeight" class="h-full w-full rounded-box bg-base-200">
+    <div
+        *cdkVirtualFor="let entry of entries(); trackBy: trackByKey"
+        class="flex h-8 cursor-pointer items-center gap-3 px-3 font-mono text-xs hover:bg-base-content/10"
+        (click)="selected.emit(entry)"
+    >
+        <span class="shrink-0 text-base-content/60">{{ entry.time | date: 'HH:mm:ss.SSS' }}</span>
+        <span class="badge badge-xs badge-ghost shrink-0">{{ entry.callsign }}</span>
+        <span class="min-w-0 truncate text-base-content/80">{{ entry.json }}</span>
+    </div>
+</cdk-virtual-scroll-viewport>
+} @else {
+<div class="flex h-full w-full items-center justify-center rounded-box bg-base-200 p-6 text-sm text-base-content/60">
+    No telemetry packets in the last 24 hours.
+</div>
+}

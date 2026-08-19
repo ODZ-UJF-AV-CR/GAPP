@@ -1,1 +1,54 @@
-<div>Telemetry detail: {{ id() }}</div>
+<div *headerContent class="flex justify-end text-sm">
+    <div class="flex flex-col items-end gap-1 text-right">
+        <div>{{ packetCount() }} packets</div>
+
+        @switch (connectionStatus()) { @case ('live') {
+        <div class="badge badge-sm badge-success">Live</div>
+        } @case ('reconnecting') {
+        <div class="badge badge-sm badge-warning">Reconnecting&hellip;</div>
+        } @case ('connecting') {
+        <div class="badge badge-sm badge-info">Connecting&hellip;</div>
+        } @default {
+        <div class="badge badge-sm badge-neutral">Offline</div>
+        } }
+    </div>
+</div>
+
+<div class="flex max-h-full w-full flex-col gap-3 content-width">
+    @if (loading()) {
+    <loader></loader>
+    } @else if (notFound()) {
+    <div class="gapp-card">Vehicle not found.</div>
+    } @else if (vehicle(); as vehicle) {
+    <div class="gapp-card flex flex-col gap-2">
+        <div class="flex flex-row items-center gap-3">
+            <vehicle-icon [typeId]="vehicle.vehicle_type_id" size="2rem"></vehicle-icon>
+            <h2 class="text-2xl font-bold">{{ vehicle.name }}</h2>
+        </div>
+
+        @if (vehicle.description) {
+        <p class="text-sm text-base-content/60">{{ vehicle.description }}</p>
+        }
+
+        <div class="flex flex-row flex-wrap gap-2">
+            @for (beacon of beacons(); track beacon.id) {
+            <span class="badge badge-outline">{{ beacon.callsign }}</span>
+            } @empty {
+            <span class="text-sm text-base-content/60">No transmitters.</span>
+            }
+        </div>
+    </div>
+
+    <div class="gapp-card flex min-h-0 flex-1 flex-col gap-2">
+        <h3 class="text-sm font-semibold text-base-content/60">Telemetry log</h3>
+
+        <div class="h-[60vh] min-h-0">
+            <telemetry-log [entries]="entries()" (selected)="showPacket($event)"></telemetry-log>
+        </div>
+    </div>
+    }
+</div>
+
+<gapp-dialog title="Telemetry packet" modalClass="max-w-2xl">
+    <pre class="max-h-[60vh] overflow-auto rounded-box bg-base-200 p-3 font-mono text-xs">{{ selectedJson() }}</pre>
+</gapp-dialog>

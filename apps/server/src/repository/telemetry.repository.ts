@@ -100,6 +100,23 @@ export class TelemetryRepository {
         this.writeApi.writePoint(dataPoint);
     }
 
+    public async getVehicleTelemetry(callsigns: string[]): Promise<TelemetryRecord[]> {
+        if (!callsigns.length) {
+            return [];
+        }
+
+        const query = `from(bucket: "${this.bucketName}")
+            |> range(start: -24h)
+            |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
+            |> pivot(rowKey: ["_time", "callsign"], columnKey: ["_field"], valueColumn: "_value")
+            |> drop(columns: ["_start", "_stop", "_measurement"])
+            |> group()
+            |> sort(columns: ["_time"])`;
+
+        const rows = await this.queryAPi.collectRows<Record<string, unknown>>(query);
+        return rows.map(({ table, result, _start, _stop, _measurement, ...rest }) => rest as unknown as TelemetryRecord);
+    }
+
     public async getUploadersLastContact(callsigns?: string[]): Promise<LastContactData[]> {
         const uploaderFilter = callsigns?.length
             ? `|> filter(fn: (r) => contains(value: r.uploader_callsign, set: ${arrayAsString(callsigns)}))`

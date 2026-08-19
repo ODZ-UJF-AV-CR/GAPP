@@ -44,10 +44,13 @@ export class TelemetryDashboardComponent implements OnInit {
     private vehiclesByVehicleType = computed(() => {
         const vehiclesList = this.vehiclesWithContact();
 
-        return this.vehiclesService.vehicleTypesList().map((type) => ({
-            vehicles: vehiclesList.filter((vehicle) => vehicle.vehicle_type_id === type.id),
-            type,
-        }));
+        return this.vehiclesService
+            .vehicleTypesList()
+            .map((type) => ({
+                vehicles: vehiclesList.filter((vehicle) => vehicle.vehicle_type_id === type.id),
+                type,
+            }))
+            .filter((entry) => entry.vehicles.length > 0);
     });
 
     public connectionStatus = this.liveTelemetry.connectionStatus;

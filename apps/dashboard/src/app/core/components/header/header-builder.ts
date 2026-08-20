@@ -1,6 +1,6 @@
 export interface HeaderData {
     showHeader: boolean;
-    title?: string;
+    title?: string | null;
     back?: string;
 }
 
@@ -8,7 +8,7 @@ export interface HeaderOptions {
     back?: string;
 }
 
-export const useHeader = (title?: string, options?: HeaderOptions): { header: HeaderData } => ({
+export const useHeader = (title?: string | null, options?: HeaderOptions): { header: HeaderData } => ({
     header: {
         showHeader: true,
         title,

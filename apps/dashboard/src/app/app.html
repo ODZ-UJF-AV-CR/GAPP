@@ -6,7 +6,13 @@
 
     @if(showHeader()) {
     <div class="absolute inset-x-0 top-0 z-10 p-4 max-sm:px-2 pointer-events-none">
-        <gapp-header class="pointer-events-auto" [title]="headerTitle()" [content]="headerContent()" [back]="headerBack()"></gapp-header>
+        <gapp-header
+            class="pointer-events-auto"
+            [title]="headerTitle()"
+            [contentLeft]="headerContentLeft()"
+            [contentRight]="headerContentRight()"
+            [back]="headerBack()"
+        ></gapp-header>
     </div>
     }
 
@@ -17,7 +23,12 @@
 } @else {
 <div class="flex justify-center">
     <div class="flex flex-col h-svh gap-3 p-4 max-sm:px-2 max-md:pb-6 w-full">
-        @if(showHeader()) {<gapp-header [title]="headerTitle()" [content]="headerContent()" [back]="headerBack()"></gapp-header>}
+        @if(showHeader()) {<gapp-header
+            [title]="headerTitle()"
+            [contentLeft]="headerContentLeft()"
+            [contentRight]="headerContentRight()"
+            [back]="headerBack()"
+        ></gapp-header>}
 
         <div class="grow w-full flex justify-center items-center overflow-hidden"><router-outlet></router-outlet></div>
 

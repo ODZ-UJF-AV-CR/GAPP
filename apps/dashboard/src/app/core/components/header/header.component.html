@@ -7,10 +7,15 @@
     <div class="flex items-center">
         <h1 class="text-xl md:text-3xl font-bold">{{ title() }}</h1>
     </div>
+    } @if(contentLeft()) {
+    <div class="flex items-center">
+        <ng-container *ngTemplateOutlet="contentLeft()" />
+    </div>
     }
 
-    <div class="grow">
-        @if(content()) {
-        <ng-container *ngTemplateOutlet="content()" />}
+    <div class="grow flex justify-end">
+        @if(contentRight()) {
+        <ng-container *ngTemplateOutlet="contentRight()" />
+        }
     </div>
 </div>

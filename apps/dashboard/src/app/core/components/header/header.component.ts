@@ -13,7 +13,8 @@ import type { HeaderContent } from './header.service';
     providers: [provideIcons({ tablerArrowLeft })],
 })
 export class HeaderComponent {
-    public readonly title = input<string | undefined>(undefined);
-    public readonly content = input<HeaderContent | undefined>(undefined);
+    public readonly title = input<string | null | undefined>(undefined);
+    public readonly contentLeft = input<HeaderContent | undefined>(undefined);
+    public readonly contentRight = input<HeaderContent | undefined>(undefined);
     public readonly back = input<string | undefined>(undefined);
 }

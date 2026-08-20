@@ -1,4 +1,11 @@
-<div *headerContent class="flex justify-end text-sm">
+<div *headerContent="'left'" class="flex items-center gap-3">
+    @if (vehicle(); as vehicle) {
+    <vehicle-icon [typeId]="vehicle.vehicle_type_id" size="2rem"></vehicle-icon>
+    <h1 class="text-xl md:text-3xl font-bold">{{ vehicle.name }}</h1>
+    }
+</div>
+
+<div *headerContent="'right'" class="flex justify-end text-sm">
     <div class="flex flex-col items-end gap-1 text-right">
         @if (isFiltered()) {
         <div>{{ visibleCount() }} / {{ packetCount() }} packets</div>
@@ -22,12 +29,7 @@
     } @else if (notFound()) {
     <div class="gapp-card">Vehicle not found.</div>
     } @else if (vehicle(); as vehicle) {
-    <div class="gapp-card flex flex-col gap-2">
-        <div class="flex flex-row items-center gap-3">
-            <vehicle-icon [typeId]="vehicle.vehicle_type_id" size="2rem"></vehicle-icon>
-            <h2 class="text-2xl font-bold">{{ vehicle.name }}</h2>
-        </div>
-
+    <div class="gapp-card flex min-h-0 flex-1 flex-col gap-2">
         @if (vehicle.description) {
         <p class="text-sm text-base-content/60">{{ vehicle.description }}</p>
         }
@@ -50,10 +52,6 @@
             <button type="button" class="btn btn-ghost btn-xs" (click)="clearFilter()">Clear</button>
             }
         </div>
-    </div>
-
-    <div class="gapp-card flex min-h-0 flex-1 flex-col gap-2">
-        <h3 class="text-sm font-semibold text-base-content/60">Telemetry log</h3>
 
         <div class="h-[60vh] min-h-0">
             <telemetry-log [entries]="visibleEntries()" [emptyMessage]="emptyMessage()" (selected)="showPacket($event)"></telemetry-log>

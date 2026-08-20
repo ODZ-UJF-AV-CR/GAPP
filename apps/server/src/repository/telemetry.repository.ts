@@ -159,4 +159,23 @@ export class TelemetryRepository {
 
         return await this.queryAPi.collectRows(query);
     }
+
+    public async getCallsignsTrack(callsigns: string[], hours = 24, limit = MAX_TELEMETRY_ROWS): Promise<LocationData[]> {
+        if (!callsigns.length) {
+            return [];
+        }
+
+        const query = `from(bucket: "${this.bucketName}")
+            |> range(start: -${hours}h)
+            |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
+            |> filter(fn: (r) => r._field == "latitude" or r._field == "longitude" or r._field == "altitude")
+            |> pivot(rowKey: ["_time", "callsign"], columnKey: ["_field"], valueColumn: "_value")
+            |> keep(columns: ["_time", "altitude", "longitude", "latitude", "callsign", "uploader_callsign"])
+            |> group()
+            |> sort(columns: ["_time"])
+            |> tail(n: ${limit})`;
+
+        const rows = await this.queryAPi.collectRows<LocationData>(query);
+        return rows.filter((row) => row.latitude !== undefined && row.longitude !== undefined);
+    }
 }

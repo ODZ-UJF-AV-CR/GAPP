@@ -1,5 +1,5 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { OptionalCallsignQuery } from '@gapp/shared';
+import { MapStreamQuerySchema, OptionalCallsignQuery } from '@gapp/shared';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 
 export const liveDataController: FastifyPluginAsyncTypebox = async (fastify) => {
@@ -21,6 +21,26 @@ export const liveDataController: FastifyPluginAsyncTypebox = async (fastify) => 
             req.raw.on('close', () => ac.abort());
             const callsigns = req.query.callsign?.split(',').filter(Boolean);
             rep.sse(req.server.liveDataService.getDashboardStream(callsigns)(ac));
+        },
+    );
+
+    fastify.get(
+        '/map',
+        {
+            schema: {
+                tags: ['live-data'],
+                summary: 'Get live map telemetry stream',
+                description:
+                    'Stream map data using server sent events. Initial message contains position tracks for non-station vehicles and last known position for stations. Following messages contain updates for watched callsigns.',
+                querystring: MapStreamQuerySchema,
+            },
+        },
+        async (req, rep) => {
+            const ac = req.server.getAbortController();
+            req.raw.on('close', () => ac.abort());
+            const callsigns = req.query.callsign?.split(',').filter(Boolean);
+            const stream = await req.server.liveDataService.getMapStream(callsigns, req.query.hours);
+            rep.sse(stream(ac));
         },
     );
 

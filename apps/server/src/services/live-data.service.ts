@@ -1,4 +1,4 @@
-import type { DashboardStream, TelemetryRecord, VehicleTelemetryStream } from '@gapp/shared';
+import type { DashboardStream, MapData, MapStream, TelemetryRecord, VehicleTelemetryStream } from '@gapp/shared';
 import type { FastifyBaseLogger } from 'fastify';
 import type { Events } from '../plugins/event-bus.ts';
 import type { TelemetryRepository } from '../repository/telemetry.repository.ts';
@@ -52,6 +52,68 @@ export class LiveDataService {
         };
 
         return buildStream<DashboardStream>({ initialData, subscribe });
+    }
+
+    public async getMapStream(callsigns?: string[], hours = 24) {
+        const beaconVehicles = await this.vehiclesRepository.getBeaconCallsignsWithStationFlag(callsigns);
+        const stationCallsigns = beaconVehicles.filter((b) => b.is_station).map((b) => b.callsign);
+        const trackCallsigns = beaconVehicles.filter((b) => !b.is_station).map((b) => b.callsign);
+        const watchedCallsigns = new Set(beaconVehicles.map((b) => b.callsign));
+
+        const isWatched = (callsign?: string) => !!callsign && watchedCallsigns.has(callsign);
+
+        const initialData: InitialDataCallback<MapStream> = async () => {
+            if (!watchedCallsigns.size) {
+                return { telemetry: [] };
+            }
+
+            try {
+                const [tracks, stations] = await Promise.all([
+                    this.telemetryRepository.getCallsignsTrack(trackCallsigns, hours),
+                    this.telemetryRepository.getCallsignsLastLocation(stationCallsigns),
+                ]);
+
+                const toMapData = ({ _time, callsign, latitude, longitude, altitude, uploader_callsign }: MapData) => ({
+                    _time,
+                    callsign,
+                    latitude,
+                    longitude,
+                    altitude,
+                    uploader_callsign,
+                });
+
+                return {
+                    telemetry: [...tracks.map(toMapData), ...stations.map(toMapData)],
+                };
+            } catch (e) {
+                this.logger.error(e, 'Failed to load initial map snapshot');
+                return { telemetry: [] };
+            }
+        };
+
+        const subscribe: SubscribeCallback<MapStream> = (push) => {
+            const handler = ({ _time, callsign, latitude, longitude, altitude, uploader_callsign }: TelemetryRecord) => {
+                if (isWatched(callsign)) {
+                    push({
+                        telemetry: [
+                            {
+                                _time,
+                                callsign,
+                                latitude,
+                                longitude,
+                                altitude,
+                                uploader_callsign,
+                            },
+                        ],
+                    });
+                }
+            };
+
+            this.eventBus.on('telemetry.new', handler);
+            return () => this.eventBus.off('telemetry.new', handler);
+        };
+
+        return buildStream<MapStream>({ initialData, subscribe });
     }
 
     public async getVehicleTelemetryStream(vehicleId: number) {

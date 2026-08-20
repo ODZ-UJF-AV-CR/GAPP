@@ -15,7 +15,7 @@ import { type TelemetryLogEntry, VehicleTelemetryStore } from './vehicle-telemet
 @Component({
     selector: 'telemetry-detail',
     templateUrl: './telemetry-detail.component.html',
-    host: { class: 'flex flex-col items-center max-h-full w-full' },
+    host: { class: 'flex flex-col items-center h-full max-h-full w-full' },
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [HeaderContentDirective, VehicleIconComponent, LoaderComponent, TelemetryLogComponent, DialogComponent],
     providers: [VehicleTelemetryStore],

@@ -1,4 +1,4 @@
-<div>
+<a [routerLink]="['/telemetry', vehicle().id]" class="block cursor-pointer">
     @if(!isStation()) {
     <div class="font-semibold text-lg mb-1">{{ vehicle().name }}</div>
     }
@@ -8,4 +8,4 @@
         <beacon-row [beacon]="beacon" [isStation]="isStation()"></beacon-row>
         }
     </div>
-</div>
+</a>

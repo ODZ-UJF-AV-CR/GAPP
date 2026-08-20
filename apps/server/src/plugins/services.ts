@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
 import { BeaconService } from '../services/beacon.service.ts';
+import { LiveDataService } from '../services/live-data.service.ts';
 import { TelemetryService } from '../services/telemetry.service.ts';
 import { VehicleService } from '../services/vehicle.service.ts';
 import { Plugins } from './plugins.ts';
@@ -12,6 +13,7 @@ interface ServicesPluginOptions extends FastifyPluginOptions {
 
 declare module 'fastify' {
     interface FastifyInstance {
+        liveDataService: LiveDataService;
         telemetryService: TelemetryService;
         vehicleService: VehicleService;
         beaconService: BeaconService;
@@ -19,6 +21,7 @@ declare module 'fastify' {
 }
 
 const services: FastifyPluginAsync<ServicesPluginOptions> = async (fastify, options) => {
+    const liveDataService = new LiveDataService(fastify.telemetryRepository, fastify.vehiclesRepository, fastify.eventBus, fastify.log);
     const telemetryService = new TelemetryService(
         fastify.telemetryRepository,
         fastify.vehiclesRepository,
@@ -31,6 +34,7 @@ const services: FastifyPluginAsync<ServicesPluginOptions> = async (fastify, opti
     const vehicleService = new VehicleService(fastify.vehiclesRepository);
     const beaconService = new BeaconService(fastify.beaconsRepository, fastify.vehiclesRepository);
 
+    fastify.decorate('liveDataService', liveDataService);
     fastify.decorate('telemetryService', telemetryService);
     fastify.decorate('vehicleService', vehicleService);
     fastify.decorate('beaconService', beaconService);

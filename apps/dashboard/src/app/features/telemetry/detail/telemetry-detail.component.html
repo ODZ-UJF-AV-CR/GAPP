@@ -1,1 +1,65 @@
-<div>Telemetry detail: {{ id() }}</div>
+<div *headerContent="'left'" class="flex items-center gap-3">
+    @if (vehicle(); as vehicle) {
+    <vehicle-icon [typeId]="vehicle.vehicle_type_id" size="2rem"></vehicle-icon>
+    <h1 class="text-xl md:text-3xl font-bold">{{ vehicle.name }}</h1>
+    }
+</div>
+
+<div *headerContent="'right'" class="flex justify-end text-sm">
+    <div class="flex flex-col items-end gap-1 text-right">
+        @if (isFiltered()) {
+        <div>{{ visibleCount() }} / {{ packetCount() }} packets</div>
+        } @else {
+        <div>{{ packetCount() }} packets</div>
+        } @switch (connectionStatus()) { @case ('live') {
+        <div class="badge badge-sm badge-success">Live</div>
+        } @case ('reconnecting') {
+        <div class="badge badge-sm badge-warning">Reconnecting&hellip;</div>
+        } @case ('connecting') {
+        <div class="badge badge-sm badge-info">Connecting&hellip;</div>
+        } @default {
+        <div class="badge badge-sm badge-neutral">Offline</div>
+        } }
+    </div>
+</div>
+
+<div class="flex h-full max-h-full w-full flex-col gap-3 content-width">
+    @if (loading()) {
+    <loader></loader>
+    } @else if (notFound()) {
+    <div class="gapp-card">Vehicle not found.</div>
+    } @else if (vehicle(); as vehicle) {
+    <div class="gapp-card flex min-h-0 flex-1 flex-col gap-2">
+        @if (vehicle.description) {
+        <p class="text-sm text-base-content/60">{{ vehicle.description }}</p>
+        }
+
+        <div class="flex flex-row flex-wrap items-center gap-2">
+            @for (beacon of beacons(); track beacon.id) {
+            <button
+                type="button"
+                class="badge"
+                [class.badge-primary]="selectedCallsigns().has(beacon.callsign)"
+                [class.badge-outline]="!selectedCallsigns().has(beacon.callsign)"
+                [attr.aria-pressed]="selectedCallsigns().has(beacon.callsign)"
+                (click)="toggleBeacon(beacon.callsign)"
+            >
+                {{ beacon.callsign }}
+            </button>
+            } @empty {
+            <span class="text-sm text-base-content/60">No transmitters.</span>
+            } @if (isFiltered()) {
+            <button type="button" class="btn btn-ghost btn-xs" (click)="clearFilter()">Clear</button>
+            }
+        </div>
+
+        <div class="min-h-0 flex-1">
+            <telemetry-log [entries]="visibleEntries()" [emptyMessage]="emptyMessage()" (selected)="showPacket($event)"></telemetry-log>
+        </div>
+    </div>
+    }
+</div>
+
+<gapp-dialog title="Telemetry packet" modalClass="max-w-2xl">
+    <pre class="max-h-[60vh] overflow-auto rounded-box bg-base-200 p-3 font-mono text-xs">{{ selectedJson() }}</pre>
+</gapp-dialog>

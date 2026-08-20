@@ -1,4 +1,4 @@
-import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
+import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
 import { OptionalCallsignQuery } from '@gapp/shared';
 import { FastifySSEPlugin } from 'fastify-sse-v2';
 
@@ -20,7 +20,28 @@ export const liveDataController: FastifyPluginAsyncTypebox = async (fastify) => 
             const ac = req.server.getAbortController();
             req.raw.on('close', () => ac.abort());
             const callsigns = req.query.callsign?.split(',').filter(Boolean);
-            rep.sse(req.server.telemetryService.getDashboardStream(callsigns)(ac));
+            rep.sse(req.server.liveDataService.getDashboardStream(callsigns)(ac));
+        },
+    );
+
+    fastify.get(
+        '/vehicles/:vehicleId',
+        {
+            schema: {
+                tags: ['live-data'],
+                summary: 'Get live vehicle telemetry data',
+                description:
+                    'Stream vehicle telemetry using server sent events. Initial message contains up to 24h history of all telemetry packets for the vehicle, following messages contain only updates.',
+                params: Type.Object({
+                    vehicleId: Type.Number(),
+                }),
+            },
+        },
+        async (req, rep) => {
+            const ac = req.server.getAbortController();
+            req.raw.on('close', () => ac.abort());
+            const stream = await req.server.liveDataService.getVehicleTelemetryStream(req.params.vehicleId);
+            rep.sse(stream(ac));
         },
     );
 };

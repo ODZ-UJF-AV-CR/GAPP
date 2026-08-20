@@ -7,6 +7,8 @@ export enum PointType {
     LOCATION = 'location',
 }
 
+const MAX_TELEMETRY_ROWS = 5000;
+
 export type LocationData = {
     _time: string;
     altitude: number;
@@ -98,6 +100,29 @@ export class TelemetryRepository {
         }
 
         this.writeApi.writePoint(dataPoint);
+    }
+
+    /** @description Sorted oldest first, capped to the newest packets so a busy beacon cannot blow up the response */
+    public async getVehicleTelemetry(callsigns: string[], limit = MAX_TELEMETRY_ROWS): Promise<TelemetryRecord[]> {
+        if (!callsigns.length) {
+            return [];
+        }
+
+        const query = `from(bucket: "${this.bucketName}")
+            |> range(start: -24h)
+            |> filter(fn: (r) => contains(value: r.callsign, set: ${arrayAsString(callsigns)}))
+            |> pivot(rowKey: ["_time", "callsign"], columnKey: ["_field"], valueColumn: "_value")
+            |> drop(columns: ["_start", "_stop", "_measurement"])
+            |> group()
+            |> sort(columns: ["_time"])
+            |> tail(n: ${limit})`;
+
+        const rows = await this.queryAPi.collectRows<Record<string, unknown>>(query);
+
+        // pivot fills every column for every row, so fields a packet never carried come back as null
+        return rows.map(({ table, result, _start, _stop, _measurement, ...rest }) => {
+            return Object.fromEntries(Object.entries(rest).filter(([, value]) => value !== null)) as unknown as TelemetryRecord;
+        });
     }
 
     public async getUploadersLastContact(callsigns?: string[]): Promise<LastContactData[]> {

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { VehicleTypeGet } from '@gapp/shared';
 import { BeaconRowComponent } from './beacon-row.component';
 import type { VehicleWithContact } from './telemetry-dashboard.component';
@@ -7,7 +8,7 @@ import type { VehicleWithContact } from './telemetry-dashboard.component';
     selector: 'vehicle-row',
     templateUrl: './vehicle-row.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BeaconRowComponent],
+    imports: [BeaconRowComponent, RouterLink],
 })
 export class VehicleRowComponent {
     public vehicle = input.required<VehicleWithContact>();

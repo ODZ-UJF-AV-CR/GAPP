@@ -87,10 +87,6 @@ export const TtnTelemetrySchema = T.Object({
 });
 export type TtnTelemetry = Static<typeof TtnTelemetrySchema>;
 
-/**
- * Closed on purpose, every accepted key becomes an InfluxDB field, so unknown keys would grow the
- * field cardinality without bound. Optional fields mirror what SondeHub amateur telemetry accepts.
- */
 const telemetryProperties = {
     callsign: T.String({ minLength: 1, description: 'Beacon callsign the packet was received from' }),
     latitude: T.Number({ minimum: -90, maximum: 90, description: 'Decimal degrees WGS84' }),
@@ -131,3 +127,8 @@ export const TelemetryQuerySchema = T.Object(
     { nullable: true },
 );
 export type TelemetryQuery = Static<typeof TelemetryQuerySchema>;
+
+export const VehicleTelemetryStreamSchema = T.Object({
+    telemetry: T.Array(TelemetryRecordSchema),
+});
+export type VehicleTelemetryStream = Static<typeof VehicleTelemetryStreamSchema>;

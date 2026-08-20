@@ -83,6 +83,17 @@ export class VehiclesRepository {
             .executeTakeFirst();
     }
 
+    public async getBeaconCallsignsWithStationFlag(callsigns?: string[], includeDeleted = false) {
+        return await this.db
+            .selectFrom('beacons')
+            .innerJoin('vehicles', 'beacons.vehicle_id', 'vehicles.id')
+            .innerJoin('vehicle_types', 'vehicles.vehicle_type_id', 'vehicle_types.id')
+            .select(['beacons.callsign', 'vehicle_types.is_station'])
+            .$if(!includeDeleted, (qb) => qb.where('vehicles.deleted_at', 'is', null))
+            .$if(Boolean(callsigns?.length), (qb) => qb.where('beacons.callsign', 'in', callsigns ?? []))
+            .execute();
+    }
+
     public async getVehicleTypes() {
         return await this.db.selectFrom('vehicle_types').selectAll().execute();
     }

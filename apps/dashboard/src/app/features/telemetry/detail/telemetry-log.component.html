@@ -11,7 +11,5 @@
     </div>
 </cdk-virtual-scroll-viewport>
 } @else {
-<div class="flex h-full w-full items-center justify-center rounded-box bg-base-200 p-6 text-sm text-base-content/60">
-    No telemetry packets in the last 24 hours.
-</div>
+<div class="flex h-full w-full items-center justify-center rounded-box bg-base-200 p-6 text-sm text-base-content/60">{{ emptyMessage() }}</div>
 }

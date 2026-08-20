@@ -26,6 +26,7 @@ export class TelemetryDetailComponent implements OnInit {
     private store = inject(VehicleTelemetryStore);
 
     private packetDialog = viewChild.required(DialogComponent);
+    private log = viewChild(TelemetryLogComponent);
     private vehicleResponse = signal<ApiResponse<VehicleGet>>({ loading: true });
 
     protected readonly vehicleId = toSignal(this.activatedRoute.paramMap.pipe(map((params) => Number(params.get('vehicleId')))), { requireSync: true });
@@ -37,6 +38,19 @@ export class TelemetryDetailComponent implements OnInit {
     protected readonly entries = this.store.entries;
     protected readonly packetCount = this.store.count;
     protected readonly connectionStatus = this.store.connectionStatus;
+
+    protected readonly selectedCallsigns = signal<ReadonlySet<string>>(new Set());
+    protected readonly isFiltered = computed(() => this.selectedCallsigns().size > 0);
+    protected readonly visibleEntries = computed(() => {
+        const selected = this.selectedCallsigns();
+        const entries = this.entries();
+
+        return selected.size ? entries.filter((entry) => selected.has(entry.callsign)) : entries;
+    });
+    protected readonly visibleCount = computed(() => this.visibleEntries().length);
+    protected readonly emptyMessage = computed(() =>
+        this.isFiltered() ? 'No packets from the selected transmitters.' : 'No telemetry packets in the last 24 hours.',
+    );
 
     protected readonly selectedEntry = signal<TelemetryLogEntry | undefined>(undefined);
     protected readonly selectedJson = computed(() => {
@@ -56,5 +70,24 @@ export class TelemetryDetailComponent implements OnInit {
     protected showPacket(entry: TelemetryLogEntry) {
         this.selectedEntry.set(entry);
         this.packetDialog().open();
+    }
+
+    protected toggleBeacon(callsign: string) {
+        this.selectedCallsigns.update((current) => {
+            const next = new Set(current);
+
+            if (!next.delete(callsign)) {
+                next.add(callsign);
+            }
+
+            return next;
+        });
+
+        this.log()?.scrollToTop();
+    }
+
+    protected clearFilter() {
+        this.selectedCallsigns.set(new Set());
+        this.log()?.scrollToTop();
     }
 }

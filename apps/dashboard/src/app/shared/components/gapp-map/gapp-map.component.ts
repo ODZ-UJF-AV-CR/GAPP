@@ -30,7 +30,8 @@ export class GappMapComponent {
 
     public onMapLoad(map: MapLibre) {
         map.touchPitch.disable();
-        map.touchZoomRotate.disableRotation();
         map.dragRotate.disable();
+        map.touchZoomRotate.disableRotation();
+        map.keyboard.disableRotation();
     }
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { GappMapComponent } from '@shared/components/gapp-map/gapp-map.component';
+import { GappMapComponent } from '@shared/components/gapp-map';
 
 @Component({
     selector: 'map',

@@ -2,8 +2,8 @@
     class="w-full h-full"
     [mapStyle]="mapTiles()"
     [projection]="projection"
-    [zoom]="9"
-    [center]="[14.4, 50.1]"
+    [zoom]="initialZoom()"
+    [center]="initialLocation()"
     [pitch]="10"
     [minPitch]="10"
     [maxPitch]="10"
@@ -11,8 +11,15 @@
 >
     @for (icon of icons; track icon.id) {
     <mgl-image [id]="icon.id" [url]="icon.url" [options]="icon.options" />
+    } @for (layer of layers(); track layer.layerId) {
+    <mgl-geojson-source [id]="layer.layerId + '-source'" [data]="layer.data()" />
+    <mgl-layer
+        [id]="layer.layerId"
+        [type]="layer.type"
+        [source]="layer.layerId + '-source'"
+        [layout]="layer.layout"
+        [paint]="layer.paint"
+        [filter]="layer.filter"
+    />
     }
-
-    <mgl-geojson-source id="prague-source" [data]="praguePoint" />
-    <mgl-layer id="prague-layer" type="symbol" source="prague-source" [layout]="carLayerLayout" />
 </mgl-map>

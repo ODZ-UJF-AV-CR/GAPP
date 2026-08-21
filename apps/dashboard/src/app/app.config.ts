@@ -6,7 +6,7 @@ import { provideTicker } from '@core/services/ticker.provider';
 import { provideUnits, type UnitConfig } from '@core/services/unit.provider';
 import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
 import { tablerAirBalloon, tablerCar, tablerDrone, tablerHelpHexagon } from '@ng-icons/tabler-icons';
-import { GAPP_MAP_TILES } from '@shared/components/gapp-map/gapp-map.provider';
+import { GAPP_MAP_TILES, type GappMapIcon, provideGappMapIcons } from '@shared/components/gapp-map/gapp-map.provider';
 import { provideVehicleIcons, type VehicleIcons } from '@shared/components/vehicle-icon/vehicle-icon.provider';
 import { ROUTES } from './app.routes';
 
@@ -31,6 +31,13 @@ const VEHICLE_ICONS: VehicleIcons = {
 const LIGHT_MAP_TILES = 'https://tiles.openfreemap.org/styles/liberty';
 const DARK_MAP_TILES = 'https://tiles.openfreemap.org/styles/dark';
 
+const MAP_ICONS: GappMapIcon[] = [
+    {
+        id: 'chase-car',
+        url: 'map-icons/car-icon.jpg',
+    },
+];
+
 const provideMapTiles = (): Provider => ({
     provide: GAPP_MAP_TILES,
     useFactory: (themeService: ThemeService) => computed(() => (themeService.effectiveTheme() === 'light' ? LIGHT_MAP_TILES : DARK_MAP_TILES)),
@@ -46,6 +53,7 @@ export const appConfig: ApplicationConfig = {
         provideVehicleIcons(VEHICLE_ICONS),
         provideTicker(),
         provideMapTiles(),
+        provideGappMapIcons(MAP_ICONS),
         provideMaplibreWorker('maplibre-gl-worker.mjs'),
     ],
 };

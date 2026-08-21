@@ -8,4 +8,8 @@
     [minPitch]="10"
     [maxPitch]="10"
     (mapLoad)="onMapLoad($event)"
-> </mgl-map>
+>
+    @for (icon of icons; track icon.id) {
+    <mgl-image [id]="icon.id" [url]="icon.url" [options]="icon.options" />
+    }
+</mgl-map>

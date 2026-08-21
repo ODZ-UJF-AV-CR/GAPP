@@ -34,7 +34,11 @@ const DARK_MAP_TILES = 'https://tiles.openfreemap.org/styles/dark';
 const MAP_ICONS: GappMapIcon[] = [
     {
         id: 'chase-car',
-        url: 'map-icons/car-icon.jpg',
+        url: 'map-icons/chase-car.png',
+    },
+    {
+        id: 'baloon',
+        url: 'map-icons/baloon.webp',
     },
 ];
 

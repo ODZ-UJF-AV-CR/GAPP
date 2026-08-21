@@ -12,4 +12,7 @@
     @for (icon of icons; track icon.id) {
     <mgl-image [id]="icon.id" [url]="icon.url" [options]="icon.options" />
     }
+
+    <mgl-geojson-source id="prague-source" [data]="praguePoint" />
+    <mgl-layer id="prague-layer" type="symbol" source="prague-source" [layout]="carLayerLayout" />
 </mgl-map>

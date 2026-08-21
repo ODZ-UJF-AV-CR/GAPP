@@ -1,10 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
-import { type ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { type ApplicationConfig, computed, type Provider, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { ThemeService } from '@core/services/theme.service';
 import { provideTicker } from '@core/services/ticker.provider';
 import { provideUnits, type UnitConfig } from '@core/services/unit.provider';
 import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
 import { tablerAirBalloon, tablerCar, tablerDrone, tablerHelpHexagon } from '@ng-icons/tabler-icons';
+import { GAPP_MAP_TILES } from '@shared/components/gapp-map/gapp-map.provider';
 import { provideVehicleIcons, type VehicleIcons } from '@shared/components/vehicle-icon/vehicle-icon.provider';
 import { ROUTES } from './app.routes';
 
@@ -26,6 +28,15 @@ const VEHICLE_ICONS: VehicleIcons = {
     },
 };
 
+const LIGHT_MAP_TILES = 'https://tiles.openfreemap.org/styles/liberty';
+const DARK_MAP_TILES = 'https://tiles.openfreemap.org/styles/dark';
+
+const provideMapTiles = (): Provider => ({
+    provide: GAPP_MAP_TILES,
+    useFactory: (themeService: ThemeService) => computed(() => (themeService.effectiveTheme() === 'light' ? LIGHT_MAP_TILES : DARK_MAP_TILES)),
+    deps: [ThemeService],
+});
+
 export const appConfig: ApplicationConfig = {
     providers: [
         provideZonelessChangeDetection(),
@@ -34,6 +45,7 @@ export const appConfig: ApplicationConfig = {
         provideUnits(UNIT_CONFIG),
         provideVehicleIcons(VEHICLE_ICONS),
         provideTicker(),
+        provideMapTiles(),
         provideMaplibreWorker('maplibre-gl-worker.mjs'),
     ],
 };

@@ -1,0 +1,25 @@
+<mgl-map
+    class="w-full h-full"
+    [mapStyle]="mapTiles()"
+    [projection]="projection"
+    [zoom]="initialZoom()"
+    [center]="initialLocation()"
+    [pitch]="10"
+    [minPitch]="10"
+    [maxPitch]="10"
+    (mapLoad)="onMapLoad($event)"
+>
+    @for (icon of icons; track icon.id) {
+    <mgl-image [id]="icon.id" [url]="icon.url" [options]="icon.options" />
+    } @for (layer of layers(); track layer.layerId) {
+    <mgl-geojson-source [id]="layer.layerId + '-source'" [data]="layer.data()" />
+    <mgl-layer
+        [id]="layer.layerId"
+        [type]="layer.type"
+        [source]="layer.layerId + '-source'"
+        [layout]="layer.layout"
+        [paint]="layer.paint"
+        [filter]="layer.filter"
+    />
+    }
+</mgl-map>
